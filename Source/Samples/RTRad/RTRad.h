@@ -43,4 +43,20 @@ public:
     void onGuiRender(Gui* pGui) override;
 
 private:
+    RasterScenePass::SharedPtr mpRasterPass;
+    Scene::SharedPtr mpScene;
+
+    RtProgram::SharedPtr mpRaytraceProgram = nullptr;
+    Camera::SharedPtr mpCamera;
+
+    bool mRayTrace = true;
+    bool mUseDOF = false;
+    RtProgramVars::SharedPtr mpRtVars;
+    Texture::SharedPtr mpRtOut;
+
+    uint32_t mSampleIndex = 0xdeadbeef;
+
+    void setPerFrameVars(const Fbo* pTargetFbo);
+    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo);
+    void loadScene(const std::string& filename, const Fbo* pTargetFbo);
 };
