@@ -29,6 +29,9 @@ private:
     Texture::SharedPtr mpRtOut;
 
     Texture::SharedPtr posTex;
+    Texture::SharedPtr nrmTex;
+    Texture::SharedPtr li0Tex;
+    Texture::SharedPtr li1Tex;
 
     uint32_t mSampleIndex = 0xdeadbeef;
 

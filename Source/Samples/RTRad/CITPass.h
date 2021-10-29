@@ -11,7 +11,7 @@ public:
 
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
-    void renderScene(RenderContext* pContext, const Fbo::SharedPtr& pDstFbo);
+    void renderScene(RenderContext* pContext, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr li0Tex, const Texture::SharedPtr li1Tex);
 
     const Scene::SharedPtr& getScene() const { return mpScene; }
 private:

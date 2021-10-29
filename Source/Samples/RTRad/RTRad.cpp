@@ -36,15 +36,6 @@ void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
     mpCamera->setDepthRange(nearZ, farZ);
     mpCamera->setAspectRatio((float)pTargetFbo->getWidth() / (float)pTargetFbo->getHeight());
 
-    //mpRasterPass = RasterScenePass::create(mpScene, "Samples/RTRad/CITP.ps.hlsl", "", "main");
-
-    Falcor::Program::Desc desc;
-    desc.addShaderLibrary("Samples/RTRad/CITP.vs.hlsl");
-    desc.vsEntry("main");
-    desc.addShaderLibrary("Samples/RTRad/CITP.ps.hlsl");
-    desc.psEntry("pmain");
-
-    //mpRasterPass = RasterScenePass::create(mpScene, desc);
     mpRasterPass = CITPass::create(mpScene);
 
     // We'll now create a raytracing program. To do that we need to setup two things:
@@ -83,9 +74,10 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    //posTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 4294967295U, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess);
     posTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    //gpFramework->getTargetFbo()->attachColorTarget(posTex, 0);
+    nrmTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    li0Tex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    li1Tex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 }
 
 void RTRad::setPerFrameVars(const Fbo* pTargetFbo)
@@ -139,13 +131,14 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             //mpRasterPass->setVars(vars);
 
             //create fbo
-            std::vector<Texture::SharedPtr> tfbo;
-            tfbo.push_back(posTex);
+            //std::vector<Texture::SharedPtr> tfbo;
+            //tfbo.push_back(posTex);
 
-            Fbo::SharedPtr fbo = Fbo::create(tfbo);
+            //Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
             //render to fbo
-            mpRasterPass->renderScene(pRenderContext, fbo);
+            //mpRasterPass->renderScene(pRenderContext, fbo);
+            mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
 
             //copy to output render-view
             pRenderContext->blit(posTex->getSRV(), pTargetFbo->getRenderTargetView(0));
