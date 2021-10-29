@@ -1,5 +1,6 @@
 #pragma once
 #include "Falcor.h"
+#include "CITPass.h"
 
 using namespace Falcor;
 
@@ -16,7 +17,7 @@ public:
     void onGuiRender(Gui* pGui) override;
 
 private:
-    RasterScenePass::SharedPtr mpRasterPass;
+    CITPass::SharedPtr mpRasterPass;
     Scene::SharedPtr mpScene;
 
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;

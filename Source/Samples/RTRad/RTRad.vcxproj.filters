@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="RTRad.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="CITPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RTRad.h" />
+    <ClInclude Include="CITPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="CITP.ps.hlsl" />

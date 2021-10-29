@@ -44,7 +44,8 @@ void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
     desc.addShaderLibrary("Samples/RTRad/CITP.ps.hlsl");
     desc.psEntry("pmain");
 
-    mpRasterPass = RasterScenePass::create(mpScene, desc);
+    //mpRasterPass = RasterScenePass::create(mpScene, desc);
+    mpRasterPass = CITPass::create(mpScene);
 
     // We'll now create a raytracing program. To do that we need to setup two things:
     // - A program description (RtProgram::Desc). This holds all shader entry points, compiler flags, macro defintions, etc.
