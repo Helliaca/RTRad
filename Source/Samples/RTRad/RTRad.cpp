@@ -1,30 +1,3 @@
-/***************************************************************************
- # Copyright (c) 2015-21, NVIDIA CORPORATION. All rights reserved.
- #
- # Redistribution and use in source and binary forms, with or without
- # modification, are permitted provided that the following conditions
- # are met:
- #  * Redistributions of source code must retain the above copyright
- #    notice, this list of conditions and the following disclaimer.
- #  * Redistributions in binary form must reproduce the above copyright
- #    notice, this list of conditions and the following disclaimer in the
- #    documentation and/or other materials provided with the distribution.
- #  * Neither the name of NVIDIA CORPORATION nor the names of its
- #    contributors may be used to endorse or promote products derived
- #    from this software without specific prior written permission.
- #
- # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS "AS IS" AND ANY
- # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- # PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- # CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- # EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- # PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- # PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- # OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- **************************************************************************/
 #include "RTRad.h"
 static const float4 kClearColor(0.38f, 0.52f, 0.10f, 1);
 static const std::string kDefaultScene = "RTRad/mrad.pyscene";
@@ -35,6 +8,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.checkbox("Ray Trace", mRayTrace);
     w.checkbox("Use Depth of Field", mUseDOF);
+
     if (w.button("Load Scene"))
     {
         std::string filename;
@@ -62,7 +36,15 @@ void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
     mpCamera->setDepthRange(nearZ, farZ);
     mpCamera->setAspectRatio((float)pTargetFbo->getWidth() / (float)pTargetFbo->getHeight());
 
-    mpRasterPass = RasterScenePass::create(mpScene, "Samples/HelloDXR/HelloDXR.ps.slang", "", "main");
+    //mpRasterPass = RasterScenePass::create(mpScene, "Samples/RTRad/CITP.ps.hlsl", "", "main");
+
+    Falcor::Program::Desc desc;
+    desc.addShaderLibrary("Samples/RTRad/CITP.vs.hlsl");
+    desc.vsEntry("main");
+    desc.addShaderLibrary("Samples/RTRad/CITP.ps.hlsl");
+    desc.psEntry("pmain");
+
+    mpRasterPass = RasterScenePass::create(mpScene, desc);
 
     // We'll now create a raytracing program. To do that we need to setup two things:
     // - A program description (RtProgram::Desc). This holds all shader entry points, compiler flags, macro defintions, etc.
@@ -99,6 +81,10 @@ void RTRad::onLoad(RenderContext* pRenderContext)
     }
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
+
+    //posTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 4294967295U, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess);
+    posTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    //gpFramework->getTargetFbo()->attachColorTarget(posTex, 0);
 }
 
 void RTRad::setPerFrameVars(const Fbo* pTargetFbo)
@@ -138,8 +124,34 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
     if (mpScene)
     {
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
-        if (mRayTrace) renderRT(pRenderContext, pTargetFbo.get());
-        else mpRasterPass->renderScene(pRenderContext, pTargetFbo);
+        if (mRayTrace) {
+            renderRT(pRenderContext, pTargetFbo.get());
+        }
+        else {
+            //Falcor::GraphicsVars rasterVars = Falcor::GraphicsVars::create()
+            //mpRasterPass->getVars()->setVariable("posTex", posTex);
+            //mpRasterPass->setVars()
+            //mpRasterPass->getVars()["posTex"] = posTex;
+
+            //Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(mpRasterPass->getProgram().get());
+            //vars->setTexture("posTex", posTex);
+            //mpRasterPass->setVars(vars);
+
+            //create fbo
+            std::vector<Texture::SharedPtr> tfbo;
+            tfbo.push_back(posTex);
+
+            Fbo::SharedPtr fbo = Fbo::create(tfbo);
+
+            //render to fbo
+            mpRasterPass->renderScene(pRenderContext, fbo);
+
+            //copy to output render-view
+            pRenderContext->blit(posTex->getSRV(), pTargetFbo->getRenderTargetView(0));
+
+            //mpRasterPass->renderScene(pRenderContext, pTargetFbo);
+            //mpRasterPass->renderScene(pRenderContext, mpRtOut-)
+        }
     }
 
     TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });

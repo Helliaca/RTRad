@@ -22,6 +22,10 @@
       <Project>{2c535635-e4c5-4098-a928-574f0e7cd5f9}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ShaderSource Include="CITP.ps.hlsl" />
+    <ShaderSource Include="CITP.vs.hlsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F1FBBEE3-74B4-4F58-BDC8-314D154EFF80}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
