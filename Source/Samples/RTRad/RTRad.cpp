@@ -11,6 +11,8 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.checkbox("Apply To Model", mApplyToModel);
 
+    w.checkbox("Reset Input TExtures", mResetInputTextures);
+
     Falcor::Gui::DropdownList lst;
     lst.push_back({ 0, "posTex" });
     lst.push_back({ 1, "nrmTex" });
@@ -64,10 +66,10 @@ void RTRad::onLoad(RenderContext* pRenderContext)
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
     int res = 128;
-    posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    li1Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    li1Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 }
 
 void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& pTargetFbo)
@@ -79,7 +81,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
         if (mRayTrace) {
             //renderRT(pRenderContext, pTargetFbo.get());
-            rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera);
+            rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, li0Tex, li1Tex);
         }
         else {
             //Falcor::GraphicsVars rasterVars = Falcor::GraphicsVars::create()
@@ -99,7 +101,9 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
             //render to fbo
             //mpRasterPass->renderScene(pRenderContext, fbo);
-            mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
+            if (mResetInputTextures) {
+                mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
+            }
 
             Texture::SharedPtr t;
             switch (outputTex)

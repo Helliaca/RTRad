@@ -36,6 +36,7 @@ private:
 
     bool mApplyToModel = true;
     uint32_t outputTex = 0;
+    bool mResetInputTextures = true;
 
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
