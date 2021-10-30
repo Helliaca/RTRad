@@ -9,6 +9,16 @@ void RTRad::onGuiRender(Gui* pGui)
     w.checkbox("Ray Trace", mRayTrace);
     w.checkbox("Use Depth of Field", mUseDOF);
 
+    w.checkbox("Apply To Model", mApplyToModel);
+
+    Falcor::Gui::DropdownList lst;
+    lst.push_back({ 0, "posTex" });
+    lst.push_back({ 1, "nrmTex" });
+    lst.push_back({ 2, "li0Tex" });
+    lst.push_back({ 3, "li1Tex" });
+
+    w.dropdown("Output Texture", lst, outputTex);
+
     if (w.button("Load Scene"))
     {
         std::string filename;
@@ -37,6 +47,8 @@ void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
     mpCamera->setAspectRatio((float)pTargetFbo->getWidth() / (float)pTargetFbo->getHeight());
 
     mpRasterPass = CITPass::create(mpScene);
+
+    vitPass = VITPass::create(mpScene);
 
     // We'll now create a raytracing program. To do that we need to setup two things:
     // - A program description (RtProgram::Desc). This holds all shader entry points, compiler flags, macro defintions, etc.
@@ -74,10 +86,11 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    posTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    nrmTex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    li0Tex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    li1Tex = Texture::create2D(128, 128, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    int res = 128;
+    posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    li1Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 }
 
 void RTRad::setPerFrameVars(const Fbo* pTargetFbo)
@@ -140,8 +153,21 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             //mpRasterPass->renderScene(pRenderContext, fbo);
             mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
 
+            Texture::SharedPtr t;
+            switch (outputTex)
+            {
+            case 0: { t = posTex; break; }
+            case 1: { t = nrmTex; break; }
+            case 2: { t = li0Tex; break; }
+            case 3: { t = li1Tex; break; }
+            default:
+                t = posTex;
+            }
+
+            vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel);
+
             //copy to output render-view
-            pRenderContext->blit(posTex->getSRV(), pTargetFbo->getRenderTargetView(0));
+            //pRenderContext->blit(posTex->getSRV(), pTargetFbo->getRenderTargetView(0));
 
             //mpRasterPass->renderScene(pRenderContext, pTargetFbo);
             //mpRasterPass->renderScene(pRenderContext, mpRtOut-)

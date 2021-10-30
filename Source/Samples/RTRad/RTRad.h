@@ -1,6 +1,7 @@
 #pragma once
 #include "Falcor.h"
 #include "CITPass.h"
+#include "VITPass.h"
 
 using namespace Falcor;
 
@@ -16,9 +17,12 @@ public:
     void onHotReload(HotReloadFlags reloaded) override;
     void onGuiRender(Gui* pGui) override;
 
+    Scene::SharedPtr mpScene;
+
 private:
     CITPass::SharedPtr mpRasterPass;
-    Scene::SharedPtr mpScene;
+    VITPass::SharedPtr vitPass;
+    //Scene::SharedPtr mpScene;
 
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
     Camera::SharedPtr mpCamera;
@@ -27,6 +31,9 @@ private:
     bool mUseDOF = false;
     RtProgramVars::SharedPtr mpRtVars;
     Texture::SharedPtr mpRtOut;
+
+    bool mApplyToModel = true;
+    uint32_t outputTex = 0;
 
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;

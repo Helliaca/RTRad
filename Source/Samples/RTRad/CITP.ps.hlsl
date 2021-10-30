@@ -21,11 +21,23 @@ struct GBuffer
 
 GBuffer pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID)
 {
+    // coord transformation
+    vsOut.posW = 0.5f * (vsOut.posW + float3(1.f));
+    vsOut.normalW = 0.5f * (vsOut.normalW + float3(1.f));
+
     GBuffer o;
     o.pos = float4(vsOut.posW, 1.f);
     o.nrm = float4(vsOut.normalW, 1.f);
-    o.li0 = float4(0.f);
-    o.li1 = float4(0.f);
+
+    // apply lighting
+    if (vsOut.posW.y > 0.99f) {
+        o.li0 = float4(1.f);
+        o.li1 = float4(1.f);
+    }
+    else {
+        o.li0 = float4(0.f);
+        o.li1 = float4(0.f);
+    }
     return o;
 }
 

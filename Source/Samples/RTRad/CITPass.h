@@ -2,6 +2,8 @@
 
 #include "Falcor.h"
 
+class RTRad;
+
 using namespace Falcor;
 
 class CITPass : public BaseGraphicsPass, public std::enable_shared_from_this<CITPass>
