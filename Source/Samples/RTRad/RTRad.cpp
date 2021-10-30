@@ -6,12 +6,9 @@ void RTRad::onGuiRender(Gui* pGui)
 {
     Gui::Window w(pGui, "Hello DXR Settings", { 300, 400 }, { 10, 80 });
 
-    w.checkbox("Ray Trace", mRayTrace);
-    w.checkbox("Use Depth of Field", mUseDOF);
-
     w.checkbox("Apply To Model", mApplyToModel);
 
-    w.checkbox("Reset Input TExtures", mResetInputTextures);
+    w.checkbox("Reset Input Textures", mResetInputTextures);
 
     makePass = w.button("Make Pass");
 
@@ -67,7 +64,7 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    int res = 64;
+    int res = 128;
     posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
@@ -82,28 +79,17 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
     {
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
         if (makePass) {
-            //renderRT(pRenderContext, pTargetFbo.get());
-            rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, li0Tex, li1Tex);
+            if (passNum % 2 == 0) {
+                rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, li0Tex, li1Tex);
+            }
+            else {
+                rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, li1Tex, li0Tex);
+            }
+
+            passNum++;
             makePass = false;
         }
         else {
-            //Falcor::GraphicsVars rasterVars = Falcor::GraphicsVars::create()
-            //mpRasterPass->getVars()->setVariable("posTex", posTex);
-            //mpRasterPass->setVars()
-            //mpRasterPass->getVars()["posTex"] = posTex;
-
-            //Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(mpRasterPass->getProgram().get());
-            //vars->setTexture("posTex", posTex);
-            //mpRasterPass->setVars(vars);
-
-            //create fbo
-            //std::vector<Texture::SharedPtr> tfbo;
-            //tfbo.push_back(posTex);
-
-            //Fbo::SharedPtr fbo = Fbo::create(tfbo);
-
-            //render to fbo
-            //mpRasterPass->renderScene(pRenderContext, fbo);
             if (mResetInputTextures) {
                 mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
                 mResetInputTextures = false;
@@ -121,12 +107,6 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             }
 
             vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel);
-
-            //copy to output render-view
-            //pRenderContext->blit(posTex->getSRV(), pTargetFbo->getRenderTargetView(0));
-
-            //mpRasterPass->renderScene(pRenderContext, pTargetFbo);
-            //mpRasterPass->renderScene(pRenderContext, mpRtOut-)
         }
     }
 

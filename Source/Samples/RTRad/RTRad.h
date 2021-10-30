@@ -40,6 +40,8 @@ private:
 
     bool makePass = false;
 
+    int passNum = 0;
+
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
     Texture::SharedPtr li0Tex;

@@ -4,9 +4,9 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 
-RWTexture2D<float4> pos;
-RWTexture2D<float4> nrm;
-RWTexture2D<float4> lig;
+Texture2D<float4> pos;
+Texture2D<float4> nrm;
+Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
 #define PI 3.14159265359f
