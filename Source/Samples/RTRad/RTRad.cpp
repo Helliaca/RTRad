@@ -15,8 +15,9 @@ void RTRad::onGuiRender(Gui* pGui)
     Falcor::Gui::DropdownList lst;
     lst.push_back({ 0, "posTex" });
     lst.push_back({ 1, "nrmTex" });
-    lst.push_back({ 2, "li0Tex" });
-    lst.push_back({ 3, "li1Tex" });
+    lst.push_back({ 2, "arfTex" });
+    lst.push_back({ 3, "li0Tex" });
+    lst.push_back({ 4, "li1Tex" });
 
     w.dropdown("Output Texture", lst, outputTex);
 
@@ -67,6 +68,7 @@ void RTRad::onLoad(RenderContext* pRenderContext)
     int res = 128;
     posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     li1Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 }
@@ -91,7 +93,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         }
         else {
             if (mResetInputTextures) {
-                mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
+                mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, arfTex, li0Tex, li1Tex);
                 mResetInputTextures = false;
             }
 
@@ -100,8 +102,9 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             {
             case 0: { t = posTex; break; }
             case 1: { t = nrmTex; break; }
-            case 2: { t = li0Tex; break; }
-            case 3: { t = li1Tex; break; }
+            case 2: { t = arfTex; break; }
+            case 3: { t = li0Tex; break; }
+            case 4: { t = li1Tex; break; }
             default:
                 t = posTex;
             }

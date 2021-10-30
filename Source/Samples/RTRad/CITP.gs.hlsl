@@ -7,6 +7,7 @@ struct GSOut
     float4 posH : SV_POSITION;
     float3 posW : POSW;
     float3 normalW : NORMAL;
+    float areaFactor : AREAFACTOR;
 };
 
 
@@ -21,6 +22,8 @@ void gmain(triangle VSOut input[3], inout TriangleStream<GSOut> OutputStream)
         output.texC = input[i].texC;
         output.posW = input[i].posW;
         output.normalW = input[i].normalW;
+
+        output.areaFactor = 0.8f;
 
         OutputStream.Append(output);
     }

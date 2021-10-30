@@ -14,8 +14,9 @@ struct GBuffer
 {
     float4 pos    : SV_Target0;
     float4 nrm    : SV_Target1;
-    float4 li0    : SV_Target2;
-    float4 li1    : SV_Target3;
+    float4 arf    : SV_Target2;
+    float4 li0    : SV_Target3;
+    float4 li1    : SV_Target4;
 };
 
 
@@ -25,6 +26,7 @@ struct GSOut
     float4 posH : SV_POSITION;
     float3 posW : POSW;
     float3 normalW : NORMAL;
+    float areaFactor : AREAFACTOR;
 };
 
 GBuffer pmain(GSOut vsOut)
@@ -36,6 +38,7 @@ GBuffer pmain(GSOut vsOut)
     GBuffer o;
     o.pos = float4(vsOut.posW, 1.f);
     o.nrm = float4(vsOut.normalW, 1.f);
+    o.arf = float4(vsOut.areaFactor, 0.f, 0.f, 1.f);
 
     // apply lighting
     if (vsOut.posW.y > 0.99f) {
@@ -46,6 +49,7 @@ GBuffer pmain(GSOut vsOut)
         o.li0 = float4(0.f);
         o.li1 = float4(0.f);
     }
+
     return o;
 }
 

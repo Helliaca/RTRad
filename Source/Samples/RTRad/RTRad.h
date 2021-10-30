@@ -44,6 +44,7 @@ private:
 
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
+    Texture::SharedPtr arfTex;
     Texture::SharedPtr li0Tex;
     Texture::SharedPtr li1Tex;
 
