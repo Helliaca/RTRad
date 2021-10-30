@@ -44,7 +44,5 @@ private:
 
     uint32_t mSampleIndex = 0xdeadbeef;
 
-    void setPerFrameVars(const Fbo* pTargetFbo);
-    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo);
     void loadScene(const std::string& filename, const Fbo* pTargetFbo);
 };
