@@ -13,6 +13,8 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.checkbox("Reset Input TExtures", mResetInputTextures);
 
+    makePass = w.button("Make Pass");
+
     Falcor::Gui::DropdownList lst;
     lst.push_back({ 0, "posTex" });
     lst.push_back({ 1, "nrmTex" });
@@ -65,7 +67,7 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    int res = 128;
+    int res = 64;
     posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
@@ -79,9 +81,10 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
     if (mpScene)
     {
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
-        if (mRayTrace) {
+        if (makePass) {
             //renderRT(pRenderContext, pTargetFbo.get());
             rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, li0Tex, li1Tex);
+            makePass = false;
         }
         else {
             //Falcor::GraphicsVars rasterVars = Falcor::GraphicsVars::create()
@@ -103,6 +106,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             //mpRasterPass->renderScene(pRenderContext, fbo);
             if (mResetInputTextures) {
                 mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, li0Tex, li1Tex);
+                mResetInputTextures = false;
             }
 
             Texture::SharedPtr t;

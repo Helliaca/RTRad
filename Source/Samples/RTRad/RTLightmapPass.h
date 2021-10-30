@@ -19,8 +19,6 @@ private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
     RtProgramVars::SharedPtr mpRtVars;
 
-    Texture::SharedPtr mpRtOut;
-
     Scene::SharedPtr mpScene;
 };
 

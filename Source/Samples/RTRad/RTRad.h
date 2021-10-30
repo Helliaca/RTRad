@@ -38,6 +38,8 @@ private:
     uint32_t outputTex = 0;
     bool mResetInputTextures = true;
 
+    bool makePass = false;
+
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
     Texture::SharedPtr li0Tex;

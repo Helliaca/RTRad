@@ -40,8 +40,6 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     mpRtVars = RtProgramVars::create(mpRaytraceProgram, sbt);
 
     this->mpScene = mpScene;
-
-    mpRtOut = Texture::create2D(64, 64, ResourceFormat::RGBA16Float, 1, 1, nullptr, Resource::BindFlags::UnorderedAccess | Resource::BindFlags::ShaderResource);
 }
 
 void RTLightmapPass::setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
@@ -65,8 +63,5 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, co
 
     setPerFrameVars(posTex, nrmTex, ligTex, outTex);
 
-    static const float4 kClearColor(0.38f, 0.52f, 0.10f, 1);
-    //pContext->clearUAV(mpRtOut->getUAV().get(), kClearColor);
-    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(pTargetFbo->getWidth(), pTargetFbo->getHeight(), 1));
-    //pContext->blit(mpRtOut->getSRV(), pTargetFbo->getRenderTargetView(0));
+    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(ligTex->getWidth(), ligTex->getHeight(), 1));
 }

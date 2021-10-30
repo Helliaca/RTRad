@@ -22,9 +22,6 @@ void rayGen()
 {
     uint2  self_c = DispatchRaysIndex().xy;
 
-    lig2[self_c] = pos[self_c];
-    return;
-
     //self_c.x += current_outer_index;
 
     // If pos alpha is less than 1, skip this.
