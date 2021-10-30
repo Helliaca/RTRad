@@ -19,7 +19,15 @@ struct GBuffer
 };
 
 
-GBuffer pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID)
+struct GSOut
+{
+    float2 texC : TEXCOORD;
+    float4 posH : SV_POSITION;
+    float3 posW : POSW;
+    float3 normalW : NORMAL;
+};
+
+GBuffer pmain(GSOut vsOut)
 {
     // coord transformation
     vsOut.posW = 0.5f * (vsOut.posW + float3(1.f));

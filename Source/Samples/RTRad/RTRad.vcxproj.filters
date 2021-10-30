@@ -19,5 +19,6 @@
     <ShaderSource Include="VITP.ps.hlsl" />
     <ShaderSource Include="VITP.vs.hlsl" />
     <ShaderSource Include="rayTracedLightMap.rt.hlsl" />
+    <ShaderSource Include="CITP.gs.hlsl" />
   </ItemGroup>
 </Project>

@@ -17,8 +17,13 @@ CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
     dl.add(pScene->getSceneDefines());
 
     Falcor::Program::Desc desc;
+
     desc.addShaderLibrary("Samples/RTRad/CITP.vs.hlsl");
     desc.vsEntry("main");
+
+    desc.addShaderLibrary("Samples/RTRad/CITP.gs.hlsl");
+    desc.gsEntry("gmain");
+
     desc.addShaderLibrary("Samples/RTRad/CITP.ps.hlsl");
     desc.psEntry("pmain");
 

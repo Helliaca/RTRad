@@ -29,6 +29,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ShaderSource Include="CITP.gs.hlsl" />
     <ShaderSource Include="CITP.ps.hlsl" />
     <ShaderSource Include="CITP.vs.hlsl" />
     <ShaderSource Include="rayTracedLightMap.rt.hlsl" />
