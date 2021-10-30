@@ -50,6 +50,9 @@ void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
 
     vitPass = VITPass::create(mpScene);
 
+    rtlPass = RTLightmapPass::create();
+    rtlPass->load(mpScene);
+
     // We'll now create a raytracing program. To do that we need to setup two things:
     // - A program description (RtProgram::Desc). This holds all shader entry points, compiler flags, macro defintions, etc.
     // - A binding table (RtBindingTable). This maps shaders to geometries in the scene, and sets the ray generation and miss shaders.
@@ -131,7 +134,8 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
     {
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
         if (mRayTrace) {
-            renderRT(pRenderContext, pTargetFbo.get());
+            //renderRT(pRenderContext, pTargetFbo.get());
+            rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera);
         }
         else {
             //Falcor::GraphicsVars rasterVars = Falcor::GraphicsVars::create()

@@ -2,6 +2,7 @@
 #include "Falcor.h"
 #include "CITPass.h"
 #include "VITPass.h"
+#include "RTLightmapPass.h"
 
 using namespace Falcor;
 
@@ -22,6 +23,7 @@ public:
 private:
     CITPass::SharedPtr mpRasterPass;
     VITPass::SharedPtr vitPass;
+    RTLightmapPass::SharedPtr rtlPass;
     //Scene::SharedPtr mpScene;
 
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;

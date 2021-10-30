@@ -5,11 +5,13 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="CITPass.cpp" />
     <ClCompile Include="VITPass.cpp" />
+    <ClCompile Include="RTLightmapPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RTRad.h" />
     <ClInclude Include="CITPass.h" />
     <ClInclude Include="VITPass.h" />
+    <ClInclude Include="RTLightmapPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="CITP.ps.hlsl" />

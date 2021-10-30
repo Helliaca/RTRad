@@ -13,11 +13,13 @@
   <ItemGroup>
     <ClCompile Include="CITPass.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RTLightmapPass.cpp" />
     <ClCompile Include="RTRad.cpp" />
     <ClCompile Include="VITPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CITPass.h" />
+    <ClInclude Include="RTLightmapPass.h" />
     <ClInclude Include="RTRad.h" />
     <ClInclude Include="VITPass.h" />
   </ItemGroup>
