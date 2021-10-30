@@ -12,8 +12,8 @@ public:
     static SharedPtr create();
 
     void load(const Scene::SharedPtr mpScene);
-    void setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex);
-    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex);
+    void setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex);
+    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex);
 
 private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;

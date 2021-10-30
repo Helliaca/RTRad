@@ -6,6 +6,7 @@ import Experimental.Scene.Material.StandardMaterial;
 
 Texture2D<float4> pos;
 Texture2D<float4> nrm;
+Texture2D<float> arf;
 Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
@@ -36,8 +37,13 @@ void rayGen()
 
     float4 sum_c = float4(0, 0, 0, 0);
 
-    for (uint x = 0; x < dim1; x += 4) {
-        for (uint y = 0; y < dim2; y += 4) {
+    lig2[self_c] = float4(0.f, 0.f, 0.f, 1.f);
+    if (self_wpos.y > 0.99f) {
+        lig2[self_c] = float4(1.f, 1.f, 1.f, 1.f);
+    }
+
+    for (uint x = 0; x < dim1; x += 1) {
+        for (uint y = 0; y < dim2; y += 1) {
 
             uint2 other_c = uint2(x, y);
 
@@ -70,14 +76,15 @@ void primaryMiss(inout RayPayload rpl)
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
 
-    float3 self_wpos = pos[self_c].xyz;
-    float3 other_wpos = pos[other_c].xyz;
+    float3 self_wpos = (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 other_wpos = (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
 
     float3 self_to_other = other_wpos - self_wpos;
 
     float r = length(self_to_other);
 
-    //if (r < 0.01f) return;
+    // Avoiding self-illuimination
+    if (r < 0.05f) return;
     if (self_c.x == other_c.x && self_c.y == other_c.y) return;
 
     self_to_other = normalize(self_to_other);
@@ -94,15 +101,15 @@ void primaryMiss(inout RayPayload rpl)
 
     float ref = 0.9;
 
-    float fpa = 400.f;// (dim * dim)* texture(arfTex, other).x;
+    // Account for surface area of other
+    float dim1;
+    float dim2;
+    pos.GetDimensions(dim1, dim2);
+    float fpa = (dim1 * dim2) * arf[other_c].r; // -> fragments per unit area on other
 
     float4 self_color = float4(1.f, 1.f, 1.f, 1.f);
-    if (self_wpos.x > 0.98f) self_color = float4(1.f, 0.f, 0.f, 1.f);
-    if (self_wpos.x < 0.02f) self_color = float4(0.f, 1.f, 0.f, 1.f);
-
-    float4 other_color = float4(1.f, 1.f, 1.f, 1.f);
-    if (other_wpos.x > 0.98f) other_color = float4(1.f, 0.f, 0.f, 1.f);
-    if (other_wpos.x < 0.02f) other_color = float4(0.f, 1.f, 0.f, 1.f);
+    if (self_wpos.x > 0.99f) self_color = float4(1.f, 0.f, 0.f, 1.f);
+    if (self_wpos.x < -0.99f) self_color = float4(0.f, 1.f, 0.f, 1.f);
 
     //rpl.added_c = (lig[other_c] / fpa) * self_color * ref * view_factor;
 

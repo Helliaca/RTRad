@@ -42,16 +42,17 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     this->mpScene = mpScene;
 }
 
-void RTLightmapPass::setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
+void RTLightmapPass::setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
 {
     PROFILE("setPerFrameVars");
     mpRtVars->setTexture("pos", posTex);
     mpRtVars->setTexture("nrm", nrmTex);
+    mpRtVars->setTexture("arf", arfTex);
     mpRtVars->setTexture("lig", ligTex);
     mpRtVars->setTexture("lig2", outTex);
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
+void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
 {
     PROFILE("renderRT");
 
@@ -61,7 +62,7 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, co
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    setPerFrameVars(posTex, nrmTex, ligTex, outTex);
+    setPerFrameVars(posTex, nrmTex, arfTex, ligTex, outTex);
 
     mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(ligTex->getWidth(), ligTex->getHeight(), 1));
 }
