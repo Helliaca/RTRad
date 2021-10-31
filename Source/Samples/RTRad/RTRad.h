@@ -44,6 +44,8 @@ private:
 
     bool makeBatch = false;
 
+    bool showTexRes = false;
+
     int passNum = 0;
 
     uint32_t mSampleIndex = 0xdeadbeef;

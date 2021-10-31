@@ -28,6 +28,6 @@ private:
 
     int row_offset;
 
-    float texPerBatch = 0.25f;
+    float texPerBatch = 0.1f;
 };
 

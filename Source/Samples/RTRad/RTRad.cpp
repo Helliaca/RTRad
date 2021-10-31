@@ -10,6 +10,8 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.checkbox("Reset Input Textures", mResetInputTextures);
 
+    w.checkbox("Show Tex Res", showTexRes);
+
     makePass = w.button("Make Pass");
 
     Falcor::Gui::DropdownList lst;
@@ -66,7 +68,7 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    int res = 128;
+    int res = 256;
     textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
@@ -111,7 +113,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             t = textureGroup.posTex;
         }
 
-        vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, t==textureGroup.matTex);
+        vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, t==textureGroup.matTex, showTexRes);
     }
 
     TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });
