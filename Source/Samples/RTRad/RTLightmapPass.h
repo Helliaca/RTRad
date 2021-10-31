@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Falcor.h"
+#include "common.h"
 
 using namespace Falcor;
 
@@ -12,13 +13,19 @@ public:
     static SharedPtr create();
 
     void load(const Scene::SharedPtr mpScene);
-    void setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex);
-    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex);
+    void setPerFrameVars(const TextureGroup textureGroup);
+    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup);
+
+    bool runBatch(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup);
 
 private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
     RtProgramVars::SharedPtr mpRtVars;
 
     Scene::SharedPtr mpScene;
+
+    uint2 last_index;
+
+    int max_rays_per_batch;
 };
 

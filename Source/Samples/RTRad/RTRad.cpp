@@ -16,8 +16,8 @@ void RTRad::onGuiRender(Gui* pGui)
     lst.push_back({ 0, "posTex" });
     lst.push_back({ 1, "nrmTex" });
     lst.push_back({ 2, "arfTex" });
-    lst.push_back({ 3, "li0Tex" });
-    lst.push_back({ 4, "li1Tex" });
+    lst.push_back({ 3, "lgiTex" });
+    lst.push_back({ 4, "lgoTex" });
 
     w.dropdown("Output Texture", lst, outputTex);
 
@@ -65,12 +65,12 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    int res = 256;
-    posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    li0Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    li1Tex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    int res = 128;
+    textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    textureGroup.lgiTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    textureGroup.lgoTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 }
 
 void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& pTargetFbo)
@@ -81,32 +81,29 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
     {
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
         if (makePass) {
-            if (passNum % 2 == 0) {
-                rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, arfTex, li0Tex, li1Tex);
-            }
-            else {
-                rtlPass->renderRT(pRenderContext, pTargetFbo.get(), mpCamera, posTex, nrmTex, arfTex, li1Tex, li0Tex);
-            }
+            std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
+
+            rtlPass->runBatch(pRenderContext, pTargetFbo.get(), mpCamera, textureGroup);
 
             passNum++;
             makePass = false;
         }
         else {
             if (mResetInputTextures) {
-                mpRasterPass->renderScene(pRenderContext, posTex, nrmTex, arfTex, li0Tex, li1Tex);
+                mpRasterPass->renderScene(pRenderContext, textureGroup);
                 mResetInputTextures = false;
             }
 
             Texture::SharedPtr t;
             switch (outputTex)
             {
-            case 0: { t = posTex; break; }
-            case 1: { t = nrmTex; break; }
-            case 2: { t = arfTex; break; }
-            case 3: { t = li0Tex; break; }
-            case 4: { t = li1Tex; break; }
+            case 0: { t = textureGroup.posTex; break; }
+            case 1: { t = textureGroup.nrmTex; break; }
+            case 2: { t = textureGroup.arfTex; break; }
+            case 3: { t = textureGroup.lgiTex; break; }
+            case 4: { t = textureGroup.lgoTex; break; }
             default:
-                t = posTex;
+                t = textureGroup.posTex;
             }
 
             vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel);

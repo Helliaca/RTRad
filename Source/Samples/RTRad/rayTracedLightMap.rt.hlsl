@@ -10,6 +10,10 @@ Texture2D<float> arf;
 Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
+cbuffer PerFrameCB {
+    uint2 last_index;
+};
+
 #define PI 3.14159265359f
 
 struct RayPayload
@@ -23,7 +27,7 @@ void rayGen()
 {
     uint2  self_c = DispatchRaysIndex().xy;
 
-    //self_c.x += current_outer_index;
+    self_c += last_index;
 
     // If pos alpha is less than 1, skip this.
     if (pos[self_c].a < 1.f) return;

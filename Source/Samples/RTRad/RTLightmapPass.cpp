@@ -28,31 +28,24 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     sbt->setRayGen(rtProgDesc.addRayGen("rayGen"));
     sbt->setMiss(0, rtProgDesc.addMiss("primaryMiss"));
 
-    //sbt->setMiss(1, rtProgDesc.addMiss("shadowMiss"));
-
-    //auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
-    //auto shadow = rtProgDesc.addHitGroup("", "shadowAnyHit");
-
-    //sbt->setHitGroupByType(0, mpScene, Scene::GeometryType::TriangleMesh, primary);
-    //sbt->setHitGroupByType(1, mpScene, Scene::GeometryType::TriangleMesh, shadow);
-
     mpRaytraceProgram = RtProgram::create(rtProgDesc);
     mpRtVars = RtProgramVars::create(mpRaytraceProgram, sbt);
 
     this->mpScene = mpScene;
 }
 
-void RTLightmapPass::setPerFrameVars(const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
+void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
 {
     PROFILE("setPerFrameVars");
-    mpRtVars->setTexture("pos", posTex);
-    mpRtVars->setTexture("nrm", nrmTex);
-    mpRtVars->setTexture("arf", arfTex);
-    mpRtVars->setTexture("lig", ligTex);
-    mpRtVars->setTexture("lig2", outTex);
+    mpRtVars->setTexture("pos", textureGroup.posTex);
+    mpRtVars->setTexture("nrm", textureGroup.nrmTex);
+    mpRtVars->setTexture("arf", textureGroup.arfTex);
+    mpRtVars->setTexture("lig", textureGroup.lgiTex);
+    mpRtVars->setTexture("lig2", textureGroup.lgoTex);
+    mpRtVars["PerFrameCB"]["last_index"] = last_index;
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr ligTex, const Texture::SharedPtr outTex)
+void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup)
 {
     PROFILE("renderRT");
 
@@ -62,7 +55,23 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, co
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    setPerFrameVars(posTex, nrmTex, arfTex, ligTex, outTex);
+    setPerFrameVars(textureGroup);
 
-    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(ligTex->getWidth(), ligTex->getHeight(), 1));
+    //int rays_per_texel = ligTex->getWidth() * ligTex->getHeight(); //TODO: we do not consider the LOD-cheat here
+    //int texels_amount = max_rays_per_batch / rays_per_texel;
+
+    int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
+
+    static float texture_per_batch = 0.5f;
+    float depth_per_batch = 1.0f;
+    int batchNum = 0;
+
+    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(texture_per_batch*xres, yres, 1));
+    //mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(ligTex->getWidth(), ligTex->getHeight(), 1));
+}
+
+bool RTLightmapPass::runBatch(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup)
+{
+    renderRT(pContext, pTargetFbo, mpCamera, textureGroup);
+    return true;
 }

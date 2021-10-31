@@ -12,6 +12,7 @@
     <ClInclude Include="CITPass.h" />
     <ClInclude Include="VITPass.h" />
     <ClInclude Include="RTLightmapPass.h" />
+    <ClInclude Include="common.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="CITP.ps.hlsl" />

@@ -20,6 +20,8 @@ public:
 
     Scene::SharedPtr mpScene;
 
+    TextureGroup textureGroup;
+
 private:
     CITPass::SharedPtr mpRasterPass;
     VITPass::SharedPtr vitPass;
@@ -41,12 +43,6 @@ private:
     bool makePass = false;
 
     int passNum = 0;
-
-    Texture::SharedPtr posTex;
-    Texture::SharedPtr nrmTex;
-    Texture::SharedPtr arfTex;
-    Texture::SharedPtr li0Tex;
-    Texture::SharedPtr li1Tex;
 
     uint32_t mSampleIndex = 0xdeadbeef;
 

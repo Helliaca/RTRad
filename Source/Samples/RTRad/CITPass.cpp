@@ -30,15 +30,15 @@ CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
     return SharedPtr(new CITPass(pScene, desc, dl));
 }
 
-void CITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr li0Tex, const Texture::SharedPtr li1Tex)
+void CITPass::renderScene(RenderContext* pContext, const TextureGroup tg)
 {
     // Create FBO
     std::vector<Texture::SharedPtr> tfbo;
-    tfbo.push_back(posTex);
-    tfbo.push_back(nrmTex);
-    tfbo.push_back(arfTex);
-    tfbo.push_back(li0Tex);
-    tfbo.push_back(li1Tex);
+    tfbo.push_back(tg.posTex);
+    tfbo.push_back(tg.nrmTex);
+    tfbo.push_back(tg.arfTex);
+    tfbo.push_back(tg.lgiTex);
+    tfbo.push_back(tg.lgoTex);
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
     mpState->setFbo(fbo);

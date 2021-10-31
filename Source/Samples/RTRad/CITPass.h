@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Falcor.h"
+#include "common.h"
 
 class RTRad;
 
@@ -13,7 +14,7 @@ public:
 
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
-    void renderScene(RenderContext* pContext, const Texture::SharedPtr posTex, const Texture::SharedPtr nrmTex, const Texture::SharedPtr arfTex, const Texture::SharedPtr li0Tex, const Texture::SharedPtr li1Tex);
+    void renderScene(RenderContext* pContext, const TextureGroup tg);
 
     const Scene::SharedPtr& getScene() const { return mpScene; }
 private:
