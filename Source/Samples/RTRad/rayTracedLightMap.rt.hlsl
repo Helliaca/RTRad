@@ -7,6 +7,7 @@ import Experimental.Scene.Material.StandardMaterial;
 Texture2D<float4> pos;
 Texture2D<float4> nrm;
 Texture2D<float> arf;
+Texture2D<float> mat;
 Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
@@ -41,10 +42,9 @@ void rayGen()
 
     float4 sum_c = float4(0, 0, 0, 0);
 
-    lig2[self_c] = float4(0.f, 0.f, 0.f, 1.f);
-    if (self_wpos.y > 0.99f) {
-        lig2[self_c] = float4(1.f, 1.f, 1.f, 1.f);
-    }
+    uint matID = (uint) mat[self_c].r;
+    lig2[self_c] = float4(gScene.materials[matID].emissive, 1.f);
+
 
     for (uint x = 0; x < dim1; x += 1) {
         for (uint y = 0; y < dim2; y += 1) {
@@ -111,11 +111,8 @@ void primaryMiss(inout RayPayload rpl)
     pos.GetDimensions(dim1, dim2);
     float fpa = (dim1 * dim2) * arf[other_c].r; // -> fragments per unit area on other
 
-    float4 self_color = float4(1.f, 1.f, 1.f, 1.f);
-    if (self_wpos.x > 0.99f) self_color = float4(1.f, 0.f, 0.f, 1.f);
-    if (self_wpos.x < -0.99f) self_color = float4(0.f, 1.f, 0.f, 1.f);
-
-    //rpl.added_c = (lig[other_c] / fpa) * self_color * ref * view_factor;
+    uint matID = (uint) mat[self_c].r;
+    float4 self_color = gScene.materials[matID].baseColor;
 
     lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;
 }

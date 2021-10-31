@@ -42,16 +42,9 @@ GBuffer pmain(GSOut vsOut)
     o.nrm = float4(vsOut.normalW, 1.f);
     o.arf = vsOut.areaFactor;
     o.mat = vsOut.materialID;
+    o.li0 = float4(gScene.materials[vsOut.materialID].emissive, 1.f);
+    o.li1 = float4(gScene.materials[vsOut.materialID].emissive, 1.f);
 
-    // apply lighting
-    if (vsOut.posW.y > 0.99f) {
-        o.li0 = float4(1.f);
-        o.li1 = float4(1.f);
-    }
-    else {
-        o.li0 = float4(0.f);
-        o.li1 = float4(0.f);
-    }
 
     return o;
 }

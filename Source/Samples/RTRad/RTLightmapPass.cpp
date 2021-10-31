@@ -42,6 +42,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
     mpRtVars->setTexture("pos", textureGroup.posTex);
     mpRtVars->setTexture("nrm", textureGroup.nrmTex);
     mpRtVars->setTexture("arf", textureGroup.arfTex);
+    mpRtVars->setTexture("mat", textureGroup.matTex);
     mpRtVars->setTexture("lig", textureGroup.lgiTex);
     mpRtVars->setTexture("lig2", textureGroup.lgoTex);
     mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
