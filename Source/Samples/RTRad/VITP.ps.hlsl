@@ -8,6 +8,10 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 
+cbuffer PerFrameCB2 {
+    bool treatAsMatIDs;
+};
+
 Texture2D<float4> disTex;
 
 SamplerState sampleWrap : register(s0);
@@ -16,7 +20,14 @@ SamplerState sampleWrap : register(s0);
 float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 {
 
-    return disTex.Sample(sampleWrap, vsOut.texC);
+    float4 col = disTex.Sample(sampleWrap, vsOut.texC);
+
+    if (treatAsMatIDs) {
+        uint matID = (uint) col.r;
+        col = gScene.materials[matID].baseColor;
+    }
+
+    return col;
 }
 
 

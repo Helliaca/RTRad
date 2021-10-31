@@ -8,6 +8,7 @@ struct TextureGroup {
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
     Texture::SharedPtr arfTex;
+    Texture::SharedPtr matTex;
     Texture::SharedPtr lgiTex;
     Texture::SharedPtr lgoTex;
 };

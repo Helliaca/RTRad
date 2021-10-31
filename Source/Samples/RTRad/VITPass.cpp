@@ -24,11 +24,12 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
     return SharedPtr(new VITPass(pScene, desc, dl));
 }
 
-void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel)
+void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel, const bool treatAsMatIDs)
 {
     Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(this->getProgram().get());
     vars->setTexture("disTex", disTex);
     vars["PerFrameCB"]["applyToModel"] = applyToModel;
+    vars["PerFrameCB2"]["treatAsMatIDs"] = treatAsMatIDs;
     this->setVars(vars);
 
     mpState->setFbo(outputFbo);

@@ -16,8 +16,9 @@ void RTRad::onGuiRender(Gui* pGui)
     lst.push_back({ 0, "posTex" });
     lst.push_back({ 1, "nrmTex" });
     lst.push_back({ 2, "arfTex" });
-    lst.push_back({ 3, "lgiTex" });
-    lst.push_back({ 4, "lgoTex" });
+    lst.push_back({ 3, "matTex" });
+    lst.push_back({ 4, "lgiTex" });
+    lst.push_back({ 5, "lgoTex" });
 
     w.dropdown("Output Texture", lst, outputTex);
 
@@ -30,7 +31,7 @@ void RTRad::onGuiRender(Gui* pGui)
         }
     }
 
-    //mpScene->renderUI(w);
+    mpScene->renderUI(w);
 }
 
 void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
@@ -69,6 +70,7 @@ void RTRad::onLoad(RenderContext* pRenderContext)
     textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    textureGroup.matTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.lgiTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.lgoTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 }
@@ -102,13 +104,14 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         case 0: { t = textureGroup.posTex; break; }
         case 1: { t = textureGroup.nrmTex; break; }
         case 2: { t = textureGroup.arfTex; break; }
-        case 3: { t = textureGroup.lgiTex; break; }
-        case 4: { t = textureGroup.lgoTex; break; }
+        case 3: { t = textureGroup.matTex; break; }
+        case 4: { t = textureGroup.lgiTex; break; }
+        case 5: { t = textureGroup.lgoTex; break; }
         default:
             t = textureGroup.posTex;
         }
 
-        vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel);
+        vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, t==textureGroup.matTex);
     }
 
     TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });

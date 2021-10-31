@@ -37,6 +37,7 @@ void CITPass::renderScene(RenderContext* pContext, const TextureGroup tg)
     tfbo.push_back(tg.posTex);
     tfbo.push_back(tg.nrmTex);
     tfbo.push_back(tg.arfTex);
+    tfbo.push_back(tg.matTex);
     tfbo.push_back(tg.lgiTex);
     tfbo.push_back(tg.lgoTex);
     Fbo::SharedPtr fbo = Fbo::create(tfbo);

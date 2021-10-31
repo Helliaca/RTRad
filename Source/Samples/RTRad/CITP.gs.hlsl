@@ -8,6 +8,7 @@ struct GSOut
     float3 posW : POSW;
     float3 normalW : NORMAL;
     float areaFactor : AREAFACTOR;
+    uint materialID  : MATERIAL_ID;
 };
 
 [maxvertexcount(3)]
@@ -27,6 +28,7 @@ void gmain(triangle VSOut input[3], inout TriangleStream<GSOut> OutputStream)
         output.texC = input[i].texC;
         output.posW = input[i].posW;
         output.normalW = input[i].normalW;
+        output.materialID = input[i].materialID;
 
         output.areaFactor = uvA / vvA;
 
