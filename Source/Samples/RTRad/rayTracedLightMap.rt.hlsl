@@ -11,7 +11,7 @@ Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
 cbuffer PerFrameCB {
-    uint2 last_index;
+    int row_offset;
 };
 
 #define PI 3.14159265359f
@@ -25,9 +25,9 @@ struct RayPayload
 [shader("raygeneration")]
 void rayGen()
 {
-    uint2  self_c = DispatchRaysIndex().xy;
+    uint2 self_c = DispatchRaysIndex().xy;
 
-    self_c += last_index;
+    self_c.x += row_offset;
 
     // If pos alpha is less than 1, skip this.
     if (pos[self_c].a < 1.f) return;

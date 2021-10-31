@@ -30,7 +30,7 @@ void RTRad::onGuiRender(Gui* pGui)
         }
     }
 
-    mpScene->renderUI(w);
+    //mpScene->renderUI(w);
 }
 
 void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
@@ -80,34 +80,35 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
     if (mpScene)
     {
         mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
-        if (makePass) {
+
+        if (makePass && !makeBatch) {
             std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
-
-            rtlPass->runBatch(pRenderContext, pTargetFbo.get(), mpCamera, textureGroup);
-
-            passNum++;
+            makeBatch = true;
             makePass = false;
         }
-        else {
-            if (mResetInputTextures) {
-                mpRasterPass->renderScene(pRenderContext, textureGroup);
-                mResetInputTextures = false;
-            }
 
-            Texture::SharedPtr t;
-            switch (outputTex)
-            {
-            case 0: { t = textureGroup.posTex; break; }
-            case 1: { t = textureGroup.nrmTex; break; }
-            case 2: { t = textureGroup.arfTex; break; }
-            case 3: { t = textureGroup.lgiTex; break; }
-            case 4: { t = textureGroup.lgoTex; break; }
-            default:
-                t = textureGroup.posTex;
-            }
-
-            vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel);
+        if (makeBatch) {
+            makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup);
         }
+
+        if (mResetInputTextures) {
+            mpRasterPass->renderScene(pRenderContext, textureGroup);
+            mResetInputTextures = false;
+        }
+
+        Texture::SharedPtr t;
+        switch (outputTex)
+        {
+        case 0: { t = textureGroup.posTex; break; }
+        case 1: { t = textureGroup.nrmTex; break; }
+        case 2: { t = textureGroup.arfTex; break; }
+        case 3: { t = textureGroup.lgiTex; break; }
+        case 4: { t = textureGroup.lgoTex; break; }
+        default:
+            t = textureGroup.posTex;
+        }
+
+        vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel);
     }
 
     TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });

@@ -42,6 +42,8 @@ private:
 
     bool makePass = false;
 
+    bool makeBatch = false;
+
     int passNum = 0;
 
     uint32_t mSampleIndex = 0xdeadbeef;

@@ -32,6 +32,8 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     mpRtVars = RtProgramVars::create(mpRaytraceProgram, sbt);
 
     this->mpScene = mpScene;
+
+    row_offset = 0;
 }
 
 void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
@@ -42,10 +44,10 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
     mpRtVars->setTexture("arf", textureGroup.arfTex);
     mpRtVars->setTexture("lig", textureGroup.lgiTex);
     mpRtVars->setTexture("lig2", textureGroup.lgoTex);
-    mpRtVars["PerFrameCB"]["last_index"] = last_index;
+    mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup)
+void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup)
 {
     PROFILE("renderRT");
 
@@ -62,16 +64,25 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const Fbo* pTargetFbo, co
 
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    static float texture_per_batch = 0.5f;
-    float depth_per_batch = 1.0f;
-    int batchNum = 0;
+    //batch_counter++;
+    //row_offset = 
 
-    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(texture_per_batch*xres, yres, 1));
-    //mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(ligTex->getWidth(), ligTex->getHeight(), 1));
+    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(texPerBatch*xres, yres, 1));
+
+    row_offset += (int)(texPerBatch * xres);
 }
 
-bool RTLightmapPass::runBatch(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup)
+bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup)
 {
-    renderRT(pContext, pTargetFbo, mpCamera, textureGroup);
-    return true;
+    int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
+
+    renderRT(pContext, textureGroup);
+
+    if (row_offset >= xres) {
+        row_offset = 0;
+        return true;
+    }
+    else {
+        return false;
+    }
 }

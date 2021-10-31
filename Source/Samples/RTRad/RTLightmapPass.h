@@ -14,9 +14,9 @@ public:
 
     void load(const Scene::SharedPtr mpScene);
     void setPerFrameVars(const TextureGroup textureGroup);
-    void renderRT(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup);
+    void renderRT(RenderContext* pContext, const TextureGroup textureGroup);
 
-    bool runBatch(RenderContext* pContext, const Fbo* pTargetFbo, const Camera::SharedPtr mpCamera, const TextureGroup textureGroup);
+    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup);
 
 private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
@@ -24,8 +24,10 @@ private:
 
     Scene::SharedPtr mpScene;
 
-    uint2 last_index;
+    int batch_counter;
 
-    int max_rays_per_batch;
+    int row_offset;
+
+    float texPerBatch = 0.25f;
 };
 
