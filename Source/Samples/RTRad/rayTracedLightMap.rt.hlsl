@@ -43,7 +43,12 @@ void rayGen()
     float4 sum_c = float4(0, 0, 0, 0);
 
     uint matID = (uint) mat[self_c].r;
-    lig2[self_c] = float4(gScene.materials[matID].emissive, 1.f);
+    float3 emissive = gScene.materials[matID].emissive;
+
+    lig2[self_c] = float4(emissive, 1.f);
+
+    // Lets not run this for light-sources
+    if (length(emissive) > 0.1f) return;
 
 
     for (uint x = 0; x < dim1; x += 1) {
