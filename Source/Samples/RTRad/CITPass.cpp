@@ -43,5 +43,5 @@ void CITPass::renderScene(RenderContext* pContext, const TextureGroup tg)
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
     mpState->setFbo(fbo);
-    mpScene->rasterize(pContext, mpState.get(), mpVars.get());
+    mpScene->rasterize(pContext, mpState.get(), mpVars.get(), RasterizerState::CullMode::None);
 }

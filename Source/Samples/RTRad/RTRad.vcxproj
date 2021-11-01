@@ -33,6 +33,7 @@
     <ShaderSource Include="CITP.gs.hlsl" />
     <ShaderSource Include="CITP.ps.hlsl" />
     <ShaderSource Include="CITP.vs.hlsl" />
+    <ShaderSource Include="FixSeams.ps.hlsl" />
     <ShaderSource Include="rayTracedLightMap.rt.hlsl" />
     <ShaderSource Include="VITP.ps.hlsl" />
     <ShaderSource Include="VITP.vs.hlsl" />

@@ -22,12 +22,14 @@ private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
     RtProgramVars::SharedPtr mpRtVars;
 
+    FullScreenPass::SharedPtr fsp;
+
     Scene::SharedPtr mpScene;
 
     int batch_counter;
 
     int row_offset;
 
-    float texPerBatch = 0.1f;
+    float texPerBatch = 0.01f;
 };
 

@@ -31,8 +31,18 @@ void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disT
     vars["PerFrameCB"]["applyToModel"] = applyToModel;
     vars["PerFrameCB2"]["treatAsMatIDs"] = treatAsMatIDs;
     vars["PerFrameCB2"]["showTexRes"] = showTexRes;
+
+    // This code sets the sampling from bi-linear to closest.
+    /*
+    Sampler::Desc desc;
+    desc.setFilterMode(Sampler::Filter::Point, Sampler::Filter::Point, Sampler::Filter::Point);
+
+    Sampler::SharedPtr sampler = Sampler::create(desc);
+    vars->setSampler("sampleWrap", sampler);
+    */
+
     this->setVars(vars);
 
     mpState->setFbo(outputFbo);
-    mpScene->rasterize(pContext, mpState.get(), mpVars.get());
+    mpScene->rasterize(pContext, mpState.get(), mpVars.get(), RasterizerState::CullMode::None);
 }

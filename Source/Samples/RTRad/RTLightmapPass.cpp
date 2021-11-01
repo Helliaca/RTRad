@@ -34,6 +34,8 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     this->mpScene = mpScene;
 
     row_offset = 0;
+
+    fsp = FullScreenPass::create("Samples/RTRad/FixSeams.ps.hlsl", mpScene->getSceneDefines());
 }
 
 void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
@@ -81,6 +83,17 @@ bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textur
 
     if (row_offset >= xres) {
         row_offset = 0;
+
+        //fsp->execute(pContext, textureGroup.lgoTex->getF)
+        std::vector<Texture::SharedPtr> tfbo;
+        tfbo.push_back(textureGroup.lgoTex);
+        Fbo::SharedPtr fbo = Fbo::create(tfbo);
+
+        fsp->getVars()->setTexture("ligTex", textureGroup.lgoTex);
+
+        fsp->execute(pContext, fbo, true);
+
+
         return true;
     }
     else {
