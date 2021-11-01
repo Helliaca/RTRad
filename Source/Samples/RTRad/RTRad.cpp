@@ -4,17 +4,37 @@ static const std::string kDefaultScene = "RTRad/mrad.pyscene";
 
 void RTRad::onGuiRender(Gui* pGui)
 {
-    Gui::Window w(pGui, "RTRad", { 300, 180 }, { 10, 80 });
+    Gui::Window w(pGui, "RTRad", { 300, 220 }, { 10, 80 });
 
     w.checkbox("Apply To Model", mApplyToModel);
 
     w.checkbox("Show Tex Res", showTexRes);
 
-    w.slider("Sampling res", sampling_res, 1, 8);
+    w.slider("Sampling res", sampling_res, 1, 16);
+
+    Falcor::Gui::DropdownList reslst;
+    reslst.push_back({ 32, "32" });
+    reslst.push_back({ 64, "64" });
+    reslst.push_back({ 128, "128" });
+    reslst.push_back({ 256, "256" });
+    reslst.push_back({ 384, "384" });
+    reslst.push_back({ 512, "512" });
+    reslst.push_back({ 768, "768" });
+    reslst.push_back({ 1024, "1024" });
+    reslst.push_back({ 1536, "1536" });
+    reslst.push_back({ 2048, "2048" });
+
+    uint32_t prevRes = LigRes;
+    w.dropdown("Lightmap Resolution", reslst, LigRes);
 
     mResetInputTextures = w.button("Reset Input Textures");
 
     makePass = w.button("Make Pass");
+
+    if (LigRes != prevRes) {
+        makeTextures();
+        mResetInputTextures = true;
+    }
 
     Falcor::Gui::DropdownList lst;
     lst.push_back({ 0, "posTex" });
@@ -27,7 +47,7 @@ void RTRad::onGuiRender(Gui* pGui)
     w.dropdown("Output Texture", lst, outputTex);
 
 
-    Gui::Window w2(pGui, "Scene Settings", { 300, 300 }, { 10, 300 });
+    Gui::Window w2(pGui, "Scene Settings", { 300, 350 }, { 10, 300 });
 
     if (w2.button("Load Scene"))
     {
@@ -73,7 +93,12 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 
     loadScene(kDefaultScene, gpFramework->getTargetFbo().get());
 
-    int res = 256;
+    makeTextures();
+}
+
+void RTRad::makeTextures()
+{
+    int res = LigRes;
     textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);

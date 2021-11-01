@@ -17,6 +17,7 @@ public:
     bool onMouseEvent(const MouseEvent& mouseEvent) override;
     void onHotReload(HotReloadFlags reloaded) override;
     void onGuiRender(Gui* pGui) override;
+    void makeTextures();
 
     Scene::SharedPtr mpScene;
 
@@ -49,6 +50,8 @@ private:
     int sampling_res = 1;
 
     int passNum = 0;
+
+    uint32_t LigRes = 256;
 
     uint32_t mSampleIndex = 0xdeadbeef;
 
