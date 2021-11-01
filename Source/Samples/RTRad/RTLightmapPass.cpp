@@ -51,7 +51,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const int 
     mpRtVars["PerFrameCB"]["sampling_res"] = sampling_res;
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res)
+void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch)
 {
     PROFILE("renderRT");
 
@@ -76,11 +76,11 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
     row_offset += (int)(texPerBatch * xres);
 }
 
-bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res)
+bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch)
 {
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    renderRT(pContext, textureGroup, sampling_res);
+    renderRT(pContext, textureGroup, sampling_res, texPerBatch);
 
     if (row_offset >= xres) {
         row_offset = 0;

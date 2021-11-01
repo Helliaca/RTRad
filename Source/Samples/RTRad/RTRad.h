@@ -55,5 +55,7 @@ private:
 
     uint32_t mSampleIndex = 0xdeadbeef;
 
+    float texPerBatch = 0.1f;
+
     void loadScene(const std::string& filename, const Fbo* pTargetFbo);
 };

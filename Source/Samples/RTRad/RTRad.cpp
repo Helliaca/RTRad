@@ -4,7 +4,7 @@ static const std::string kDefaultScene = "RTRad/mrad.pyscene";
 
 void RTRad::onGuiRender(Gui* pGui)
 {
-    Gui::Window w(pGui, "RTRad", { 300, 220 }, { 10, 80 });
+    Gui::Window w(pGui, "RTRad", { 300, 250 }, { 10, 80 });
 
     w.checkbox("Apply To Model", mApplyToModel);
 
@@ -27,6 +27,8 @@ void RTRad::onGuiRender(Gui* pGui)
     uint32_t prevRes = LigRes;
     w.dropdown("Lightmap Resolution", reslst, LigRes);
 
+    w.slider("Tex per Batch", texPerBatch, 0.01f, 1.0f);
+
     mResetInputTextures = w.button("Reset Input Textures");
 
     makePass = w.button("Make Pass");
@@ -47,7 +49,7 @@ void RTRad::onGuiRender(Gui* pGui)
     w.dropdown("Output Texture", lst, outputTex);
 
 
-    Gui::Window w2(pGui, "Scene Settings", { 300, 350 }, { 10, 300 });
+    Gui::Window w2(pGui, "Scene Settings", { 300, 450 }, { 10, 300 });
 
     if (w2.button("Load Scene"))
     {
@@ -122,7 +124,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         }
 
         if (makeBatch) {
-            makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, sampling_res);
+            makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, sampling_res, texPerBatch);
         }
 
         if (mResetInputTextures) {

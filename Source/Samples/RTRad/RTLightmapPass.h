@@ -14,9 +14,9 @@ public:
 
     void load(const Scene::SharedPtr mpScene);
     void setPerFrameVars(const TextureGroup textureGroup, const int sampling_res);
-    void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res);
+    void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch);
 
-    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res);
+    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch);
 
 private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
@@ -29,7 +29,5 @@ private:
     int batch_counter;
 
     int row_offset;
-
-    float texPerBatch = 0.05f;
 };
 
