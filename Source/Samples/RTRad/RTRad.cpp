@@ -8,9 +8,9 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.checkbox("Apply To Model", mApplyToModel);
 
-    w.checkbox("Reset Input Textures", mResetInputTextures);
-
     w.checkbox("Show Tex Res", showTexRes);
+
+    mResetInputTextures = w.button("Reset Input Textures");
 
     makePass = w.button("Make Pass");
 
