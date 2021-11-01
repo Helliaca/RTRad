@@ -57,5 +57,11 @@ private:
 
     float texPerBatch = 0.1f;
 
+    double stime;
+
+    std::string output = " -- Empty -- ";
+
+    ProfilerUI::UniquePtr pui;
+
     void loadScene(const std::string& filename, const Fbo* pTargetFbo);
 };

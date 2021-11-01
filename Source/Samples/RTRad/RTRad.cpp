@@ -4,7 +4,7 @@ static const std::string kDefaultScene = "RTRad/mrad.pyscene";
 
 void RTRad::onGuiRender(Gui* pGui)
 {
-    Gui::Window w(pGui, "RTRad", { 300, 250 }, { 10, 80 });
+    Gui::Window w(pGui, "RTRad", { 300, 280 }, { 10, 80 });
 
     w.checkbox("Apply To Model", mApplyToModel);
 
@@ -48,8 +48,10 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.dropdown("Output Texture", lst, outputTex);
 
+    w.text(output);
 
-    Gui::Window w2(pGui, "Scene Settings", { 300, 450 }, { 10, 300 });
+
+    Gui::Window w2(pGui, "Scene Settings", { 300, 400 }, { 10, 400 });
 
     if (w2.button("Load Scene"))
     {
@@ -121,10 +123,18 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
             makeBatch = true;
             makePass = false;
+
+            gpFramework->getGlobalClock().tick();
+            stime = gpFramework->getGlobalClock().getTime();
         }
 
         if (makeBatch) {
             makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, sampling_res, texPerBatch);
+            if (!makeBatch) {
+                gpFramework->getGlobalClock().tick();
+                //TODO: This only shows *CPU* frametime, which makes no sense in this context
+                output = "Rad: " + std::to_string(gpFramework->getGlobalClock().getTime() - stime) + "s";
+            }
         }
 
         if (mResetInputTextures) {
