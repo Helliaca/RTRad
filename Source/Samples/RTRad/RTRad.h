@@ -46,6 +46,8 @@ private:
 
     bool showTexRes = false;
 
+    int sampling_res = 1;
+
     int passNum = 0;
 
     uint32_t mSampleIndex = 0xdeadbeef;

@@ -10,6 +10,8 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.checkbox("Show Tex Res", showTexRes);
 
+    w.slider("Sampling res", sampling_res, 1, 8);
+
     mResetInputTextures = w.button("Reset Input Textures");
 
     makePass = w.button("Make Pass");
@@ -95,7 +97,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         }
 
         if (makeBatch) {
-            makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup);
+            makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, sampling_res);
         }
 
         if (mResetInputTextures) {

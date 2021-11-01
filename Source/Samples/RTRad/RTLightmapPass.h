@@ -13,10 +13,10 @@ public:
     static SharedPtr create();
 
     void load(const Scene::SharedPtr mpScene);
-    void setPerFrameVars(const TextureGroup textureGroup);
-    void renderRT(RenderContext* pContext, const TextureGroup textureGroup);
+    void setPerFrameVars(const TextureGroup textureGroup, const int sampling_res);
+    void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res);
 
-    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup);
+    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res);
 
 private:
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;

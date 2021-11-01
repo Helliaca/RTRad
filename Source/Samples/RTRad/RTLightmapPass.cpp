@@ -38,7 +38,7 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     fsp = FullScreenPass::create("Samples/RTRad/FixSeams.ps.hlsl", mpScene->getSceneDefines());
 }
 
-void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
+void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const int sampling_res)
 {
     PROFILE("setPerFrameVars");
     mpRtVars->setTexture("pos", textureGroup.posTex);
@@ -48,9 +48,10 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
     mpRtVars->setTexture("lig", textureGroup.lgiTex);
     mpRtVars->setTexture("lig2", textureGroup.lgoTex);
     mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
+    mpRtVars["PerFrameCB"]["sampling_res"] = sampling_res;
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup)
+void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res)
 {
     PROFILE("renderRT");
 
@@ -60,7 +61,7 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    setPerFrameVars(textureGroup);
+    setPerFrameVars(textureGroup, sampling_res);
 
     //int rays_per_texel = ligTex->getWidth() * ligTex->getHeight(); //TODO: we do not consider the LOD-cheat here
     //int texels_amount = max_rays_per_batch / rays_per_texel;
@@ -75,11 +76,11 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
     row_offset += (int)(texPerBatch * xres);
 }
 
-bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup)
+bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res)
 {
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    renderRT(pContext, textureGroup);
+    renderRT(pContext, textureGroup, sampling_res);
 
     if (row_offset >= xres) {
         row_offset = 0;
