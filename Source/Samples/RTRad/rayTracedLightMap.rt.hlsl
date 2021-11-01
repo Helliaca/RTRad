@@ -31,7 +31,9 @@ void rayGen()
     self_c.x += row_offset;
 
     // If pos alpha is less than 1, skip this.
-    if (pos[self_c].a < 1.f) return;
+    if (pos[self_c].a < 1.f) {
+        return;
+    }
 
     // Worls position of current texel
     float4 self_wpos = (2.0f * pos[self_c]) - float4(1.f, 1.f, 1.f, 1.f);

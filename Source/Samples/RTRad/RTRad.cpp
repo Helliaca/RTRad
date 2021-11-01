@@ -4,7 +4,7 @@ static const std::string kDefaultScene = "RTRad/mrad.pyscene";
 
 void RTRad::onGuiRender(Gui* pGui)
 {
-    Gui::Window w(pGui, "Hello DXR Settings", { 300, 400 }, { 10, 80 });
+    Gui::Window w(pGui, "RTRad", { 300, 180 }, { 10, 80 });
 
     w.checkbox("Apply To Model", mApplyToModel);
 
@@ -24,7 +24,10 @@ void RTRad::onGuiRender(Gui* pGui)
 
     w.dropdown("Output Texture", lst, outputTex);
 
-    if (w.button("Load Scene"))
+
+    Gui::Window w2(pGui, "Scene Settings", { 300, 300 }, { 10, 300 });
+
+    if (w2.button("Load Scene"))
     {
         std::string filename;
         if (openFileDialog(Scene::getFileExtensionFilters(), filename))
@@ -33,7 +36,7 @@ void RTRad::onGuiRender(Gui* pGui)
         }
     }
 
-    mpScene->renderUI(w);
+    mpScene->renderUI(w2);
 }
 
 void RTRad::loadScene(const std::string& filename, const Fbo* pTargetFbo)
