@@ -18,7 +18,7 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
     // needs to be re-created when switching scene. In this example, we re-create both the program and vars when a scene is loaded.
 
     RtProgram::Desc rtProgDesc;
-    rtProgDesc.addShaderLibrary("Samples/RTRad/rayTracedLightMap.rt.hlsl");
+    rtProgDesc.addShaderLibrary(SHADERS_FOLDER"/rayTracedLightMap.rt.hlsl");
     rtProgDesc.addDefines(mpScene->getSceneDefines());
     rtProgDesc.setMaxTraceRecursionDepth(1); // 1 for calling TraceRay from RayGen, 1 for calling it from the primary-ray ClosestHit shader for reflections, 1 for reflection ray tracing a shadow ray
     rtProgDesc.setMaxPayloadSize(24); // The largest ray payload struct (PrimaryRayData) is 24 bytes. The payload size should be set as small as possible for maximum performance.
@@ -35,7 +35,7 @@ void RTLightmapPass::load(const Scene::SharedPtr mpScene)
 
     row_offset = 0;
 
-    fsp = FullScreenPass::create("Samples/RTRad/FixSeams.ps.hlsl", mpScene->getSceneDefines());
+    fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", mpScene->getSceneDefines());
 }
 
 void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const int sampling_res)

@@ -4,6 +4,8 @@
 
 using namespace Falcor;
 
+#define SHADERS_FOLDER "Samples/RTRad/RenderPasses/Shaders"
+
 struct TextureGroup {
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;

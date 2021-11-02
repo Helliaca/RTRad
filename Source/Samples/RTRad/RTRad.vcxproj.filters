@@ -3,24 +3,24 @@
   <ItemGroup>
     <ClCompile Include="RTRad.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="CITPass.cpp" />
-    <ClCompile Include="VITPass.cpp" />
-    <ClCompile Include="RTLightmapPass.cpp" />
+    <ClCompile Include="RenderPasses\CITPass.cpp" />
+    <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
+    <ClCompile Include="RenderPasses\VITPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RTRad.h" />
-    <ClInclude Include="CITPass.h" />
-    <ClInclude Include="VITPass.h" />
-    <ClInclude Include="RTLightmapPass.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="RenderPasses\CITPass.h" />
+    <ClInclude Include="RenderPasses\RTLightmapPass.h" />
+    <ClInclude Include="RenderPasses\VITPass.h" />
   </ItemGroup>
   <ItemGroup>
-    <ShaderSource Include="CITP.ps.hlsl" />
-    <ShaderSource Include="CITP.vs.hlsl" />
-    <ShaderSource Include="VITP.ps.hlsl" />
-    <ShaderSource Include="VITP.vs.hlsl" />
-    <ShaderSource Include="rayTracedLightMap.rt.hlsl" />
-    <ShaderSource Include="CITP.gs.hlsl" />
-    <ShaderSource Include="FixSeams.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CITP.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CITP.vs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\FixSeams.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\VITP.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\VITP.vs.hlsl" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 #include "CITPass.h"
-#include "RTRad.h"
+#include "../RTRad.h"
 
 using namespace Falcor;
 
@@ -18,13 +18,13 @@ CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
 
     Falcor::Program::Desc desc;
 
-    desc.addShaderLibrary("Samples/RTRad/CITP.vs.hlsl");
+    desc.addShaderLibrary(SHADERS_FOLDER"/CITP.vs.hlsl");
     desc.vsEntry("main");
 
-    desc.addShaderLibrary("Samples/RTRad/CITP.gs.hlsl");
+    desc.addShaderLibrary(SHADERS_FOLDER"/CITP.gs.hlsl");
     desc.gsEntry("gmain");
 
-    desc.addShaderLibrary("Samples/RTRad/CITP.ps.hlsl");
+    desc.addShaderLibrary(SHADERS_FOLDER"/CITP.ps.hlsl");
     desc.psEntry("pmain");
 
     return SharedPtr(new CITPass(pScene, desc, dl));

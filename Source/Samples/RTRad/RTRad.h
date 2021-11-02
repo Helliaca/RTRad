@@ -1,8 +1,8 @@
 #pragma once
 #include "Falcor.h"
-#include "CITPass.h"
-#include "VITPass.h"
-#include "RTLightmapPass.h"
+#include "RenderPasses/CITPass.h"
+#include "RenderPasses/VITPass.h"
+#include "RenderPasses/RTLightmapPass.h"
 
 using namespace Falcor;
 

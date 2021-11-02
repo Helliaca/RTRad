@@ -1,4 +1,5 @@
 #include "VITPass.h"
+#include "../common.h"
 
 using namespace Falcor;
 
@@ -16,9 +17,9 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
     dl.add(pScene->getSceneDefines());
 
     Falcor::Program::Desc desc;
-    desc.addShaderLibrary("Samples/RTRad/VITP.vs.hlsl");
+    desc.addShaderLibrary(SHADERS_FOLDER"/VITP.vs.hlsl");
     desc.vsEntry("main");
-    desc.addShaderLibrary("Samples/RTRad/VITP.ps.hlsl");
+    desc.addShaderLibrary(SHADERS_FOLDER"/VITP.ps.hlsl");
     desc.psEntry("pmain");
 
     return SharedPtr(new VITPass(pScene, desc, dl));
