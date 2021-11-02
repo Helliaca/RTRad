@@ -57,9 +57,11 @@ private:
 
     float texPerBatch = 0.1f;
 
-    double stime;
+    ProfilerUI::UniquePtr mpProfilerUI;
 
     std::string output = " -- Empty -- ";
+
+    double rttime = 0;
 
     ProfilerUI::UniquePtr pui;
 

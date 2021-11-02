@@ -117,45 +117,57 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
     if (mpScene)
     {
-        mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
-
-        if (makePass && !makeBatch) {
-            std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
-            makeBatch = true;
-            makePass = false;
-
-            gpFramework->getGlobalClock().tick();
-            stime = gpFramework->getGlobalClock().getTime();
+        {
+            PROFILE("SceneUpdate");
+            mpScene->update(pRenderContext, gpFramework->getGlobalClock().getTime());
         }
 
-        if (makeBatch) {
-            makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, sampling_res, texPerBatch);
-            if (!makeBatch) {
-                gpFramework->getGlobalClock().tick();
-                //TODO: This only shows *CPU* frametime, which makes no sense in this context
-                output = "Rad: " + std::to_string(gpFramework->getGlobalClock().getTime() - stime) + "s";
+        {
+            PROFILE("RTRad");
+
+            if (makePass && !makeBatch) {
+                std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
+                makeBatch = true;
+                makePass = false;
+                rttime = 0;
+            }
+
+            if (makeBatch) {
+                makeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, sampling_res, texPerBatch);
             }
         }
 
-        if (mResetInputTextures) {
-            mpRasterPass->renderScene(pRenderContext, textureGroup);
-            mResetInputTextures = false;
-        }
-
-        Texture::SharedPtr t;
-        switch (outputTex)
         {
-        case 0: { t = textureGroup.posTex; break; }
-        case 1: { t = textureGroup.nrmTex; break; }
-        case 2: { t = textureGroup.arfTex; break; }
-        case 3: { t = textureGroup.matTex; break; }
-        case 4: { t = textureGroup.lgiTex; break; }
-        case 5: { t = textureGroup.lgoTex; break; }
-        default:
-            t = textureGroup.posTex;
+            PROFILE("TextureClear");
+            if (mResetInputTextures) {
+                mpRasterPass->renderScene(pRenderContext, textureGroup);
+                mResetInputTextures = false;
+            }
         }
 
-        vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, t==textureGroup.matTex, showTexRes);
+        {
+            PROFILE("VITPass");
+            Texture::SharedPtr t;
+            switch (outputTex)
+            {
+            case 0: { t = textureGroup.posTex; break; }
+            case 1: { t = textureGroup.nrmTex; break; }
+            case 2: { t = textureGroup.arfTex; break; }
+            case 3: { t = textureGroup.matTex; break; }
+            case 4: { t = textureGroup.lgiTex; break; }
+            case 5: { t = textureGroup.lgoTex; break; }
+            default:
+                t = textureGroup.posTex;
+            }
+
+            vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, t == textureGroup.matTex, showTexRes);
+        }
+
+        float gt = Profiler::instance().getEvent("/onFrameRender/RTRad")->getGpuTime();
+        if (gt > 1.f) {
+            rttime += gt;
+        }
+        output = "rad_time= "+std::to_string(rttime / 1000.f) + "s";
     }
 
     TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });
