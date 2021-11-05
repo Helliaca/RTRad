@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="RTRad.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RenderPasses\CITPass.cpp" />
+    <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
+    <ClCompile Include="RenderPasses\VITPass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RTRad.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="RenderPasses\CITPass.h" />
+    <ClInclude Include="RenderPasses\RTLightmapPass.h" />
+    <ClInclude Include="RenderPasses\VITPass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CITP.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CITP.vs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\FixSeams.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\VITP.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\VITP.vs.hlsl" />
+  </ItemGroup>
+</Project>

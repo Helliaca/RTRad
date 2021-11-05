@@ -1,1 +1,0 @@
-﻿C:\Users\Kahl\mrad\Falcor\Source\Falcor\Falcor.props(48,5): error MSB4019: The imported project "C:\Users\Kahl\mrad\Falcor\Source\Samples\RTRad\Source\Falcor\ShaderSource.targets" was not found. Confirm that the expression in the Import declaration "C:\Users\Kahl\mrad\Falcor\Source\Samples\RTRad\\Source\Falcor\ShaderSource.targets" is correct, and that the file exists on disk.
