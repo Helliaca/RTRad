@@ -77,8 +77,7 @@ void RTRad::loadScene(const std::string& filename)
 
     vitPass = VITPass::create(mpScene);
 
-    rtlPass = RTLightmapPass::create();
-    rtlPass->load(mpScene);
+    rtlPass = RTLightmapPass::create(mpScene);
 
     mResetInputTextures = true;
 }

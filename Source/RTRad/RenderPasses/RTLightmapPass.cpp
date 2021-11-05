@@ -2,12 +2,14 @@
 
 using namespace Falcor;
 
-RTLightmapPass::SharedPtr RTLightmapPass::create()
+RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene)
 {
-    return SharedPtr(new RTLightmapPass());
+    RTLightmapPass* pass = new RTLightmapPass();
+    pass->load(mpScene);
+    return SharedPtr(pass);
 }
 
-void RTLightmapPass::load(const Scene::SharedPtr mpScene)
+void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
 {
     // We'll now create a raytracing program. To do that we need to setup two things:
     // - A program description (RtProgram::Desc). This holds all shader entry points, compiler flags, macro defintions, etc.

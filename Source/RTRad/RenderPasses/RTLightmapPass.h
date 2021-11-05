@@ -10,15 +10,16 @@ class RTLightmapPass : public std::enable_shared_from_this<RTLightmapPass>
 public:
     using SharedPtr = std::shared_ptr<RTLightmapPass>;
 
-    static SharedPtr create();
+    static SharedPtr create(const Scene::SharedPtr& mpScene);
 
-    void load(const Scene::SharedPtr mpScene);
     void setPerFrameVars(const TextureGroup textureGroup, const int sampling_res);
     void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch);
 
     bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch);
 
 private:
+    void load(const Scene::SharedPtr& mpScene);
+
     RtProgram::SharedPtr mpRaytraceProgram = nullptr;
     RtProgramVars::SharedPtr mpRtVars;
 
