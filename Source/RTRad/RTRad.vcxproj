@@ -23,6 +23,7 @@
     <ClInclude Include="RenderPasses\RTLightmapPass.h" />
     <ClInclude Include="RenderPasses\VITPass.h" />
     <ClInclude Include="RTRad.h" />
+    <ClInclude Include="Tools\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Falcor\Falcor.vcxproj">

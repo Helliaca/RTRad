@@ -13,6 +13,7 @@
     <ClInclude Include="RenderPasses\CITPass.h" />
     <ClInclude Include="RenderPasses\RTLightmapPass.h" />
     <ClInclude Include="RenderPasses\VITPass.h" />
+    <ClInclude Include="Tools\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />

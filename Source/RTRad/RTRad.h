@@ -9,61 +9,49 @@ using namespace Falcor;
 class RTRad : public IRenderer
 {
 public:
+    // GUI Controls
+    void onGuiRender(Gui* pGui) override;
+
+    // Scene loading and initialization
     void onLoad(RenderContext* pRenderContext) override;
+    void loadScene(const std::string& filename);
+    void makeTextures();
+
+    // Main Render function
     void onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& pTargetFbo) override;
+
+    // Callback functions
     void onShutdown() override;
     void onResizeSwapChain(uint32_t width, uint32_t height) override;
     bool onKeyEvent(const KeyboardEvent& keyEvent) override;
     bool onMouseEvent(const MouseEvent& mouseEvent) override;
     void onHotReload(HotReloadFlags reloaded) override;
-    void onGuiRender(Gui* pGui) override;
-    void makeTextures();
-
-    Scene::SharedPtr mpScene;
-
-    TextureGroup textureGroup;
 
 private:
-    CITPass::SharedPtr mpRasterPass;
+    // RenderPasses
+    CITPass::SharedPtr citPass;
     VITPass::SharedPtr vitPass;
     RTLightmapPass::SharedPtr rtlPass;
-    //Scene::SharedPtr mpScene;
 
-    RtProgram::SharedPtr mpRaytraceProgram = nullptr;
+    // Texture group for the pipeline
+    TextureGroup textureGroup;
+
+    // Scene data
+    Scene::SharedPtr mpScene;
     Camera::SharedPtr mpCamera;
 
-    bool mRayTrace = false;
-    bool mUseDOF = false;
-    RtProgramVars::SharedPtr mpRtVars;
-    Texture::SharedPtr mpRtOut;
-
+    // Flow-Control variables
+    uint32_t mOutputTex = 0;
     bool mApplyToModel = true;
-    uint32_t outputTex = 0;
     bool mResetInputTextures = true;
+    bool mMakePass = false;
+    bool mMakeBatch = false;
+    bool mShowTexRes = false;
+    int mSamplingRes = 1;
+    uint32_t mTextureRes = 256;
+    float mTexPerBatch = 0.1f;
 
-    bool makePass = false;
-
-    bool makeBatch = false;
-
-    bool showTexRes = false;
-
-    int sampling_res = 1;
-
-    int passNum = 0;
-
-    uint32_t LigRes = 256;
-
-    uint32_t mSampleIndex = 0xdeadbeef;
-
-    float texPerBatch = 0.1f;
-
-    ProfilerUI::UniquePtr mpProfilerUI;
-
-    std::string output = " -- Empty -- ";
-
-    double rttime = 0;
-
-    ProfilerUI::UniquePtr pui;
-
-    void loadScene(const std::string& filename, const Fbo* pTargetFbo);
+    // Output/Measurement variables
+    std::string mOutputString = " -- Empty -- ";
+    double mAccTime = 0;
 };
