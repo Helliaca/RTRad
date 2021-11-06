@@ -26,10 +26,11 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 
     float4 col = disTex.Sample(sampleWrap, vsOut.texC);
 
+    /*
     if (treatAsMatIDs) {
         uint matID = (uint) col.r;
         col = gScene.materials[matID].baseColor;
-    }
+    }*/
 
     if (showTexRes) {
         float dim1;

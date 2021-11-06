@@ -15,7 +15,7 @@ struct GBuffer
     float4 pos    : SV_Target0;
     float4 nrm    : SV_Target1;
     float arf    : SV_Target2;
-    float mat    : SV_Target3;
+    float4 mat    : SV_Target3;
     float4 li0    : SV_Target4;
     float4 li1    : SV_Target5;
 };
@@ -41,7 +41,16 @@ GBuffer pmain(GSOut vsOut)
     o.pos = float4(vsOut.posW, 1.f);
     o.nrm = float4(vsOut.normalW, 1.f);
     o.arf = vsOut.areaFactor;
-    o.mat = vsOut.materialID;
+
+    // Set mat
+    o.mat = gScene.materials[vsOut.materialID].baseColor;
+    MaterialResources mr = gScene.materialResources[vsOut.materialID];
+    float4 mrc = mr.baseColor.Sample(mr.samplerState, vsOut.texC);
+    if (mrc.a > 0.0f) {
+        o.mat *= mrc;
+    }
+    o.mat.a = vsOut.materialID;
+
     o.li0 = float4(gScene.materials[vsOut.materialID].emissive, 1.f);
     o.li1 = float4(gScene.materials[vsOut.materialID].emissive, 1.f);
 
