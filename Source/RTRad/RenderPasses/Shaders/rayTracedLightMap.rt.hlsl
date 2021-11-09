@@ -14,6 +14,7 @@ RWTexture2D<float4> lig2;
 cbuffer PerFrameCB {
     int row_offset;
     int sampling_res;
+    float3 posOffset;
 };
 
 #define PI 3.14159265359f
@@ -37,7 +38,7 @@ void rayGen()
     }
 
     // Worls position of current texel
-    float4 self_wpos = (2.0f * pos[self_c]) - float4(1.f, 1.f, 1.f, 1.f);
+    float3 self_wpos = pos[self_c].xyz + posOffset;
 
     float dim1;
     float dim2;
@@ -59,13 +60,13 @@ void rayGen()
 
             uint2 other_c = uint2(x, y);
 
-            float4 other_wpos = (2.0f * pos[other_c]) - float4(1.f, 1.f, 1.f, 1.f);
+            float3 other_wpos = pos[other_c].xyz + posOffset;
 
             RayDesc ray;
-            ray.Origin = self_wpos.xyz;
-            ray.Direction = normalize(other_wpos.xyz - self_wpos.xyz);
+            ray.Origin = self_wpos;
+            ray.Direction = normalize(other_wpos - self_wpos);
             ray.TMin = 0.01f;
-            ray.TMax = distance(self_wpos.xyz, other_wpos.xyz) - (2.0f * ray.TMin);
+            ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
             RayPayload rpl = { self_c, other_c };
 
@@ -88,8 +89,8 @@ void primaryMiss(inout RayPayload rpl)
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
 
-    float3 self_wpos = (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
-    float3 other_wpos = (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 self_wpos = pos[self_c].xyz + posOffset;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 other_wpos = pos[other_c].xyz + posOffset;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
 
     float3 self_to_other = other_wpos - self_wpos;
 

@@ -51,6 +51,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const int 
     mpRtVars->setTexture("lig2", textureGroup.lgoTex);
     mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
     mpRtVars["PerFrameCB"]["sampling_res"] = sampling_res;
+    mpRtVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
 }
 
 void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch)

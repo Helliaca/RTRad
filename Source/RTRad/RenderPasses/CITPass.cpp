@@ -42,6 +42,8 @@ void CITPass::renderScene(RenderContext* pContext, const TextureGroup tg)
     tfbo.push_back(tg.lgoTex);
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
+    mpVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
+
     mpState->setFbo(fbo);
     mpScene->rasterize(pContext, mpState.get(), mpVars.get(), RasterizerState::CullMode::None);
 }

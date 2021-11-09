@@ -8,8 +8,6 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 
-//RWTexture2D<float4> posTex;
-
 struct GBuffer
 {
     float4 pos    : SV_Target0;
@@ -31,10 +29,14 @@ struct GSOut
     uint materialID  : MATERIAL_ID;
 };
 
+cbuffer PerFrameCB {
+    float3 posOffset;
+};
+
 GBuffer pmain(GSOut vsOut)
 {
     // coord transformation
-    vsOut.posW = 0.5f * (vsOut.posW + float3(1.f));
+    vsOut.posW = vsOut.posW - posOffset;
     vsOut.normalW = 0.5f * (vsOut.normalW + float3(1.f));
 
     GBuffer o;
