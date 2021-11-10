@@ -25,13 +25,18 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
     return SharedPtr(new VITPass(pScene, desc, dl));
 }
 
-void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel, const bool treatAsMatIDs, const bool showTexRes)
+void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel, const bool showTexRes, float4 interp_min, float4 interp_max)
 {
     Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(this->getProgram().get());
     vars->setTexture("disTex", disTex);
     vars["PerFrameCB"]["applyToModel"] = applyToModel;
-    vars["PerFrameCB2"]["treatAsMatIDs"] = treatAsMatIDs;
     vars["PerFrameCB2"]["showTexRes"] = showTexRes;
+
+    vars["PerFrameCB2"]["interp_min"] = interp_min;
+    vars["PerFrameCB2"]["interp_max"] = interp_max;
+
+    //vars["PerFrameCB2"]["interp_min"] = float4(mpScene->getSceneBounds().minPoint, 1.f);
+    //vars["PerFrameCB2"]["interp_max"] = float4(mpScene->getSceneBounds().maxPoint, 1.f);
 
     // This code sets the sampling from bi-linear to closest.
     /*

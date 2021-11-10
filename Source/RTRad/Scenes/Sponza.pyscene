@@ -3,8 +3,8 @@ sceneBuilder.importScene('models/Sponza.fbx')
 
 # Add camera
 camera = Camera()
-camera.position = float3(0, 0, -3)
-camera.target = float3(0, 0, 1)
+camera.position = float3(-1374, 231, -17)
+camera.target = float3(-1373, 231, -17)
 camera.up = float3(0, 1, 0)
 camera.focalLength = 21.0
 sceneBuilder.addCamera(camera)

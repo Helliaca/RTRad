@@ -10,7 +10,7 @@ public:
 
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
-    void renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel, const bool treatAsMatIDs=false, const bool showTexRes=false);
+    void renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel, const bool showTexRes=false, float4 interp_min=float4(0.0f), float4 interp_max=float4(1.0f));
 
     const Scene::SharedPtr& getScene() const { return mpScene; }
 private:

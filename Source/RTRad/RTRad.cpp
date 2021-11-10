@@ -141,9 +141,15 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         {
             PROFILE("VITPass");
             Texture::SharedPtr t;
+            float4 interp_min = float4(0.0f), interp_max = float4(1.0f);
             switch (mOutputTex)
             {
-            case 0: { t = textureGroup.posTex; break; }
+            case 0: {
+                t = textureGroup.posTex;
+                interp_min = float4(mpScene->getSceneBounds().minPoint, 1.f);
+                interp_max = float4(mpScene->getSceneBounds().maxPoint, 1.f);
+                break;
+            }
             case 1: { t = textureGroup.nrmTex; break; }
             case 2: { t = textureGroup.arfTex; break; }
             case 3: { t = textureGroup.matTex; break; }
@@ -153,7 +159,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
                 t = textureGroup.posTex;
             }
 
-            vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, t == textureGroup.matTex, mShowTexRes);
+            vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, mShowTexRes, interp_min, interp_max);
         }
 
         float gt = Profiler::instance().getEvent("/onFrameRender/RTRad")->getGpuTime();

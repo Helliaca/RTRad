@@ -9,8 +9,9 @@ import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 
 cbuffer PerFrameCB2 {
-    bool treatAsMatIDs;
     bool showTexRes;
+    float4 interp_min;
+    float4 interp_max;
 };
 
 Texture2D<float4> disTex;
@@ -26,11 +27,7 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 
     float4 col = disTex.Sample(sampleWrap, vsOut.texC);
 
-    /*
-    if (treatAsMatIDs) {
-        uint matID = (uint) col.r;
-        col = gScene.materials[matID].baseColor;
-    }*/
+    col = col / (interp_max - interp_min);
 
     if (showTexRes) {
         float dim1;
