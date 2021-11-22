@@ -7,13 +7,15 @@ void RTRad::onGuiRender(Gui* pGui)
     {
         Gui::Window w(pGui, "RTRad", { 300, 280 }, { 10, 80 });
 
-        w.checkbox("Apply To Model", mApplyToModel);
+        w.checkbox("Apply To Model", vitSettings.applyToModel);
 
-        w.checkbox("Show Tex Res", mShowTexRes);
+        w.checkbox("Show Tex Res", vitSettings.showTexRes);
 
         w.checkbox("Randomize Sample", rtlSettings.randomizeSample);
 
         w.slider("Sampling res", rtlSettings.sampling_res, 1, 16);
+
+        w.slider("Mipmaplevel", vitSettings.mipmapLevel, 1, 16);
 
         Falcor::Gui::DropdownList reslst;
         reslst.push_back({ 32, "32" });
@@ -97,12 +99,14 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 void RTRad::makeTextures()
 {
     int res = mTextureRes;
-    textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 4, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.matTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.lgiTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.lgoTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+
+    //textureGroup.posTex->mi
 }
 
 void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& pTargetFbo)
@@ -136,6 +140,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             if (mResetInputTextures) {
                 makeTextures();
                 citPass->renderScene(pRenderContext, textureGroup);
+                textureGroup.posTex->generateMips(pRenderContext);
                 mResetInputTextures = false;
             }
         }
@@ -143,13 +148,14 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         {
             PROFILE("VITPass");
             Texture::SharedPtr t;
-            float4 interp_min = float4(0.0f), interp_max = float4(1.0f);
+            vitSettings.interp_min = float4(0.0f);
+            vitSettings.interp_max = float4(1.0f);
             switch (mOutputTex)
             {
             case 0: {
                 t = textureGroup.posTex;
-                interp_min = float4(mpScene->getSceneBounds().minPoint, 1.f);
-                interp_max = float4(mpScene->getSceneBounds().maxPoint, 1.f);
+                vitSettings.interp_min = float4(mpScene->getSceneBounds().minPoint, 1.f);
+                vitSettings.interp_max = float4(mpScene->getSceneBounds().maxPoint, 1.f);
                 break;
             }
             case 1: { t = textureGroup.nrmTex; break; }
@@ -161,7 +167,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
                 t = textureGroup.posTex;
             }
 
-            vitPass->renderScene(pRenderContext, t, pTargetFbo, mApplyToModel, mShowTexRes, interp_min, interp_max);
+            vitPass->renderScene(pRenderContext, t, pTargetFbo, vitSettings);
         }
 
         float gt = Profiler::instance().getEvent("/onFrameRender/RTRad")->getGpuTime();

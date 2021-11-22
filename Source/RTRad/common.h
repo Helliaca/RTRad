@@ -8,7 +8,7 @@ using namespace Falcor;
 
 #define SCENES_FOLDER "../Source/RTRad/Scenes"
 
-#define DEFAULT_SCENE SCENES_FOLDER"/CornellTest.pyscene"
+#define DEFAULT_SCENE SCENES_FOLDER"/CornellLucy.pyscene"
 
 #define DEFAULT_WIN_HEIGHT 1080
 #define DEFAULT_WIN_WIDTH 1920

@@ -12,6 +12,7 @@ cbuffer PerFrameCB2 {
     bool showTexRes;
     float4 interp_min;
     float4 interp_max;
+    int mipmapLevel;
 };
 
 Texture2D<float4> disTex;
@@ -25,7 +26,7 @@ bool xor(bool a, bool b) {
 float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 {
 
-    float4 col = disTex.Sample(sampleWrap, vsOut.texC);
+    float4 col = disTex.SampleLevel(sampleWrap, vsOut.texC, mipmapLevel);
 
     col = col / (interp_max - interp_min);
 

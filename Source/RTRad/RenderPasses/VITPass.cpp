@@ -25,15 +25,17 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
     return SharedPtr(new VITPass(pScene, desc, dl));
 }
 
-void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const bool applyToModel, const bool showTexRes, float4 interp_min, float4 interp_max)
+void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const VITPassSettings settings)
 {
     Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(this->getProgram().get());
     vars->setTexture("disTex", disTex);
-    vars["PerFrameCB"]["applyToModel"] = applyToModel;
-    vars["PerFrameCB2"]["showTexRes"] = showTexRes;
+    vars["PerFrameCB"]["applyToModel"] = settings.applyToModel;
+    vars["PerFrameCB2"]["showTexRes"] = settings.showTexRes;
 
-    vars["PerFrameCB2"]["interp_min"] = interp_min;
-    vars["PerFrameCB2"]["interp_max"] = interp_max;
+    vars["PerFrameCB2"]["interp_min"] = settings.interp_min;
+    vars["PerFrameCB2"]["interp_max"] = settings.interp_max;
+
+    vars["PerFrameCB2"]["mipmapLevel"] = settings.mipmapLevel;
 
     //vars["PerFrameCB2"]["interp_min"] = float4(mpScene->getSceneBounds().minPoint, 1.f);
     //vars["PerFrameCB2"]["interp_max"] = float4(mpScene->getSceneBounds().maxPoint, 1.f);

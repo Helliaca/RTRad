@@ -30,7 +30,10 @@ public:
 private:
     // RenderPasses
     CITPass::SharedPtr citPass;
+
     VITPass::SharedPtr vitPass;
+    VITPassSettings vitSettings;
+
     RTLightmapPass::SharedPtr rtlPass;
     RTLightmapPassSettings rtlSettings;
 
@@ -43,11 +46,9 @@ private:
 
     // Flow-Control variables
     uint32_t mOutputTex = 0;
-    bool mApplyToModel = true;
     bool mResetInputTextures = true;
     bool mMakePass = false;
     bool mMakeBatch = false;
-    bool mShowTexRes = false;
     uint32_t mTextureRes = 256;
 
     // Output/Measurement variables
