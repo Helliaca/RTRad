@@ -15,6 +15,8 @@ using namespace Falcor;
 
 #define CLEAR_COLOR float4(0.38f, 0.52f, 0.10f, 1)
 
+#define DEFAULT_MIPMAP_LEVELS 4
+
 struct TextureGroup {
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
@@ -22,4 +24,13 @@ struct TextureGroup {
     Texture::SharedPtr matTex;
     Texture::SharedPtr lgiTex;
     Texture::SharedPtr lgoTex;
+
+    void generateMips(RenderContext* pRenderContext) {
+        posTex->generateMips(pRenderContext);
+        nrmTex->generateMips(pRenderContext);
+        arfTex->generateMips(pRenderContext);
+        matTex->generateMips(pRenderContext);
+        lgiTex->generateMips(pRenderContext);
+        lgoTex->generateMips(pRenderContext);
+    }
 };
