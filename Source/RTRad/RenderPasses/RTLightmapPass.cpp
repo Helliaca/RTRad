@@ -40,7 +40,9 @@ void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
     fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", mpScene->getSceneDefines());
 }
 
-void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const int sampling_res)
+static int c = 0;
+
+void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLightmapPassSettings settings)
 {
     PROFILE("setPerFrameVars");
     mpRtVars->setTexture("pos", textureGroup.posTex);
@@ -50,11 +52,13 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const int 
     mpRtVars->setTexture("lig", textureGroup.lgiTex);
     mpRtVars->setTexture("lig2", textureGroup.lgoTex);
     mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
-    mpRtVars["PerFrameCB"]["sampling_res"] = sampling_res;
+    mpRtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     mpRtVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
+    mpRtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
+    mpRtVars["PerFrameCB"]["passNum"] = c++; //NOTE: This is *NOT* the true passnum. (Its the batchnumber)
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch)
+void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings)
 {
     PROFILE("renderRT");
 
@@ -64,7 +68,7 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    setPerFrameVars(textureGroup, sampling_res);
+    setPerFrameVars(textureGroup, settings);
 
     //int rays_per_texel = ligTex->getWidth() * ligTex->getHeight(); //TODO: we do not consider the LOD-cheat here
     //int texels_amount = max_rays_per_batch / rays_per_texel;
@@ -74,16 +78,16 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
     //batch_counter++;
     //row_offset = 
 
-    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(texPerBatch*xres, yres, 1));
+    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(settings.texPerBatch*xres, yres, 1));
 
-    row_offset += (int)(texPerBatch * xres);
+    row_offset += (int)(settings.texPerBatch * xres);
 }
 
-bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch)
+bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings)
 {
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    renderRT(pContext, textureGroup, sampling_res, texPerBatch);
+    renderRT(pContext, textureGroup, settings);
 
     if (row_offset >= xres) {
         row_offset = 0;

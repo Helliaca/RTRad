@@ -15,6 +15,8 @@ cbuffer PerFrameCB {
     int row_offset;
     int sampling_res;
     float3 posOffset;
+    bool randomizeSamples;
+    int passNum;
 };
 
 #define PI 3.14159265359f
@@ -24,6 +26,30 @@ struct RayPayload
     uint2 self_c;
     uint2 other_c;
 };
+
+// Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
+uint Hash(uint seed)
+{
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed *= 9;
+    seed = seed ^ (seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+    return seed;
+}
+
+uint random(uint seed, uint max)
+{
+    return Hash(seed) % max;
+}
+
+uint2 random(uint2 seed, uint2 max)
+{
+    return uint2(
+        Hash(seed.x) % max.x,
+        Hash(seed.y) % max.y
+    );
+}
 
 [shader("raygeneration")]
 void rayGen()
@@ -59,6 +85,20 @@ void rayGen()
         for (uint y = 0; y < dim2; y += sampling_res) {
 
             uint2 other_c = uint2(x, y);
+
+            if (randomizeSamples) {
+                uint2 seed = uint2(
+                    random((self_c.x + 1) * (self_c.y + 1) + passNum, 7864128),
+                    random((self_c.x + 1) * (self_c.y + 1) + passNum, 5490141)
+                    );
+
+                uint2 rnd = random(seed, uint2(sampling_res, sampling_res));
+
+                other_c += uint2(
+                    rnd.x,
+                    rnd.y
+                    );
+            }
 
             float3 other_wpos = pos[other_c].xyz + posOffset;
 

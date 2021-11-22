@@ -5,6 +5,18 @@
 
 using namespace Falcor;
 
+struct RTLightmapPassSettings {
+    int sampling_res;
+    float texPerBatch;
+    bool randomizeSample;
+
+    RTLightmapPassSettings() {
+        sampling_res = 1;
+        texPerBatch = 0.01f;
+        randomizeSample = false;
+    }
+};
+
 class RTLightmapPass : public std::enable_shared_from_this<RTLightmapPass>
 {
 public:
@@ -12,11 +24,10 @@ public:
 
     static SharedPtr create(const Scene::SharedPtr& mpScene);
 
-    void setPerFrameVars(const TextureGroup textureGroup, const int sampling_res);
-    void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch);
+    void setPerFrameVars(const TextureGroup textureGroup, const RTLightmapPassSettings settings);
+    void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
 
-    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const int sampling_res, const float texPerBatch);
-
+    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
 private:
     void load(const Scene::SharedPtr& mpScene);
 

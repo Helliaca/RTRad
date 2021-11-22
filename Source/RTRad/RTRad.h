@@ -32,6 +32,7 @@ private:
     CITPass::SharedPtr citPass;
     VITPass::SharedPtr vitPass;
     RTLightmapPass::SharedPtr rtlPass;
+    RTLightmapPassSettings rtlSettings;
 
     // Texture group for the pipeline
     TextureGroup textureGroup;
@@ -47,9 +48,7 @@ private:
     bool mMakePass = false;
     bool mMakeBatch = false;
     bool mShowTexRes = false;
-    int mSamplingRes = 1;
     uint32_t mTextureRes = 256;
-    float mTexPerBatch = 0.1f;
 
     // Output/Measurement variables
     std::string mOutputString = " -- Empty -- ";

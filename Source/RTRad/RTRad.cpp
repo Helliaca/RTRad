@@ -11,7 +11,9 @@ void RTRad::onGuiRender(Gui* pGui)
 
         w.checkbox("Show Tex Res", mShowTexRes);
 
-        w.slider("Sampling res", mSamplingRes, 1, 16);
+        w.checkbox("Randomize Sample", rtlSettings.randomizeSample);
+
+        w.slider("Sampling res", rtlSettings.sampling_res, 1, 16);
 
         Falcor::Gui::DropdownList reslst;
         reslst.push_back({ 32, "32" });
@@ -28,7 +30,7 @@ void RTRad::onGuiRender(Gui* pGui)
         uint32_t prevRes = mTextureRes;
         w.dropdown("Lightmap Resolution", reslst, mTextureRes);
 
-        w.slider("Tex per Batch", mTexPerBatch, 0.01f, 1.0f);
+        w.slider("Tex per Batch", rtlSettings.texPerBatch, 0.01f, 1.0f);
 
         mResetInputTextures = w.button("Reset Input Textures");
 
@@ -125,7 +127,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             }
 
             if (mMakeBatch) {
-                mMakeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, mSamplingRes, mTexPerBatch);
+                mMakeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, rtlSettings);
             }
         }
 
