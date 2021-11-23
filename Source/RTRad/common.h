@@ -25,11 +25,7 @@ struct TextureGroup {
     Texture::SharedPtr lgiTex;
     Texture::SharedPtr lgoTex;
 
-    void generateMips(RenderContext* pRenderContext) {
-        posTex->generateMips(pRenderContext);
-        nrmTex->generateMips(pRenderContext);
-        arfTex->generateMips(pRenderContext);
-        matTex->generateMips(pRenderContext);
+    void generateLMips(RenderContext* pRenderContext) {
         lgiTex->generateMips(pRenderContext);
         lgoTex->generateMips(pRenderContext);
     }

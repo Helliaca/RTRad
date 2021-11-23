@@ -13,7 +13,15 @@ void RTRad::onGuiRender(Gui* pGui)
 
         w.checkbox("Randomize Sample", rtlSettings.randomizeSample);
 
-        w.slider("Sampling res", rtlSettings.sampling_res, 1, 16);
+        Falcor::Gui::DropdownList sreslst;
+        uint32_t sres = rtlSettings.sampling_res;
+        sreslst.push_back({ 1, "1x1" });
+        sreslst.push_back({ 2, "2x2" });
+        sreslst.push_back({ 4, "4x4" });
+        sreslst.push_back({ 8, "8x8" });
+        sreslst.push_back({ 16, "16x16" });
+        w.dropdown("Sampling Res", sreslst, sres);
+        rtlSettings.sampling_res = sres;
 
         w.slider("Mipmaplevel", vitSettings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
 
@@ -130,6 +138,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
             if (mMakeBatch) {
                 mMakeBatch = !rtlPass->runBatch(pRenderContext, textureGroup, rtlSettings);
+                textureGroup.generateLMips(pRenderContext);
             }
         }
 
@@ -138,7 +147,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             if (mResetInputTextures) {
                 makeTextures();
                 citPass->renderScene(pRenderContext, textureGroup);
-                textureGroup.generateMips(pRenderContext);
+                textureGroup.generateLMips(pRenderContext);
                 mResetInputTextures = false;
             }
         }

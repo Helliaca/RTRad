@@ -19,6 +19,8 @@ cbuffer PerFrameCB {
     int passNum;
 };
 
+SamplerState sampleWrap : register(s0);
+
 #define PI 3.14159265359f
 
 struct RayPayload
@@ -105,7 +107,7 @@ void rayGen()
             RayDesc ray;
             ray.Origin = self_wpos;
             ray.Direction = normalize(other_wpos - self_wpos);
-            ray.TMin = 0.01f;
+            ray.TMin = 0.0001f;
             ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
             RayPayload rpl = { self_c, other_c };
@@ -137,8 +139,8 @@ void primaryMiss(inout RayPayload rpl)
     float r = length(self_to_other);
 
     // Avoiding self-illuimination
-    if (r < 0.1f) return;
-    if (self_c.x == other_c.x && self_c.y == other_c.y) return;
+    //if (r < 0.1f) return;
+    if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) return;
 
     self_to_other = normalize(self_to_other);
 
@@ -166,5 +168,11 @@ void primaryMiss(inout RayPayload rpl)
     //uint matID = (uint) mat[self_c].r;
     //float4 self_color = gScene.materials[matID].baseColor;
 
-    lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;
+    float2 uvs = float2(float(other_c.x), float(other_c.y)) / float2(float(dim1), float(dim2));
+
+    float4 col = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
+
+    lig2[self_c] += (col / fpa) * self_color * ref * view_factor;
+
+    //lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;
 }
