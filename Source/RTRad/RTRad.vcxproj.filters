@@ -23,5 +23,6 @@
     <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\VITP.ps.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\VITP.vs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap2.rt.hlsl" />
   </ItemGroup>
 </Project>
