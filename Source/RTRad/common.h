@@ -17,6 +17,8 @@ using namespace Falcor;
 
 #define DEFAULT_MIPMAP_LEVELS 4
 
+#define HEMISPHERIC_SAMPLING 0
+
 struct TextureGroup {
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;

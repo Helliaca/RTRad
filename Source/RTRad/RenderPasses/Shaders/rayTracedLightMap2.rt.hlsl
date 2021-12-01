@@ -124,7 +124,7 @@ float3 getCosHemisphereSample(inout uint randSeed, float3 hitNorm)
     return tangent * (r * cos(phi).x) + bitangent * (r * sin(phi)) + hitNorm.xyz * sqrt(1 - randVal.x);
 }
 
-#define samples 65000
+#define samples 10000
 
 [shader("raygeneration")]
 void rayGen()
