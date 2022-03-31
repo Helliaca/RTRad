@@ -49,7 +49,7 @@ private:
     bool mResetInputTextures = true;
     bool mMakePass = false;
     bool mMakeBatch = false;
-    uint32_t mTextureRes = 256;
+    uint32_t mTextureRes = 32;
 
     // Output/Measurement variables
     std::string mOutputString = " -- Empty -- ";

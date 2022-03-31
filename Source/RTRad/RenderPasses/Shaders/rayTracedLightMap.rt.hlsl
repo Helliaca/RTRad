@@ -11,12 +11,15 @@ Texture2D<float4> mat;
 Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
+RWBuffer<uint> vis : register(t9);
+
 cbuffer PerFrameCB {
     int row_offset;
     int sampling_res;
     float3 posOffset;
     bool randomizeSamples;
     int passNum;
+    bool useVisCache;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -88,6 +91,18 @@ void rayGen()
 
             uint2 other_c = uint2(x, y);
 
+            if (useVisCache) {
+                // Get viscache
+                int self_bufPos = self_c.x + self_c.y * 32;
+                int other_bufPos = other_c.x + other_c.y * 32;
+                int bufPos = self_bufPos + other_bufPos * 32 * 32;
+
+                if (vis[bufPos] > 0) {
+                    //setColor(self_c, other_c);
+                    continue;
+                }
+            }
+
             if (randomizeSamples) {
                 uint2 seed = uint2(
                     random((self_c.x + 1) * (self_c.y + 1) + passNum, 7864128),
@@ -131,6 +146,18 @@ void primaryMiss(inout RayPayload rpl)
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
 
+    // Set visCache
+    int self_bufPos = self_c.x + self_c.y * 32;
+    int other_bufPos = other_c.x + other_c.y * 32;
+    int bufPos = self_bufPos + other_bufPos * 32 * 32;
+
+    vis[bufPos] = 1;
+
+
+    setColor(self_c, other_c);
+}
+
+void setColor(uint2 self_c, uint2 other_c) {
     float3 self_wpos = pos[self_c].xyz + posOffset;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
     float3 other_wpos = pos[other_c].xyz + posOffset;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
 

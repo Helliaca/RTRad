@@ -126,10 +126,19 @@ namespace Falcor
     template<bool forGraphics>
     void bindRootDescriptor(CopyContext* pContext, uint32_t rootIndex, const Resource::SharedPtr& pResource, bool isUav)
     {
+        // NOTE: This *can* be used to get rid of the SetGraphicsRootShaderResourceView error spam in the console.
+        // Just make sure it is used on the correct rootIndex. Otherwise raytracing won't be happening
+        //if (pResource != nullptr && rootIndex==4) {
+        //    if (pResource->getBindFlags() == Falcor::ResourceBindFlags::AccelerationStructure) {
+        //        //logWarning(std::to_string(rootIndex));
+        //        return;
+        //    }
+        //}
+
         auto pBuffer = pResource->asBuffer();
         assert(!pResource || pBuffer); // If a resource is bound, it must be a buffer
         uint64_t gpuAddress = pBuffer ? pBuffer->getGpuAddress() : 0;
-
+        
         if (forGraphics)
         {
             if (isUav)

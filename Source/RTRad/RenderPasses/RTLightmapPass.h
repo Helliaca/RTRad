@@ -38,6 +38,8 @@ private:
 
     Scene::SharedPtr mpScene;
 
+    Buffer::SharedPtr visBuf;
+
     int batch_counter;
 
     int row_offset;
