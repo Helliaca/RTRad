@@ -52,8 +52,12 @@ void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
     fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", mpScene->getSceneDefines());
 
     // TODO: This number needs to be divided by 8 because its in bytes but we only need one bit
-    int bufSize = (32 * 32 * 32 * 32);
-    visBuf = Buffer::create(bufSize);
+    int bufSize = (64 * 64 * 64 * 64 * 4);
+
+    visBuf = Buffer::create(bufSize,
+        Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
+        Falcor::Buffer::CpuAccess::None
+    );
 }
 
 static int c = 0;
@@ -74,7 +78,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLi
     mpRtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
     mpRtVars["PerFrameCB"]["passNum"] = c++; //NOTE: This is *NOT* the true passnum. (Its the batchnumber)
     // TODO: This will only work if we do full passes because c is not the actuall passnumber
-    mpRtVars["PerFrameCB"]["useVisCache"] = passNum > 1;
+    mpRtVars["PerFrameCB"]["useVisCache"] = passNum > 0;
 
     mpRtVars["vis"] = visBuf;
 }
@@ -114,14 +118,13 @@ bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textur
         passNum++;
         row_offset = 0;
 
-        //fsp->execute(pContext, textureGroup.lgoTex->getF)
-        std::vector<Texture::SharedPtr> tfbo;
-        tfbo.push_back(textureGroup.lgoTex);
-        Fbo::SharedPtr fbo = Fbo::create(tfbo);
+        //std::vector<Texture::SharedPtr> tfbo;
+        //tfbo.push_back(textureGroup.lgoTex);
+        //Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
-        fsp->getVars()->setTexture("ligTex", textureGroup.lgoTex);
+        //fsp->getVars()->setTexture("ligTex", textureGroup.lgoTex);
 
-        fsp->execute(pContext, fbo, true);
+        //fsp->execute(pContext, fbo, true);
 
 
         return true;

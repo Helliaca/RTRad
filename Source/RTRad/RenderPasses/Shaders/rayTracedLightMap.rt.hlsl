@@ -56,6 +56,15 @@ uint2 random(uint2 seed, uint2 max)
     );
 }
 
+uint getBufferPos(uint2 self_c, uint2 other_c) {
+    //uint self_i = self_c.x + self_c.y * 64;
+    //uint other_i = other_c.x + other_c.y * 64;
+
+    //uint total = self_i + other_i * 64 * 64;
+    uint total = self_c.x + self_c.y * 64 + other_c.x * 64 * 64 + other_c.y * 64 * 64 * 64;
+    return total;
+}
+
 [shader("raygeneration")]
 void rayGen()
 {
@@ -64,7 +73,7 @@ void rayGen()
     self_c.x += row_offset;
 
     // If pos alpha is less than 1, skip this.
-    if (pos[self_c].a < 1.f) {
+    if (pos[self_c].a < 0.1f) {
         return;
     }
 
@@ -83,7 +92,11 @@ void rayGen()
     lig2[self_c] = float4(emissive, 1.f);
 
     // Lets not run this for light-sources
-    if (length(emissive) > 0.1f) return;
+    // TODO: renable. I turned it off for bugfixing
+    //if (length(emissive) > 0.1f) return;
+
+    
+    //lig2[self_c] = lig[self_c];
 
 
     for (uint x = 0; x < dim1; x += sampling_res) {
@@ -93,14 +106,13 @@ void rayGen()
 
             if (useVisCache) {
                 // Get viscache
-                int self_bufPos = self_c.x + self_c.y * 32;
-                int other_bufPos = other_c.x + other_c.y * 32;
-                int bufPos = self_bufPos + other_bufPos * 32 * 32;
+                uint bufPos = getBufferPos(self_c, other_c);
 
-                if (vis[bufPos] > 0) {
-                    //setColor(self_c, other_c);
-                    continue;
+                if (vis[bufPos] == 100) {
+                    setColor(self_c, other_c);
                 }
+
+                continue;
             }
 
             if (randomizeSamples) {
@@ -122,7 +134,7 @@ void rayGen()
             RayDesc ray;
             ray.Origin = self_wpos;
             ray.Direction = normalize(other_wpos - self_wpos);
-            ray.TMin = 0.0001f;
+            ray.TMin = 0.001f;
             ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
             RayPayload rpl = { self_c, other_c };
@@ -147,11 +159,15 @@ void primaryMiss(inout RayPayload rpl)
     uint2 other_c = rpl.other_c;
 
     // Set visCache
-    int self_bufPos = self_c.x + self_c.y * 32;
-    int other_bufPos = other_c.x + other_c.y * 32;
-    int bufPos = self_bufPos + other_bufPos * 32 * 32;
+    uint bufPos = getBufferPos(self_c, other_c);
 
-    vis[bufPos] = 1;
+    //if (vis[bufPos] != 100) lig2[self_c] += float4(0.01, 0, 0, 0);
+
+    vis[bufPos] = 100;
+
+    bufPos = getBufferPos(other_c, self_c);
+
+    vis[bufPos] = 100;
 
 
     setColor(self_c, other_c);

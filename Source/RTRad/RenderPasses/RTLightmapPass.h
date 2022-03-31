@@ -12,7 +12,7 @@ struct RTLightmapPassSettings {
 
     RTLightmapPassSettings() {
         sampling_res = 1;
-        texPerBatch = 0.01f;
+        texPerBatch = 1.0f;
         randomizeSample = false;
     }
 };
