@@ -68,6 +68,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLi
     mpRtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     mpRtVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
     mpRtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
+    mpRtVars["PerFrameCB"]["texRes"] = textureGroup.lgiTex.get()->getWidth();
     mpRtVars["PerFrameCB"]["passNum"] = c++; //NOTE: This is *NOT* the true passnum. (Its the batchnumber)
     // TODO: This will only work if we do full passes because c is not the actuall passnumber
     mpRtVars["PerFrameCB"]["useVisCache"] = passNum > 0 && settings.useVisCache;

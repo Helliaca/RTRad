@@ -20,6 +20,7 @@ cbuffer PerFrameCB {
     bool randomizeSamples;
     int passNum;
     bool useVisCache;
+    int texRes;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -57,7 +58,7 @@ uint2 random(uint2 seed, uint2 max)
 }
 
 bool getVisible(uint2 self_c, uint2 other_c) {
-    uint bufferpos = self_c.x + self_c.y * 64 + other_c.x * 64 * 64 + other_c.y * 64 * 64 * 64;
+    uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
 
     uint bitpos = bufferpos % 32;
 
@@ -69,7 +70,7 @@ bool getVisible(uint2 self_c, uint2 other_c) {
 }
 
 void setVisible(uint2 self_c, uint2 other_c) {
-    uint bufferpos = self_c.x + self_c.y * 64 + other_c.x * 64 * 64 + other_c.y * 64 * 64 * 64;
+    uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
 
     uint bitpos = bufferpos % 32;
 
