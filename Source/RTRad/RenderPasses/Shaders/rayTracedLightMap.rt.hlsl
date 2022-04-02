@@ -56,6 +56,30 @@ uint2 random(uint2 seed, uint2 max)
     );
 }
 
+bool getVisible(uint2 self_c, uint2 other_c) {
+    uint bufferpos = self_c.x + self_c.y * 64 + other_c.x * 64 * 64 + other_c.y * 64 * 64 * 64;
+
+    uint bitpos = bufferpos % 32;
+
+    bufferpos = bufferpos / 32;
+
+    uint v = vis[bufferpos];
+
+    return ((v >> bitpos) & 1) > 0;
+}
+
+void setVisible(uint2 self_c, uint2 other_c) {
+    uint bufferpos = self_c.x + self_c.y * 64 + other_c.x * 64 * 64 + other_c.y * 64 * 64 * 64;
+
+    uint bitpos = bufferpos % 32;
+
+    bufferpos = bufferpos / 32;
+
+    uint v = vis[bufferpos];
+
+    vis[bufferpos] = v | (1 << bitpos);
+}
+
 uint getBufferPos(uint2 self_c, uint2 other_c) {
     //uint self_i = self_c.x + self_c.y * 64;
     //uint other_i = other_c.x + other_c.y * 64;
@@ -106,9 +130,9 @@ void rayGen()
 
             if (useVisCache) {
                 // Get viscache
-                uint bufPos = getBufferPos(self_c, other_c);
+                //uint bufPos = getBufferPos(self_c, other_c);
 
-                if (vis[bufPos] == 100) {
+                if (getVisible(self_c, other_c)) {
                     setColor(self_c, other_c);
                 }
 
@@ -134,7 +158,7 @@ void rayGen()
             RayDesc ray;
             ray.Origin = self_wpos;
             ray.Direction = normalize(other_wpos - self_wpos);
-            ray.TMin = 0.001f;
+            ray.TMin = 0.0001f;
             ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
             RayPayload rpl = { self_c, other_c };
@@ -159,15 +183,18 @@ void primaryMiss(inout RayPayload rpl)
     uint2 other_c = rpl.other_c;
 
     // Set visCache
-    uint bufPos = getBufferPos(self_c, other_c);
+    //uint bufPos = getBufferPos(self_c, other_c);
 
     //if (vis[bufPos] != 100) lig2[self_c] += float4(0.01, 0, 0, 0);
 
-    vis[bufPos] = 100;
+    //vis[bufPos] = 100;
 
-    bufPos = getBufferPos(other_c, self_c);
+    //bufPos = getBufferPos(other_c, self_c);
 
-    vis[bufPos] = 100;
+    //vis[bufPos] = 100;
+
+    setVisible(self_c, other_c);
+    setVisible(other_c, self_c);
 
 
     setColor(self_c, other_c);
@@ -193,7 +220,7 @@ void setColor(uint2 self_c, uint2 other_c) {
     float self_cos = dot(self_nrm, self_to_other);
     float other_cos = dot(other_nrm, -self_to_other);
 
-    if (self_cos <= 0.0 || other_cos <= 0.0) return;
+    if (self_cos <= 0.0f || other_cos <= 0.0f) return;
 
     float view_factor = self_cos * other_cos * (1.0f / (PI * r * r));
 

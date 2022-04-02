@@ -52,7 +52,7 @@ void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
     fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", mpScene->getSceneDefines());
 
     // TODO: This number needs to be divided by 8 because its in bytes but we only need one bit
-    int bufSize = (64 * 64 * 64 * 64 * 4);
+    int bufSize = (64 * 64 * 64 * 64 * 4 / 32);
 
     visBuf = Buffer::create(bufSize,
         Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
