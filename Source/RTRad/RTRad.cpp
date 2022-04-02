@@ -42,6 +42,10 @@ void RTRad::onGuiRender(Gui* pGui)
         uint32_t prevRes = mTextureRes;
         w.dropdown("Lightmap Resolution", reslst, mTextureRes);
 
+        if (mTextureRes > MAX_VISCACHE_RESOLUTION) {
+            rtlSettings.useVisCache = false;
+        }
+
         w.slider("Tex per Batch", rtlSettings.texPerBatch, 0.01f, 1.0f);
 
         mResetInputTextures = w.button("Reset Input Textures");
@@ -49,7 +53,8 @@ void RTRad::onGuiRender(Gui* pGui)
         mMakePass = w.button("Make Pass");
 
         if (mTextureRes != prevRes) {
-            makeTextures();
+            //makeTextures();
+
             mResetInputTextures = true;
         }
 
@@ -106,32 +111,6 @@ void RTRad::onLoad(RenderContext* pRenderContext)
     loadScene(DEFAULT_SCENE);
 }
 
-void RTRad::makeTextures()
-{
-    int res = mTextureRes;
-
-    if (res < 256 && rtlSettings.useVisCache) {
-        int bufSize = (res * res * res * res * 4 / 32);
-
-        textureGroup.visBuf = Buffer::create(bufSize,
-            Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
-            Falcor::Buffer::CpuAccess::None
-        );
-    }
-    else
-    {
-        textureGroup.visBuf = NULL;
-        rtlSettings.useVisCache = false;
-    }
-
-    textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    textureGroup.matTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    textureGroup.lgiTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-    textureGroup.lgoTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-}
-
 void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& pTargetFbo)
 {
     pRenderContext->clearFbo(pTargetFbo.get(), CLEAR_COLOR, 1.0f, 0, FboAttachmentType::All);
@@ -162,7 +141,8 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         {
             PROFILE("TextureClear");
             if (mResetInputTextures) {
-                makeTextures();
+                //makeTextures();
+                textureGroup = TextureGroup::makeTextures(mTextureRes, rtlSettings.useVisCache);
                 citPass->renderScene(pRenderContext, textureGroup);
                 textureGroup.generateLMips(pRenderContext);
                 mResetInputTextures = false;
