@@ -13,6 +13,8 @@ void RTRad::onGuiRender(Gui* pGui)
 
         w.checkbox("Randomize Sample", rtlSettings.randomizeSample);
 
+        w.checkbox("Use VisCache", rtlSettings.useVisCache);
+
         Falcor::Gui::DropdownList sreslst;
         uint32_t sres = rtlSettings.sampling_res;
         sreslst.push_back({ 1, "1x1" });
@@ -107,6 +109,21 @@ void RTRad::onLoad(RenderContext* pRenderContext)
 void RTRad::makeTextures()
 {
     int res = mTextureRes;
+
+    if (res < 256 && rtlSettings.useVisCache) {
+        int bufSize = (res * res * res * res * 4 / 32);
+
+        textureGroup.visBuf = Buffer::create(bufSize,
+            Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
+            Falcor::Buffer::CpuAccess::None
+        );
+    }
+    else
+    {
+        textureGroup.visBuf = NULL;
+        rtlSettings.useVisCache = false;
+    }
+
     textureGroup.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     textureGroup.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);

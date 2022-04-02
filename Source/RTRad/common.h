@@ -27,6 +27,8 @@ struct TextureGroup {
     Texture::SharedPtr lgiTex;
     Texture::SharedPtr lgoTex;
 
+    Buffer::SharedPtr visBuf;
+
     void generateLMips(RenderContext* pRenderContext) {
         lgiTex->generateMips(pRenderContext);
         lgoTex->generateMips(pRenderContext);

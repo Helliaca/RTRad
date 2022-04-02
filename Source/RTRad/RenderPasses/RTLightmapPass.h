@@ -9,11 +9,13 @@ struct RTLightmapPassSettings {
     int sampling_res;
     float texPerBatch;
     bool randomizeSample;
+    bool useVisCache;
 
     RTLightmapPassSettings() {
         sampling_res = 1;
         texPerBatch = 1.0f;
         randomizeSample = false;
+        useVisCache = false;
     }
 };
 
@@ -37,8 +39,6 @@ private:
     FullScreenPass::SharedPtr fsp;
 
     Scene::SharedPtr mpScene;
-
-    Buffer::SharedPtr visBuf;
 
     int batch_counter;
 
