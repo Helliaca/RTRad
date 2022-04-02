@@ -49,8 +49,10 @@ void RTRad::onGuiRender(Gui* pGui)
         mMakePass = w.button("Make Pass");
 
         if (mTextureRes != prevRes) {
-            //makeTextures();
+            mResetInputTextures = true;
+        }
 
+        if (rtlSettings.useVisCache && !textureGroup.visBuf) {
             mResetInputTextures = true;
         }
 
