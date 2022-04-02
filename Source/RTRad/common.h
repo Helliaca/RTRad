@@ -41,7 +41,9 @@ struct TextureGroup {
         TextureGroup ret;
 
         if (res <= MAX_VISCACHE_RESOLUTION && useVisCache) {
-            int bufSize = (res * res * res * res * 4 / 32);
+            // We have to use size_t here because otherwise we overflow the integer
+            size_t rres = res;
+            size_t bufSize = ((rres * rres * rres * rres * (size_t)2) / 32);
 
             ret.visBuf = Buffer::create(bufSize,
                 Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,

@@ -57,8 +57,24 @@ uint2 random(uint2 seed, uint2 max)
     );
 }
 
+uint cantor(uint x, uint y)
+{
+    if (x > y) {
+        uint tmp = x;
+        x = y;
+        y = tmp;
+    }
+
+    x = texRes - x;
+    return (x + y)* (x + y + 1) / 2 + x;
+}
+
 bool getVisible(uint2 self_c, uint2 other_c) {
-    uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
+    //uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
+    uint self_p = self_c.x + self_c.y * texRes;
+    uint other_p = other_c.x + other_c.y * texRes;
+
+    uint bufferpos = cantor(self_p, other_p);
 
     uint bitpos = bufferpos % 32;
 
@@ -70,7 +86,11 @@ bool getVisible(uint2 self_c, uint2 other_c) {
 }
 
 void setVisible(uint2 self_c, uint2 other_c) {
-    uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
+    //uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
+    uint self_p = self_c.x + self_c.y * texRes;
+    uint other_p = other_c.x + other_c.y * texRes;
+
+    uint bufferpos = cantor(self_p, other_p);
 
     uint bitpos = bufferpos % 32;
 
@@ -79,15 +99,6 @@ void setVisible(uint2 self_c, uint2 other_c) {
     uint v = vis[bufferpos];
 
     vis[bufferpos] = v | (1 << bitpos);
-}
-
-uint getBufferPos(uint2 self_c, uint2 other_c) {
-    //uint self_i = self_c.x + self_c.y * 64;
-    //uint other_i = other_c.x + other_c.y * 64;
-
-    //uint total = self_i + other_i * 64 * 64;
-    uint total = self_c.x + self_c.y * 64 + other_c.x * 64 * 64 + other_c.y * 64 * 64 * 64;
-    return total;
 }
 
 [shader("raygeneration")]
@@ -128,6 +139,8 @@ void rayGen()
         for (uint y = 0; y < dim2; y += sampling_res) {
 
             uint2 other_c = uint2(x, y);
+
+            if (self_c.x == other_c.x && self_c.y == other_c.y) continue;
 
             if (useVisCache) {
                 // Get viscache
@@ -195,7 +208,7 @@ void primaryMiss(inout RayPayload rpl)
     //vis[bufPos] = 100;
 
     setVisible(self_c, other_c);
-    setVisible(other_c, self_c);
+    //setVisible(other_c, self_c);
 
 
     setColor(self_c, other_c);
