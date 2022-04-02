@@ -26,6 +26,7 @@ cbuffer PerFrameCB {
 SamplerState sampleWrap : register(s0);
 
 #define PI 3.14159265359f
+#define max_bufferpos 1073676288
 
 struct RayPayload
 {
@@ -69,13 +70,15 @@ uint cantor(uint x, uint y)
     return (x + y)* (x + y + 1) / 2 + x;
 }
 
-bool getVisible(uint2 self_c, uint2 other_c) {
-    //uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
+uint getBufferPos(uint2 self_c, uint2 other_c)
+{
     uint self_p = self_c.x + self_c.y * texRes;
     uint other_p = other_c.x + other_c.y * texRes;
 
-    uint bufferpos = cantor(self_p, other_p);
+    return cantor(self_p, other_p);
+}
 
+bool getVisible(uint bufferpos) {
     uint bitpos = bufferpos % 32;
 
     bufferpos = bufferpos / 32;
@@ -85,13 +88,7 @@ bool getVisible(uint2 self_c, uint2 other_c) {
     return ((v >> bitpos) & 1) > 0;
 }
 
-void setVisible(uint2 self_c, uint2 other_c) {
-    //uint bufferpos = self_c.x + self_c.y * texRes + other_c.x * texRes * texRes + other_c.y * texRes * texRes * texRes;
-    uint self_p = self_c.x + self_c.y * texRes;
-    uint other_p = other_c.x + other_c.y * texRes;
-
-    uint bufferpos = cantor(self_p, other_p);
-
+void setVisible(uint bufferpos) {
     uint bitpos = bufferpos % 32;
 
     bufferpos = bufferpos / 32;
@@ -144,13 +141,14 @@ void rayGen()
 
             if (useVisCache) {
                 // Get viscache
-                //uint bufPos = getBufferPos(self_c, other_c);
+                uint bufPos = getBufferPos(self_c, other_c);
 
-                if (getVisible(self_c, other_c)) {
-                    setColor(self_c, other_c);
+                if (bufPos <= max_bufferpos) {
+                    if (getVisible(bufPos)) {
+                        setColor(self_c, other_c);
+                    }
+                    continue;
                 }
-
-                continue;
             }
 
             if (randomizeSamples) {
@@ -207,7 +205,10 @@ void primaryMiss(inout RayPayload rpl)
 
     //vis[bufPos] = 100;
 
-    setVisible(self_c, other_c);
+    uint bufPos = getBufferPos(self_c, other_c);
+    if (bufPos <= max_bufferpos) {
+        setVisible(bufPos);
+    }
     //setVisible(other_c, self_c);
 
 

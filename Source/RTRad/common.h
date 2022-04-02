@@ -19,7 +19,7 @@ using namespace Falcor;
 
 #define HEMISPHERIC_SAMPLING 0
 
-#define MAX_VISCACHE_RESOLUTION 256
+#define MAX_VISCACHE_RESOLUTION 512
 
 struct TextureGroup {
     Texture::SharedPtr posTex;
@@ -40,10 +40,20 @@ struct TextureGroup {
     {
         TextureGroup ret;
 
-        if (res <= MAX_VISCACHE_RESOLUTION && useVisCache) {
+        if (useVisCache) {
+            /*
+            * A word on the math down here to calculate the size of the viscache:
+            * res^4 is the raw amount of pairs there are in a set of res*res.
+            * We then multiply by 4, because each uint has 4 bytes, and we need to give the amount of bytes
+            * Then we divide by 2, because since we only want each UNIQUE pair, we only need half
+            * Then we divide by 32, because a uint has 32bits, and we store visibilty in individual bits
+            * Then we subtract res*res, because we don't need mirrored pairs like (0,0), (1,1) etc. There are exactly res*res of these
+            */
+
             // We have to use size_t here because otherwise we overflow the integer
-            size_t rres = res;
-            size_t bufSize = ((rres * rres * rres * rres * (size_t)2) / 32);
+            size_t rres = std::min(res, MAX_VISCACHE_RESOLUTION);
+            size_t bufSize = (rres * rres * rres * rres * (size_t)4 / (size_t)2 / (size_t)32);
+            bufSize -= (rres * rres);
 
             ret.visBuf = Buffer::create(bufSize,
                 Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,

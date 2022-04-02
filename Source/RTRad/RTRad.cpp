@@ -42,10 +42,6 @@ void RTRad::onGuiRender(Gui* pGui)
         uint32_t prevRes = mTextureRes;
         w.dropdown("Lightmap Resolution", reslst, mTextureRes);
 
-        if (mTextureRes > MAX_VISCACHE_RESOLUTION) {
-            rtlSettings.useVisCache = false;
-        }
-
         w.slider("Tex per Batch", rtlSettings.texPerBatch, 0.01f, 1.0f);
 
         mResetInputTextures = w.button("Reset Input Textures");
