@@ -139,7 +139,7 @@ void rayGen()
 
             if (self_c.x == other_c.x && self_c.y == other_c.y) continue;
 
-            if (useVisCache) {
+            if (useVisCache && passNum > 0) {
                 // Get viscache
                 uint bufPos = getBufferPos(self_c, other_c);
 
@@ -205,9 +205,11 @@ void primaryMiss(inout RayPayload rpl)
 
     //vis[bufPos] = 100;
 
-    uint bufPos = getBufferPos(self_c, other_c);
-    if (bufPos <= max_bufferpos) {
-        setVisible(bufPos);
+    if (useVisCache) {
+        uint bufPos = getBufferPos(self_c, other_c);
+        if (bufPos <= max_bufferpos) {
+            setVisible(bufPos);
+        }
     }
     //setVisible(other_c, self_c);
 
