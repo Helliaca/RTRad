@@ -29,6 +29,8 @@ struct TextureGroup {
     Texture::SharedPtr lgiTex;
     Texture::SharedPtr lgoTex;
 
+    Texture::SharedPtr voxTex;
+
     Buffer::SharedPtr visBuf;
 
     void generateLMips(RenderContext* pRenderContext) {
@@ -64,6 +66,8 @@ struct TextureGroup {
         {
             ret.visBuf = NULL;
         }
+
+        ret.voxTex = Texture::create3D(32, 32, 32, ResourceFormat::RGBA16Float, 0, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 
         ret.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
         ret.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);

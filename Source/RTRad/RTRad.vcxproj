@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RenderPasses\CVMPass.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RenderPasses\CITPass.cpp" />
     <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
@@ -19,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
+    <ClInclude Include="RenderPasses\CVMPass.h" />
     <ClInclude Include="RenderPasses\CITPass.h" />
     <ClInclude Include="RenderPasses\RTLightmapPass.h" />
     <ClInclude Include="RenderPasses\VITPass.h" />
@@ -34,6 +36,9 @@
     <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\CITP.ps.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\CITP.vs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CVMP.gs.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CVMP.ps.hlsl" />
+    <ShaderSource Include="RenderPasses\Shaders\CVMP.vs.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\FixSeams.ps.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
     <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap2.rt.hlsl" />
