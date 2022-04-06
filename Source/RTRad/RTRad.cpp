@@ -96,6 +96,8 @@ void RTRad::loadScene(const std::string& filename)
 
     rtlPass = RTLightmapPass::create(mpScene);
 
+    cvmPass = CVMPass::create(mpScene);
+
     mResetInputTextures = true;
 }
 
@@ -137,7 +139,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         }
 
         {
-            PROFILE("TextureClear");
+            PROFILE("CITPass");
             if (mResetInputTextures) {
                 //makeTextures();
                 textureGroup = TextureGroup::makeTextures(mTextureRes, rtlSettings.useVisCache);
@@ -145,6 +147,11 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
                 textureGroup.generateLMips(pRenderContext);
                 mResetInputTextures = false;
             }
+        }
+
+        {
+            PROFILE("CVMPass");
+            cvmPass->renderScene(pRenderContext, textureGroup);
         }
 
         {

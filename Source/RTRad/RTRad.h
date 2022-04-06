@@ -3,6 +3,7 @@
 #include "RenderPasses/CITPass.h"
 #include "RenderPasses/VITPass.h"
 #include "RenderPasses/RTLightmapPass.h"
+#include "RenderPasses/CVMPass.h"
 
 using namespace Falcor;
 
@@ -36,6 +37,8 @@ private:
 
     RTLightmapPass::SharedPtr rtlPass;
     RTLightmapPassSettings rtlSettings;
+
+    CVMPass::SharedPtr cvmPass;
 
     // Texture group for the pipeline
     TextureGroup textureGroup;
