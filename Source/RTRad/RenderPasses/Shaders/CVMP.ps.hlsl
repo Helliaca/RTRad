@@ -11,13 +11,9 @@ import Experimental.Scene.Material.StandardMaterial;
 struct GBuffer
 {
     float4 pos    : SV_Target0;
-    float4 nrm    : SV_Target1;
-    float arf    : SV_Target2;
-    float4 mat    : SV_Target3;
-    float4 li0    : SV_Target4;
-    float4 li1    : SV_Target5;
 };
 
+RWTexture3D<float4> voxTex;
 
 struct GSOut
 {
@@ -40,21 +36,12 @@ GBuffer pmain(GSOut vsOut)
     vsOut.normalW = 0.5f * (vsOut.normalW + float3(1.f));
 
     GBuffer o;
-    o.pos = float4(vsOut.posW, 1.f);
-    o.nrm = float4(vsOut.normalW, 1.f);
-    o.arf = vsOut.areaFactor;
 
-    // Set mat
-    o.mat = gScene.materials[vsOut.materialID].baseColor;
-    MaterialResources mr = gScene.materialResources[vsOut.materialID];
-    float4 mrc = mr.baseColor.Sample(mr.samplerState, vsOut.texC);
-    if (mrc.a > 0.0f) {
-        o.mat *= mrc;
-    }
-    o.mat.a = vsOut.materialID;
+    uint3 coord = uint3(0, 0, 0);
+    voxTex[coord] = float4(0, 1, 0, 1);
 
-    o.li0 = float4(gScene.materials[vsOut.materialID].emissive, 1.f);
-    o.li1 = float4(gScene.materials[vsOut.materialID].emissive, 1.f);
+    //o.pos = float4(1, 0, 1, 1.f);
+    o.pos = voxTex[coord];
 
 
     return o;

@@ -5,7 +5,7 @@ void RTRad::onGuiRender(Gui* pGui)
 {
     // MAIN CONTROLPANEL
     {
-        Gui::Window w(pGui, "RTRad", { 300, 280 }, { 10, 80 });
+        Gui::Window w(pGui, "RTRad", { 300, 330 }, { 10, 80 });
 
         w.checkbox("Apply To Model", vitSettings.applyToModel);
 
@@ -71,7 +71,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
     // SCENE CONTROLS
     {
-        Gui::Window w2(pGui, "Scene Settings", { 300, 400 }, { 10, 400 });
+        Gui::Window w2(pGui, "Scene Settings", { 300, 420 }, { 10, 400 });
 
         if (w2.button("Load Scene"))
         {
