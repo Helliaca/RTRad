@@ -175,6 +175,9 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             default:
                 t = textureGroup.posTex;
             }
+            if (vitSettings.showTexRes) {
+                t = textureGroup.voxTex;
+            }
 
             vitPass->renderScene(pRenderContext, t, pTargetFbo, vitSettings);
         }

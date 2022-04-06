@@ -29,6 +29,11 @@ void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disT
 {
     Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(this->getProgram().get());
     vars->setTexture("disTex", disTex);
+
+    if (settings.showTexRes) {
+        vars->setTexture("voxTex", disTex);
+    }
+
     vars["PerFrameCB"]["applyToModel"] = settings.applyToModel;
     vars["PerFrameCB2"]["showTexRes"] = settings.showTexRes;
 

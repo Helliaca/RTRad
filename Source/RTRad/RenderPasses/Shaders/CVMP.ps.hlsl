@@ -37,11 +37,20 @@ GBuffer pmain(GSOut vsOut)
 
     GBuffer o;
 
-    uint3 coord = uint3(0, 0, 0);
-    voxTex[coord] = float4(0, 1, 0, 1);
+    for (int i = 0; i < 64; i++) {
+        for (int j = 0; j < 64; j++) {
+            for (int u = 0; u < 64; u++) {
+                uint3 coord = uint3(i, j, u);
+                voxTex[coord] = float4(0, 1, 0, 1);
+            }
+        }
+    }
+
+    //uint3 coord = uint3(0, 0, 0);
+    //voxTex[coord] = float4(0, 1, 0, 1);
 
     //o.pos = float4(1, 0, 1, 1.f);
-    o.pos = voxTex[coord];
+    //o.pos = voxTex[coord];
 
 
     return o;

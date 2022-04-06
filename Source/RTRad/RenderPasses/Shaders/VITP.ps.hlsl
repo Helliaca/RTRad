@@ -17,6 +17,8 @@ cbuffer PerFrameCB2 {
 
 Texture2D<float4> disTex;
 
+Texture3D<float4> voxTex;
+
 SamplerState sampleWrap : register(s0);
 
 bool xor(bool a, bool b) {
@@ -30,7 +32,17 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 
     col = col / (interp_max - interp_min);
 
+    //Temporary ammendment: We show voxelmap data when showTexRes.
+    // get rid of this and re-enable the if below to go back to how it was before
     if (showTexRes) {
+        float3 posW = vsOut.posW.xyz;
+        posW = 0.5f*(posW + float3(1, 1, 1)); // [0,1]
+        posW = posW * 63; // [0, 64]
+        uint3 samp = (uint3)posW;
+        col = voxTex[samp];
+    }
+
+    /*if (showTexRes) {
         float dim1;
         float dim2;
         disTex.GetDimensions(dim1, dim2);
@@ -40,7 +52,7 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 
         if(xor(vsOut.texC.x > 0.5f, vsOut.texC.y > 0.5f)) col = float4(1.0f);
         else col = float4(0.0f);
-    }
+    }*/
 
     return col;
 }
