@@ -31,28 +31,14 @@ cbuffer PerFrameCB {
 
 GBuffer pmain(GSOut vsOut)
 {
-    // coord transformation
-    vsOut.posW = vsOut.posW - posOffset;
-    vsOut.normalW = 0.5f * (vsOut.normalW + float3(1.f));
+    float3 posW = vsOut.posW.xyz;
+    posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
+    posW = posW * 63; // [0, 64]
+    uint3 samp = (uint3)posW;
+    voxTex[samp] = float4(0, 0, 1, 1);
 
     GBuffer o;
-
-    for (int i = 0; i < 64; i++) {
-        for (int j = 0; j < 64; j++) {
-            for (int u = 0; u < 64; u++) {
-                uint3 coord = uint3(i, j, u);
-                voxTex[coord] = float4(0, 1, 0, 1);
-            }
-        }
-    }
-
-    //uint3 coord = uint3(0, 0, 0);
-    //voxTex[coord] = float4(0, 1, 0, 1);
-
-    //o.pos = float4(1, 0, 1, 1.f);
-    //o.pos = voxTex[coord];
-
-
+    o.pos = float4(vsOut.posW, 1.f);
     return o;
 }
 

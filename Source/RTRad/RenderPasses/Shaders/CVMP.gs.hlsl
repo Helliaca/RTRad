@@ -16,21 +16,20 @@ void gmain(triangle VSOut input[3], inout TriangleStream<GSOut> OutputStream)
 {
     GSOut output;
 
-    // UV surface area
-    float uvA = 0.5f * length(cross(float3(input[1].texC - input[0].texC, 0.f), float3(input[2].texC - input[1].texC, 0.f)));
+    // normal
+    float3 faceNormal = abs(cross(input[1].posW - input[0].posW, input[2].posW - input[0].posW));
 
-    // real surface area
-    float vvA = 0.5f * length(cross(input[1].posW - input[0].posW, input[2].posW - input[1].posW));
+    // dominatn axis
+    float dominantAxis = max(faceNormal.x, max(faceNormal.y, faceNormal.z));
 
     for (uint i = 0; i < 3; i += 1)
     {
-        output.posH = input[i].posH;
-        output.texC = input[i].texC;
         output.posW = input[i].posW;
         output.normalW = input[i].normalW;
-        output.materialID = input[i].materialID;
 
-        output.areaFactor = uvA / vvA;
+        if (dominantAxis == faceNormal.x) output.posH = float4(output.posW.zyx, 1);
+        else if (dominantAxis == faceNormal.y) output.posH = float4(output.posW.xzy, 1);
+        else if (dominantAxis == faceNormal.z) output.posH = float4(output.posW.xyz, 1);
 
         OutputStream.Append(output);
     }
