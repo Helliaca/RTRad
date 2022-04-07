@@ -27,7 +27,7 @@ bool xor(bool a, bool b) {
 
 uint3 toVoxelSpace(float3 posW) {
     posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
-    posW = posW * 63.9999f; // [0, 64]
+    posW = posW * 63.49f; // [0, 64]
     return (uint3)posW;
 }
 
@@ -41,8 +41,10 @@ float3 rayMarch(float3 start, float3 end) {
 
         if (max3(abs(pos)) > 1.0f) continue;
 
-        if (voxTex[toVoxelSpace(pos)].a > 0) {
-            return voxTex[toVoxelSpace(pos)].rgb;
+        uint3 voxPos = toVoxelSpace(pos);
+
+        if (voxTex[voxPos].a > 0) {
+            return voxTex[voxPos].rgb;
         }
     }
     return float3(0, 0, 0);

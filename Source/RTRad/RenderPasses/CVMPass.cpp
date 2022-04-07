@@ -39,9 +39,18 @@ void CVMPass::renderScene(RenderContext* pContext, const TextureGroup tg)
     tfbo.push_back(tmpTex);
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
+    RasterizerState::Desc desc;
+    desc.setConservativeRasterization(false);  // Maybe better as true?
+    desc.setCullMode(RasterizerState::CullMode::None);
+    desc.setDepthClamp(true);
+    desc.setLineAntiAliasing(false);
+    desc.setFrontCounterCW(true);
+    RasterizerState::SharedPtr state = RasterizerState::create(desc);
+    
+
     mpVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
     mpVars["voxTex"] = tg.voxTex;
 
     mpState->setFbo(fbo);
-    mpScene->rasterize(pContext, mpState.get(), mpVars.get(), RasterizerState::CullMode::None);
+    mpScene->rasterize(pContext, mpState.get(), mpVars.get(), state, state);
 }
