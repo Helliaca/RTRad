@@ -9,6 +9,9 @@ Texture2D<float4> nrm;
 Texture2D<float> arf;
 Texture2D<float4> mat;
 Texture2D<float4> lig;
+
+Texture3D<float4> voxTex;
+
 RWTexture2D<float4> lig2;
 
 RWBuffer<uint> vis : register(t9);
@@ -33,6 +36,59 @@ struct RayPayload
     uint2 self_c;
     uint2 other_c;
 };
+
+uint3 toVoxelSpace(float3 posW) {
+    posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
+    posW = posW * 63.49f; // [0, 64]
+    return (uint3)posW;
+}
+
+float max3(float3 v) {
+    return max(v.x, max(v.y, v.z));
+}
+
+bool rayMarchVisible(float3 self_pos, float3 other_pos)
+{
+    //epsilon
+    self_pos = self_pos + normalize(other_pos - self_pos) * 0.07f;
+    other_pos = other_pos + normalize(self_pos - other_pos) * 0.07f;
+
+    for (float i = 0.0f; i < 1.0f; i += 1.0f / 128.0f) {
+        float3 pos = self_pos + i * (other_pos - self_pos);
+
+        if (max3(abs(pos)) > 1.0f) return true;
+
+        uint3 voxPos = toVoxelSpace(pos);
+
+        if (voxTex[voxPos].a > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool rayMarchVisible(uint2 self_c, uint2 other_c)
+{
+    float3 self_pos = pos[self_c].xyz;
+    float3 other_pos = pos[other_c].xyz;
+
+    //epsilon
+    self_pos = self_pos + normalize(other_pos - self_pos) * 0.07f;
+    other_pos = other_pos + normalize(self_pos - other_pos) * 0.07f;
+
+    for (float i = 0.0f; i < 1.0f; i += 1.0f / 128.0f) {
+        float3 pos = self_pos + i * (other_pos - self_pos);
+
+        if (max3(abs(pos)) > 1.0f) return true;
+
+        uint3 voxPos = toVoxelSpace(pos);
+
+        if (voxTex[voxPos].a > 0) {
+            return false;
+        }
+    }
+    return true;
+}
 
 // Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
 uint Hash(uint seed)
@@ -131,6 +187,13 @@ void rayGen()
     
     //lig2[self_c] = lig[self_c];
 
+    // Use this to display a cool way of what points rayMarch determines to be visible from a given point
+    /*lig2[self_c] = float4(0, 0, 0, 1);
+    if (rayMarchVisible(self_wpos, float3(0.f, 0.f, -1.0f))) {
+        lig2[self_c] = float4(1,1,1,1);
+    }
+    return;*/
+
 
     for (uint x = 0; x < dim1; x += sampling_res) {
         for (uint y = 0; y < dim2; y += sampling_res) {
@@ -165,25 +228,34 @@ void rayGen()
                     );
             }
 
-            float3 other_wpos = pos[other_c].xyz + posOffset;
+            bool voxelRayMarch = true;
+            if (voxelRayMarch) {
+                if (rayMarchVisible(self_c, other_c)) {
+                    setColor(self_c, other_c);
+                }
+            }
+            else {
 
-            RayDesc ray;
-            ray.Origin = self_wpos;
-            ray.Direction = normalize(other_wpos - self_wpos);
-            ray.TMin = 0.0001f;
-            ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
+                float3 other_wpos = pos[other_c].xyz + posOffset;
 
-            RayPayload rpl = { self_c, other_c };
+                RayDesc ray;
+                ray.Origin = self_wpos;
+                ray.Direction = normalize(other_wpos - self_wpos);
+                ray.TMin = 0.0001f;
+                ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
-            TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
-                RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
-                0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
-                0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
-                0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
-                0,                                    // Miss program index (i.e., when missing, call miss shader #0)
-                ray,                                  // Data structure describing the ray to trace
-                rpl
-            );
+                RayPayload rpl = { self_c, other_c };
+
+                TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
+                    RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
+                    0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
+                    0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
+                    0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
+                    0,                                    // Miss program index (i.e., when missing, call miss shader #0)
+                    ray,                                  // Data structure describing the ray to trace
+                    rpl
+                );
+            }
         }
     }
 }

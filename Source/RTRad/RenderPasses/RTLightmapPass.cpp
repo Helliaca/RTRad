@@ -64,6 +64,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLi
     mpRtVars->setTexture("mat", textureGroup.matTex);
     mpRtVars->setTexture("lig", textureGroup.lgiTex);
     mpRtVars->setTexture("lig2", textureGroup.lgoTex);
+    mpRtVars->setTexture("voxTex", textureGroup.voxTex);
     mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
     mpRtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     mpRtVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
