@@ -46,6 +46,8 @@ void RTRad::onGuiRender(Gui* pGui)
 
         mResetInputTextures = w.button("Reset Input Textures");
 
+        mResetVoxelMap = w.button("Reset Voxel Map");
+
         mMakePass = w.button("Make Pass");
 
         if (mTextureRes != prevRes) {
@@ -151,7 +153,10 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
         {
             PROFILE("CVMPass");
-            cvmPass->renderScene(pRenderContext, textureGroup);
+            if (mResetVoxelMap) {
+                cvmPass->renderScene(pRenderContext, textureGroup);
+                mResetVoxelMap = false;
+            }
         }
 
         {

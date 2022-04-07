@@ -50,6 +50,7 @@ private:
     // Flow-Control variables
     uint32_t mOutputTex = 5;
     bool mResetInputTextures = true;
+    bool mResetVoxelMap = true;
     bool mMakePass = false;
     bool mMakeBatch = false;
     uint32_t mTextureRes = 64;
