@@ -33,8 +33,10 @@ CVMPass::SharedPtr CVMPass::create(const Scene::SharedPtr& pScene)
 void CVMPass::renderScene(RenderContext* pContext, const TextureGroup tg)
 {
     // Create FBO
+    Texture::SharedPtr tmpTex = Texture::create2D(64, 64, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+
     std::vector<Texture::SharedPtr> tfbo;
-    tfbo.push_back(tg.posTex);
+    tfbo.push_back(tmpTex);
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
     mpVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
