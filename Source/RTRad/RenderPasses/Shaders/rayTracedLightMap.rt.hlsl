@@ -76,7 +76,9 @@ bool rayMarchVisible(uint2 self_c, uint2 other_c)
     self_pos = self_pos + normalize(other_pos - self_pos) * 0.07f;
     other_pos = other_pos + normalize(self_pos - other_pos) * 0.07f;
 
-    for (float i = 0.0f; i < 1.0f; i += 1.0f / 128.0f) {
+    //float delta = 1.0f / (length(self_pos - other_pos) * 32.0f);
+
+    for (float i = 0.0f; i < 1.0f; i += 1.0f / 32.0f) {
         float3 pos = self_pos + i * (other_pos - self_pos);
 
         if (max3(abs(pos)) > 1.0f) return true;
@@ -154,6 +156,11 @@ void setVisible(uint bufferpos) {
     vis[bufferpos] = v | (1 << bitpos);
 }
 
+float distSquared(float3 pos1, float3 pos2) {
+    float3 c = pos1 - pos2;
+    return dot(c, c);
+}
+
 [shader("raygeneration")]
 void rayGen()
 {
@@ -194,7 +201,6 @@ void rayGen()
     }
     return;*/
 
-
     for (uint x = 0; x < dim1; x += sampling_res) {
         for (uint y = 0; y < dim2; y += sampling_res) {
 
@@ -228,16 +234,17 @@ void rayGen()
                     );
             }
 
-            bool voxelRayMarch = true;
+            float3 other_wpos = pos[other_c].xyz + posOffset;
+
+            //bool voxelRayMarch = distSquared(other_wpos, self_wpos) > 4.6f;//length(other_wpos - self_wpos) > 1.8f;
+            bool voxelRayMarch = y < 0;
+
             if (voxelRayMarch) {
                 if (rayMarchVisible(self_c, other_c)) {
                     setColor(self_c, other_c);
                 }
             }
             else {
-
-                float3 other_wpos = pos[other_c].xyz + posOffset;
-
                 RayDesc ray;
                 ray.Origin = self_wpos;
                 ray.Direction = normalize(other_wpos - self_wpos);
