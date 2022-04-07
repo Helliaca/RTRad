@@ -31,9 +31,16 @@ uint3 toVoxelSpace(float3 posW) {
     return (uint3)posW;
 }
 
+float max3(float3 v) {
+    return max(v.x, max(v.y, v.z));
+}
+
 float3 rayMarch(float3 start, float3 end) {
-    for (float i = 0; i < 1.5f; i+=1.0f / 128.0f) {
+    for (float i = 0; i < 2.25f; i+=1.0f / 256.0f) {
         float3 pos = start + i * (end - start);
+
+        if (max3(abs(pos)) > 1.0f) continue;
+
         if (voxTex[toVoxelSpace(pos)].a > 0) {
             return voxTex[toVoxelSpace(pos)].rgb;
         }

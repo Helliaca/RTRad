@@ -27,6 +27,8 @@ void gmain(triangle VSOut input[3], inout TriangleStream<GSOut> OutputStream)
         output.posW = input[i].posW;
         output.normalW = input[i].normalW;
 
+        output.posH = float4(output.posW.xyz, 1);
+
         if (dominantAxis == faceNormal.x) output.posH = float4(output.posW.zyx, 1);
         else if (dominantAxis == faceNormal.y) output.posH = float4(output.posW.xzy, 1);
         else if (dominantAxis == faceNormal.z) output.posH = float4(output.posW.xyz, 1);

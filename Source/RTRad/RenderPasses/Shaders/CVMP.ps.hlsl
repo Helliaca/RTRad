@@ -35,10 +35,10 @@ GBuffer pmain(GSOut vsOut)
     posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
     posW = posW * 63.999f; // [0, 64]
     uint3 samp = (uint3)posW;
-    voxTex[samp] = float4(vsOut.posW, 1);
+    voxTex[samp] = float4(0.5f * (vsOut.posW + float3(1, 1, 1)), 1);
 
     GBuffer o;
-    o.pos = float4(vsOut.posW, 1.f);
+    //o.pos = float4(0.5f*(vsOut.posW + float3(1,1,1)), 1.f);
     return o;
 }
 
