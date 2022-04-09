@@ -22,6 +22,7 @@
     <ClInclude Include="BasePipelineElement.h" />
     <ClInclude Include="BaseRenderPass.h" />
     <ClInclude Include="BaseRasterPass.h" />
+    <ClInclude Include="SettingsObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />

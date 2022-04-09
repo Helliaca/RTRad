@@ -3,13 +3,18 @@
 #include "Falcor.h"
 #include "../BaseRenderPass.h"
 #include "../common.h"
+#include "../SettingsObject.h"
 
 class RTRad;
 
 using namespace Falcor;
 
+struct CITPassSettings : public RR::BaseSettings {
+    bool enabled;
+};
 
-class CITPass : public RR::BaseRenderPass, public std::enable_shared_from_this<CITPass>
+
+class CITPass : public RR::BaseRenderPass, public std::enable_shared_from_this<CITPass>, public RR::SettingsObject<CITPassSettings>
 {
 public:
     using SharedPtr = std::shared_ptr<CITPass>;

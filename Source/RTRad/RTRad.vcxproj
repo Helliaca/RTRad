@@ -31,6 +31,7 @@
     <ClInclude Include="BaseRasterPass.h" />
     <ClInclude Include="BaseRenderPass.h" />
     <ClInclude Include="RTRad.h" />
+    <ClInclude Include="SettingsObject.h" />
     <ClInclude Include="Tools\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
