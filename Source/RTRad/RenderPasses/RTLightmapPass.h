@@ -5,13 +5,17 @@
 
 using namespace Falcor;
 
+enum class RTPassIntegral { AREA, HEMISPHERIC };
+
 struct RTLightmapPassSettings {
+    RTPassIntegral integral;
     int sampling_res;
     float texPerBatch;
     bool randomizeSample;
     bool useVisCache;
 
     RTLightmapPassSettings() {
+        integral = RTPassIntegral::AREA;
         sampling_res = 1;
         texPerBatch = 1.0f;
         randomizeSample = false;
@@ -30,6 +34,8 @@ public:
     void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
 
     bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
+
+    void onGuiRender(Gui* pGui, Gui::Window w);
 private:
     void load(const Scene::SharedPtr& mpScene);
 

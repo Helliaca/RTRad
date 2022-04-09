@@ -4,9 +4,9 @@
 using namespace Falcor;
 
 CITPass::CITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines)
-    : BaseGraphicsPass(progDesc, programDefines), mpScene(pScene)
+    : RTRadGraphicsPass(pScene, progDesc, programDefines)
 {
-    assert(pScene);
+    
 }
 
 CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)

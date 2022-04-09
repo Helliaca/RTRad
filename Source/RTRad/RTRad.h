@@ -16,7 +16,6 @@ public:
     // Scene loading and initialization
     void onLoad(RenderContext* pRenderContext) override;
     void loadScene(const std::string& filename);
-    void makeTextures();
 
     // Main Render function
     void onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& pTargetFbo) override;

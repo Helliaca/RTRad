@@ -17,6 +17,7 @@
     <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
     <ClCompile Include="RenderPasses\VITPass.cpp" />
     <ClCompile Include="RTRad.cpp" />
+    <ClCompile Include="RenderPasses\RTRadGraphicsPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
@@ -25,6 +26,7 @@
     <ClInclude Include="RenderPasses\RTLightmapPass.h" />
     <ClInclude Include="RenderPasses\VITPass.h" />
     <ClInclude Include="RTRad.h" />
+    <ClInclude Include="RenderPasses\RTRadGraphicsPass.h" />
     <ClInclude Include="Tools\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>

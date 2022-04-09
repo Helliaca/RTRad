@@ -237,7 +237,7 @@ void rayGen()
             float3 other_wpos = pos[other_c].xyz + posOffset;
 
             //bool voxelRayMarch = distSquared(other_wpos, self_wpos) > 4.6f;//length(other_wpos - self_wpos) > 1.8f;
-            bool voxelRayMarch = y < 0;
+            bool voxelRayMarch = false;
 
             if (voxelRayMarch) {
                 if (rayMarchVisible(self_c, other_c)) {

@@ -128,3 +128,15 @@ bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textur
         return false;
     }
 }
+
+void RTLightmapPass::onGuiRender(Gui* pGui, Gui::Window w)
+{
+    Falcor::Gui::DropdownList integralModes;
+
+    //uint32_t sres = rtlSettings.sampling_res;
+    integralModes.push_back({ (int)RTPassIntegral::AREA, "Area" });
+    integralModes.push_back({ (int)RTPassIntegral::HEMISPHERIC, "Hemispheric" });
+
+    //w.dropdown("Integral Mode", integralModes, sett);
+    
+}
