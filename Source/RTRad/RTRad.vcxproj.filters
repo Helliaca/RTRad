@@ -7,10 +7,9 @@
     <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
     <ClCompile Include="RenderPasses\VITPass.cpp" />
     <ClCompile Include="RenderPasses\CVMPass.cpp" />
-    <ClCompile Include="RenderPasses\RTRadGraphicsPass.cpp" />
-    <ClCompile Include="RR_BasePipelineElement.cpp" />
-    <ClCompile Include="RR_BaseRenderPass.cpp" />
-    <ClCompile Include="RR_BaseRasterPass.cpp" />
+    <ClCompile Include="BasePipelineElement.cpp" />
+    <ClCompile Include="BaseRenderPass.cpp" />
+    <ClCompile Include="BaseRasterPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RTRad.h" />
@@ -20,10 +19,9 @@
     <ClInclude Include="RenderPasses\VITPass.h" />
     <ClInclude Include="Tools\SceneLoader.h" />
     <ClInclude Include="RenderPasses\CVMPass.h" />
-    <ClInclude Include="RenderPasses\RTRadGraphicsPass.h" />
-    <ClInclude Include="RR_BasePipelineElement.h" />
-    <ClInclude Include="RR_BaseRenderPass.h" />
-    <ClInclude Include="RR_BaseRasterPass.h" />
+    <ClInclude Include="BasePipelineElement.h" />
+    <ClInclude Include="BaseRenderPass.h" />
+    <ClInclude Include="BaseRasterPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />

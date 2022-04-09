@@ -4,7 +4,7 @@
 using namespace Falcor;
 
 CITPass::CITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines)
-    : RR_BaseRenderPass(pScene, progDesc, programDefines)
+    : RR::BaseRenderPass(pScene, progDesc, programDefines)
 {
     
 }

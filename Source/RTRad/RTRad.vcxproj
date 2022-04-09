@@ -16,11 +16,10 @@
     <ClCompile Include="RenderPasses\CITPass.cpp" />
     <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
     <ClCompile Include="RenderPasses\VITPass.cpp" />
-    <ClCompile Include="RR_BasePipelineElement.cpp" />
-    <ClCompile Include="RR_BaseRasterPass.cpp" />
-    <ClCompile Include="RR_BaseRenderPass.cpp" />
+    <ClCompile Include="BasePipelineElement.cpp" />
+    <ClCompile Include="BaseRasterPass.cpp" />
+    <ClCompile Include="BaseRenderPass.cpp" />
     <ClCompile Include="RTRad.cpp" />
-    <ClCompile Include="RenderPasses\RTRadGraphicsPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
@@ -28,11 +27,10 @@
     <ClInclude Include="RenderPasses\CITPass.h" />
     <ClInclude Include="RenderPasses\RTLightmapPass.h" />
     <ClInclude Include="RenderPasses\VITPass.h" />
-    <ClInclude Include="RR_BasePipelineElement.h" />
-    <ClInclude Include="RR_BaseRasterPass.h" />
-    <ClInclude Include="RR_BaseRenderPass.h" />
+    <ClInclude Include="BasePipelineElement.h" />
+    <ClInclude Include="BaseRasterPass.h" />
+    <ClInclude Include="BaseRenderPass.h" />
     <ClInclude Include="RTRad.h" />
-    <ClInclude Include="RenderPasses\RTRadGraphicsPass.h" />
     <ClInclude Include="Tools\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
