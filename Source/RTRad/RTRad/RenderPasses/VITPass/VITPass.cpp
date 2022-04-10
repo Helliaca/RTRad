@@ -26,18 +26,64 @@ void VITPass::render(RenderContext* pContext, const TextureGroup tg)
 
 void VITPass::setPerFrameVars(const TextureGroup textureGroup)
 {
-    //TODO
-    vars->setTexture("disTex", textureGroup.posTex);
+    // Set output texture and interpolation-values
+    Texture::SharedPtr t;
+    settings.interp_min = float4(0.0f);
+    settings.interp_max = float4(1.0f);
 
-    /*if (settings.showTexRes) {
-        vars->setTexture("voxTex", disTex);
-    }*/
+    settings.showVoxelMap = false;
+    switch (settings.outputTexture)
+    {
+        case 0: {
+            t = textureGroup.posTex;
+            settings.interp_min = float4(scene->getSceneBounds().minPoint, 1.f);
+            settings.interp_max = float4(scene->getSceneBounds().maxPoint, 1.f);
+            break;
+        }
+        case 1: { t = textureGroup.nrmTex; break; }
+        case 2: { t = textureGroup.arfTex; break; }
+        case 3: { t = textureGroup.matTex; break; }
+        case 4: { t = textureGroup.lgiTex; break; }
+        case 5: { t = textureGroup.lgoTex; break; }
+        case 6: { t = nullptr; settings.showVoxelMap = true; break; }
+        default: { t = textureGroup.posTex; break; }
+    }
 
-    vars["PerFrameCB"]["applyToModel"] = settings.applyToModel;
-    vars["PerFrameCB2"]["showTexRes"] = settings.showTexRes;
+    if (!settings.showVoxelMap || textureGroup.voxTex == nullptr) {
+        vars->setTexture("outputTex", t);
+    }
+    else
+    {
+        vars->setTexture("voxTex", textureGroup.voxTex);
+    }
 
-    vars["PerFrameCB2"]["interp_min"] = settings.interp_min;
-    vars["PerFrameCB2"]["interp_max"] = settings.interp_max;
+    vars["PerFrameCB_vs"]["applyToModel"] = settings.applyToModel;
 
-    vars["PerFrameCB2"]["mipmapLevel"] = settings.mipmapLevel;
+    vars["PerFrameCB_ps"]["showTexRes"] = settings.showTexRes;
+    vars["PerFrameCB_ps"]["showVoxelMap"] = settings.showVoxelMap;
+    vars["PerFrameCB_ps"]["interp_min"] = settings.interp_min;
+    vars["PerFrameCB_ps"]["interp_max"] = settings.interp_max;
+    vars["PerFrameCB_ps"]["mipmapLevel"] = settings.mipmapLevel;
+}
+
+void VITPass::onRenderGui(Gui* Gui, Gui::Window* win)
+{
+    win->text("VITPass Settings");
+
+    Falcor::Gui::DropdownList lst;
+    lst.push_back({ 0, "posTex" });
+    lst.push_back({ 1, "nrmTex" });
+    lst.push_back({ 2, "arfTex" });
+    lst.push_back({ 3, "matTex" });
+    lst.push_back({ 4, "lgiTex" });
+    lst.push_back({ 5, "lgoTex" });
+    lst.push_back({ 6, "voxTex" });
+
+    win->dropdown("Output Texture", lst, settings.outputTexture);
+
+    win->checkbox("Apply To Model", settings.applyToModel);
+
+    win->checkbox("Show Tex Res", settings.showTexRes);
+
+    win->slider("Mipmaplevel", settings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
 }

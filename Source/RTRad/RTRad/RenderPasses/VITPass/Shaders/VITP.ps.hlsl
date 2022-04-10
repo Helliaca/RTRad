@@ -8,14 +8,15 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 
-cbuffer PerFrameCB2 {
+cbuffer PerFrameCB_ps {
     bool showTexRes;
+    bool showVoxelMap;
     float4 interp_min;
     float4 interp_max;
     int mipmapLevel;
 };
 
-Texture2D<float4> disTex;
+Texture2D<float4> outputTex;
 
 Texture3D<float4> voxTex;
 
@@ -53,36 +54,25 @@ float3 rayMarch(float3 start, float3 end) {
 float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 {
 
-    float4 col = disTex.SampleLevel(sampleWrap, vsOut.texC, mipmapLevel);
+    float4 col = outputTex.SampleLevel(sampleWrap, vsOut.texC, mipmapLevel);
 
     col = col / (interp_max - interp_min);
 
-    //Temporary ammendment: We show voxelmap data when showTexRes.
-    // get rid of this and re-enable the if below to go back to how it was before
     if (showTexRes) {
-        col.rgb = rayMarch(gScene.camera.getPosition(), vsOut.posW.xyz);
-
-        //float3 posW = vsOut.posW.xyz;
-        //posW = 0.5f*(posW + float3(1, 1, 1)); // [0,1]
-        //posW = posW * 63.9999f; // [0, 64]
-        //uint3 samp = (uint3)posW;
-        //col = voxTex[samp];
-
-        //Camera cam = gScene.camera;
-        //col.xyz = cam.getPosition();
-    }
-
-    /*if (showTexRes) {
         float dim1;
         float dim2;
-        disTex.GetDimensions(dim1, dim2);
+        outputTex.GetDimensions(dim1, dim2);
 
         vsOut.texC *= dim1 * 0.5f;
         vsOut.texC = fmod(vsOut.texC, 1.0);
 
         if(xor(vsOut.texC.x > 0.5f, vsOut.texC.y > 0.5f)) col = float4(1.0f);
         else col = float4(0.0f);
-    }*/
+    }
+
+    else if (showVoxelMap) {
+        col.rgb = rayMarch(gScene.camera.getPosition(), vsOut.posW.xyz);
+    }
 
     return col;
 }

@@ -7,9 +7,7 @@ void RTRad::onGuiRender(Gui* pGui)
     {
         Gui::Window w(pGui, "RTRad", { 300, 330 }, { 10, 80 });
 
-        w.checkbox("Apply To Model", vitPass->settings.applyToModel);
-
-        w.checkbox("Show Tex Res", vitPass->settings.showTexRes);
+        vitPass->onRenderGui(pGui, &w);
 
         w.checkbox("Randomize Sample", rtlSettings.randomizeSample);
 
@@ -24,8 +22,6 @@ void RTRad::onGuiRender(Gui* pGui)
         sreslst.push_back({ 16, "16x16" });
         w.dropdown("Sampling Res", sreslst, sres);
         rtlSettings.sampling_res = sres;
-
-        w.slider("Mipmaplevel", vitPass->settings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
 
         Falcor::Gui::DropdownList reslst;
         reslst.push_back({ 32, "32" });
@@ -57,16 +53,6 @@ void RTRad::onGuiRender(Gui* pGui)
         if (rtlSettings.useVisCache && !textureGroup.visBuf) {
             mResetInputTextures = true;
         }
-
-        Falcor::Gui::DropdownList lst;
-        lst.push_back({ 0, "posTex" });
-        lst.push_back({ 1, "nrmTex" });
-        lst.push_back({ 2, "arfTex" });
-        lst.push_back({ 3, "matTex" });
-        lst.push_back({ 4, "lgiTex" });
-        lst.push_back({ 5, "lgoTex" });
-
-        w.dropdown("Output Texture", lst, mOutputTex);
 
         w.text(mOutputString);
     }
@@ -161,29 +147,6 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
         {
             PROFILE("VITPass");
-            /*Texture::SharedPtr t;
-            vitSettings.interp_min = float4(0.0f);
-            vitSettings.interp_max = float4(1.0f);
-            switch (mOutputTex)
-            {
-            case 0: {
-                t = textureGroup.posTex;
-                vitSettings.interp_min = float4(mpScene->getSceneBounds().minPoint, 1.f);
-                vitSettings.interp_max = float4(mpScene->getSceneBounds().maxPoint, 1.f);
-                break;
-            }
-            case 1: { t = textureGroup.nrmTex; break; }
-            case 2: { t = textureGroup.arfTex; break; }
-            case 3: { t = textureGroup.matTex; break; }
-            case 4: { t = textureGroup.lgiTex; break; }
-            case 5: { t = textureGroup.lgoTex; break; }
-            default:
-                t = textureGroup.posTex;
-            }
-            if (vitSettings.showTexRes) {
-                t = textureGroup.voxTex;
-            }*/
-
             vitPass->render(pRenderContext, textureGroup);
         }
 

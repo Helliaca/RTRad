@@ -1,6 +1,6 @@
 import Scene.Raster;
 
-cbuffer PerFrameCB {
+cbuffer PerFrameCB_vs {
     bool applyToModel;
 };
 

@@ -4,9 +4,9 @@
 #include "common.h"
 
 namespace RR {
-    // NOTE TO SELF: In order to have this class as abstract, make all members virtual.
     class BasePipelineElement
     {
-
+    public:
+        virtual void onRenderGui(Gui* Gui, Gui::Window* win);
     };
 }

@@ -50,7 +50,6 @@ private:
     Camera::SharedPtr mpCamera;
 
     // Flow-Control variables
-    uint32_t mOutputTex = 5;
     bool mResetInputTextures = true;
     bool mResetVoxelMap = true;
     bool mMakePass = false;
