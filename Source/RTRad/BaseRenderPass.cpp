@@ -1,32 +1,55 @@
 #include "BaseRenderPass.h"
 
 namespace RR {
+    void BaseRenderPass::setScene(const Scene::SharedPtr& scene)
+    {
+        this->scene = scene;
+    }
+
+    void BaseRenderPass::render(RenderContext* pContext, const TextureGroup tg)
+    {
+        setPerFrameVars(tg);
+    }
+
+    void BaseRenderPass::setPerFrameVars(const TextureGroup textureGroup)
+    {
+    }
+
     BaseRenderPass::BaseRenderPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines)
     {
-        mpScene = pScene;
+        scene = pScene;
 
         auto pProg = GraphicsProgram::create(progDesc, programDefines);
 
-        mpState = GraphicsState::create();
-        mpState->setProgram(pProg);
+        state = GraphicsState::create();
+        state->setProgram(pProg);
 
-        mpVars = GraphicsVars::create(pProg.get());
+        vars = GraphicsVars::create(pProg.get());
     }
 
-    void BaseRenderPass::addDefine(const std::string& name, const std::string& value, bool updateVars)
+    BaseRenderPass::BaseRenderPass(const Scene::SharedPtr& pScene) : scene(pScene)
     {
-        mpState->getProgram()->addDefine(name, value);
-        if (updateVars) mpVars = GraphicsVars::create(mpState->getProgram().get());
     }
 
-    void BaseRenderPass::removeDefine(const std::string& name, bool updateVars)
+    void BaseRenderPass::UpdateVars()
     {
-        mpState->getProgram()->removeDefine(name);
-        if (updateVars) mpVars = GraphicsVars::create(mpState->getProgram().get());
+        vars = GraphicsVars::create(getProgram().get());
+    }
+
+    void BaseRenderPass::addProgramDefine(const std::string& name, const std::string& value, bool updateVars)
+    {
+        state->getProgram()->addDefine(name, value);
+        if (updateVars) UpdateVars();
+    }
+
+    void BaseRenderPass::removeProgramDefine(const std::string& name, bool updateVars)
+    {
+        state->getProgram()->removeDefine(name);
+        if (updateVars) UpdateVars();
     }
 
     void BaseRenderPass::setVars(const GraphicsVars::SharedPtr& pVars)
     {
-        mpVars = pVars ? pVars : GraphicsVars::create(mpState->getProgram().get());
+        vars = pVars ? pVars : GraphicsVars::create(state->getProgram().get());
     }
 }

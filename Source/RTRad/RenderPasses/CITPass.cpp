@@ -3,8 +3,8 @@
 
 using namespace Falcor;
 
-CITPass::CITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines)
-    : RR::BaseRenderPass(pScene, progDesc, programDefines)
+CITPass::CITPass(const Scene::SharedPtr& pScene)
+    : RR::BaseRasterPass(pScene, SHADERS_FOLDER"/CITP.vs.hlsl", SHADERS_FOLDER"/CITP.gs.hlsl", SHADERS_FOLDER"/CITP.ps.hlsl")
 {
     
 }
@@ -12,27 +12,14 @@ CITPass::CITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, 
 CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
 {
     if (pScene == nullptr) throw std::exception("Can't create a CITPass object without a scene");
-
-    Program::DefineList dl = Program::DefineList();
-    dl.add(pScene->getSceneDefines());
-
-    Falcor::Program::Desc desc;
-
-    desc.addShaderLibrary(SHADERS_FOLDER"/CITP.vs.hlsl");
-    desc.vsEntry("main");
-
-    desc.addShaderLibrary(SHADERS_FOLDER"/CITP.gs.hlsl");
-    desc.gsEntry("gmain");
-
-    desc.addShaderLibrary(SHADERS_FOLDER"/CITP.ps.hlsl");
-    desc.psEntry("pmain");
-
-    return SharedPtr(new CITPass(pScene, desc, dl));
+    return SharedPtr(new CITPass(pScene));
 }
 
-void CITPass::renderScene(RenderContext* pContext, const TextureGroup tg)
+void CITPass::render(RenderContext* pContext, const TextureGroup tg)
 {
-    // Create FBO
+    BaseRasterPass::render(pContext, tg);
+
+    // Create FBO. TODO: cache this?
     std::vector<Texture::SharedPtr> tfbo;
     tfbo.push_back(tg.posTex);
     tfbo.push_back(tg.nrmTex);
@@ -42,8 +29,11 @@ void CITPass::renderScene(RenderContext* pContext, const TextureGroup tg)
     tfbo.push_back(tg.lgoTex);
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
-    mpVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
+    state->setFbo(fbo);
+    scene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
+}
 
-    mpState->setFbo(fbo);
-    mpScene->rasterize(pContext, mpState.get(), mpVars.get(), RasterizerState::CullMode::None);
+void CITPass::setPerFrameVars(const TextureGroup textureGroup)
+{
+    vars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
 }

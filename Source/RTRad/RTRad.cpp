@@ -145,7 +145,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             if (mResetInputTextures) {
                 //makeTextures();
                 textureGroup = TextureGroup::makeTextures(mTextureRes, rtlSettings.useVisCache);
-                citPass->renderScene(pRenderContext, textureGroup);
+                citPass->render(pRenderContext, textureGroup);
                 textureGroup.generateLMips(pRenderContext);
                 mResetInputTextures = false;
             }

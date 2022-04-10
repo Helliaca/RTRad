@@ -1,6 +1,6 @@
 import Scene.Raster;
 
-VSOut main(VSIn vIn)
+VSOut vmain(VSIn vIn)
 {
     VSOut vOut = defaultVS(vIn);
 
