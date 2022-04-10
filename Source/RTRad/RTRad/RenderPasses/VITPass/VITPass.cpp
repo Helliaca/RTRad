@@ -17,7 +17,7 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
 
 void VITPass::render(RenderContext* pContext, const TextureGroup tg)
 {
-    BaseRasterPass::render(pContext, tg);
+    setPerFrameVars(tg);
 
     // We render into the target FBO
     state->setFbo(tg.outputFbo);

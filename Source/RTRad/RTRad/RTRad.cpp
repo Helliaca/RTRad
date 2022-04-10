@@ -140,7 +140,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         {
             PROFILE("CVMPass");
             if (mResetVoxelMap) {
-                cvmPass->renderScene(pRenderContext, textureGroup);
+                cvmPass->render(pRenderContext, textureGroup);
                 mResetVoxelMap = false;
             }
         }

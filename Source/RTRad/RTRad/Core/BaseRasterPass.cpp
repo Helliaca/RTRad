@@ -4,6 +4,7 @@ namespace RR {
     BaseRasterPass::BaseRasterPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines)
         : BaseRenderPass(pScene, progDesc, programDefines)
     {
+        rastState = RasterizerState::create(RasterizerState::Desc());
     }
 
     BaseRasterPass::BaseRasterPass(const Scene::SharedPtr& pScene, const std::string vertShader, const std::string fragShader)
@@ -34,6 +35,7 @@ namespace RR {
 
         // create state
         state = GraphicsState::create();
+        rastState = RasterizerState::create(RasterizerState::Desc());
         state->setProgram(pProg);
 
         // create vars

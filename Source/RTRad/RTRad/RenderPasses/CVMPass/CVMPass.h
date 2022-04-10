@@ -1,24 +1,33 @@
 #pragma once
 
 #include "Falcor.h"
+#include <RTRad/Core/BaseRasterPass.h>
 #include <RTRad/Core/common.h>
-
-class RTRad;
+#include <RTRad/Core/SettingsObject.h>
 
 using namespace Falcor;
 
-class CVMPass : public BaseGraphicsPass, public std::enable_shared_from_this<CVMPass>
+struct CVMPassSettings : RR::BaseSettings {
+
+};
+
+class CVMPass : public RR::BaseRasterPass, public RR::SettingsObject<CVMPassSettings>, public std::enable_shared_from_this<CVMPass>
 {
 public:
+    // Pointer
     using SharedPtr = std::shared_ptr<CVMPass>;
-
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
-    void renderScene(RenderContext* pContext, const TextureGroup tg);
+    // Render
+    void render(RenderContext* pContext, const TextureGroup tg) override;
+    void setPerFrameVars(const TextureGroup textureGroup) override;
 
-    const Scene::SharedPtr& getScene() const { return mpScene; }
 private:
-    CVMPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines);
-    Scene::SharedPtr mpScene;
+    CVMPass(const Scene::SharedPtr& pScene);
+
+    // Fbo
+    bool CurrentFboIsValid(const TextureGroup tg);
+    void MakeFbo(const TextureGroup tg);
+    Fbo::SharedPtr voxFbo;
 };
 

@@ -16,7 +16,7 @@ CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
 
 void CITPass::render(RenderContext* pContext, const TextureGroup tg)
 {
-    BaseRasterPass::render(pContext, tg);
+    setPerFrameVars(tg);
 
     // Create FBO. TODO: cache this?
     std::vector<Texture::SharedPtr> tfbo;
