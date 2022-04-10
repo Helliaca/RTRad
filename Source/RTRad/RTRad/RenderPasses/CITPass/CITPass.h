@@ -5,8 +5,6 @@
 #include <RTRad/Core/common.h>
 #include <RTRad/Core/SettingsObject.h>
 
-class RTRad;
-
 using namespace Falcor;
 
 struct CITPassSettings : public RR::BaseSettings {

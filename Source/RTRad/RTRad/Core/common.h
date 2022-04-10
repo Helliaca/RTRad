@@ -41,14 +41,18 @@ struct TextureGroup {
 
     Buffer::SharedPtr visBuf;
 
+    Fbo::SharedPtr outputFbo;
+
     void generateLMips(RenderContext* pRenderContext) {
         lgiTex->generateMips(pRenderContext);
         lgoTex->generateMips(pRenderContext);
     }
 
-    static TextureGroup makeTextures(int res, bool useVisCache)
+    static TextureGroup makeTextures(int res, bool useVisCache, Fbo::SharedPtr outputFbo)
     {
         TextureGroup ret;
+
+        ret.outputFbo = outputFbo;
 
         if (useVisCache) {
             /*

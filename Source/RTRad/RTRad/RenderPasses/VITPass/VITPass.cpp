@@ -3,8 +3,8 @@
 
 using namespace Falcor;
 
-VITPass::VITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines)
-    : BaseGraphicsPass(progDesc, programDefines), mpScene(pScene)
+VITPass::VITPass(const Scene::SharedPtr& pScene)
+    : RR::BaseRasterPass(pScene, VITPASS_DIR_SHADERS"/VITP.vs.hlsl", VITPASS_DIR_SHADERS"/VITP.ps.hlsl")
 {
     assert(pScene);
 }
@@ -12,27 +12,26 @@ VITPass::VITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, 
 VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
 {
     if (pScene == nullptr) throw std::exception("Can't create a VITPass object without a scene");
-
-    Program::DefineList dl = Program::DefineList();
-    dl.add(pScene->getSceneDefines());
-
-    Falcor::Program::Desc desc;
-    desc.addShaderLibrary(VITPASS_DIR_SHADERS"/VITP.vs.hlsl");
-    desc.vsEntry("vmain");
-    desc.addShaderLibrary(VITPASS_DIR_SHADERS"/VITP.ps.hlsl");
-    desc.psEntry("pmain");
-
-    return SharedPtr(new VITPass(pScene, desc, dl));
+    return SharedPtr(new VITPass(pScene));
 }
 
-void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const VITPassSettings settings)
+void VITPass::render(RenderContext* pContext, const TextureGroup tg)
 {
-    Falcor::GraphicsVars::SharedPtr vars = Falcor::GraphicsVars::create(this->getProgram().get());
-    vars->setTexture("disTex", disTex);
+    BaseRasterPass::render(pContext, tg);
 
-    if (settings.showTexRes) {
+    // We render into the target FBO
+    state->setFbo(tg.outputFbo);
+    scene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
+}
+
+void VITPass::setPerFrameVars(const TextureGroup textureGroup)
+{
+    //TODO
+    vars->setTexture("disTex", textureGroup.posTex);
+
+    /*if (settings.showTexRes) {
         vars->setTexture("voxTex", disTex);
-    }
+    }*/
 
     vars["PerFrameCB"]["applyToModel"] = settings.applyToModel;
     vars["PerFrameCB2"]["showTexRes"] = settings.showTexRes;
@@ -41,21 +40,4 @@ void VITPass::renderScene(RenderContext* pContext, const Texture::SharedPtr disT
     vars["PerFrameCB2"]["interp_max"] = settings.interp_max;
 
     vars["PerFrameCB2"]["mipmapLevel"] = settings.mipmapLevel;
-
-    //vars["PerFrameCB2"]["interp_min"] = float4(mpScene->getSceneBounds().minPoint, 1.f);
-    //vars["PerFrameCB2"]["interp_max"] = float4(mpScene->getSceneBounds().maxPoint, 1.f);
-
-    // This code sets the sampling from bi-linear to closest.
-    /*
-    Sampler::Desc desc;
-    desc.setFilterMode(Sampler::Filter::Point, Sampler::Filter::Point, Sampler::Filter::Point);
-
-    Sampler::SharedPtr sampler = Sampler::create(desc);
-    vars->setSampler("sampleWrap", sampler);
-    */
-
-    this->setVars(vars);
-
-    mpState->setFbo(outputFbo);
-    mpScene->rasterize(pContext, mpState.get(), mpVars.get(), RasterizerState::CullMode::None);
 }

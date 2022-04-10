@@ -7,9 +7,9 @@ void RTRad::onGuiRender(Gui* pGui)
     {
         Gui::Window w(pGui, "RTRad", { 300, 330 }, { 10, 80 });
 
-        w.checkbox("Apply To Model", vitSettings.applyToModel);
+        w.checkbox("Apply To Model", vitPass->settings.applyToModel);
 
-        w.checkbox("Show Tex Res", vitSettings.showTexRes);
+        w.checkbox("Show Tex Res", vitPass->settings.showTexRes);
 
         w.checkbox("Randomize Sample", rtlSettings.randomizeSample);
 
@@ -25,7 +25,7 @@ void RTRad::onGuiRender(Gui* pGui)
         w.dropdown("Sampling Res", sreslst, sres);
         rtlSettings.sampling_res = sres;
 
-        w.slider("Mipmaplevel", vitSettings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
+        w.slider("Mipmaplevel", vitPass->settings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
 
         Falcor::Gui::DropdownList reslst;
         reslst.push_back({ 32, "32" });
@@ -144,7 +144,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             PROFILE("CITPass");
             if (mResetInputTextures) {
                 //makeTextures();
-                textureGroup = TextureGroup::makeTextures(mTextureRes, rtlSettings.useVisCache);
+                textureGroup = TextureGroup::makeTextures(mTextureRes, rtlSettings.useVisCache, pTargetFbo);
                 citPass->render(pRenderContext, textureGroup);
                 textureGroup.generateLMips(pRenderContext);
                 mResetInputTextures = false;
@@ -161,7 +161,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
         {
             PROFILE("VITPass");
-            Texture::SharedPtr t;
+            /*Texture::SharedPtr t;
             vitSettings.interp_min = float4(0.0f);
             vitSettings.interp_max = float4(1.0f);
             switch (mOutputTex)
@@ -182,9 +182,9 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             }
             if (vitSettings.showTexRes) {
                 t = textureGroup.voxTex;
-            }
+            }*/
 
-            vitPass->renderScene(pRenderContext, t, pTargetFbo, vitSettings);
+            vitPass->render(pRenderContext, textureGroup);
         }
 
         float gt = Profiler::instance().getEvent("/onFrameRender/RTRad")->getGpuTime();

@@ -36,7 +36,6 @@ private:
     CITPass::SharedPtr citPass;
 
     VITPass::SharedPtr vitPass;
-    VITPassSettings vitSettings;
 
     RTLightmapPass::SharedPtr rtlPass;
     RTLightmapPassSettings rtlSettings;

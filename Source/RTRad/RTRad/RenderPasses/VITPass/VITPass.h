@@ -1,9 +1,13 @@
 #pragma once
+
 #include "Falcor.h"
+#include <RTRad/Core/BaseRasterPass.h>
+#include <RTRad/Core/common.h>
+#include <RTRad/Core/SettingsObject.h>
 
 using namespace Falcor;
 
-struct VITPassSettings {
+struct VITPassSettings : RR::BaseSettings {
     bool applyToModel;
     bool showTexRes;
     float4 interp_min;
@@ -19,18 +23,15 @@ struct VITPassSettings {
     }
 };
 
-class VITPass : public BaseGraphicsPass, public std::enable_shared_from_this<VITPass>
+class VITPass : public RR::BaseRasterPass, public RR::SettingsObject<VITPassSettings>, public std::enable_shared_from_this<VITPass>
 {
 public:
     using SharedPtr = std::shared_ptr<VITPass>;
-
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
-    void renderScene(RenderContext* pContext, const Texture::SharedPtr disTex, const Falcor::Fbo::SharedPtr outputFbo, const VITPassSettings settings);
-
-    const Scene::SharedPtr& getScene() const { return mpScene; }
+    void render(RenderContext* pContext, const TextureGroup tg) override;
+    void setPerFrameVars(const TextureGroup textureGroup) override;
 private:
-    VITPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines);
-    Scene::SharedPtr mpScene;
+    VITPass(const Scene::SharedPtr& pScene);
 };
 
