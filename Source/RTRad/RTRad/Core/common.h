@@ -4,7 +4,10 @@
 
 using namespace Falcor;
 
-#define SHADERS_FOLDER "RTRad/RenderPasses/Shaders"
+#define SHADERS_FOLDER "RTRad/RTRad/RenderPasses/Shaders"
+
+#define CITPASS_H <RTRad/RenderPasses/CITPass/CITPass.h>
+#define CITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/CITPass/Shaders"
 
 #define SCENES_FOLDER "../Source/RTRad/Scenes"
 

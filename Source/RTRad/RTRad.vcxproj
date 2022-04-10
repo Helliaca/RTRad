@@ -11,27 +11,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RenderPasses\CVMPass.cpp" />
+    <ClCompile Include="RTRad\RenderPasses\CVMPass.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="RenderPasses\CITPass.cpp" />
-    <ClCompile Include="RenderPasses\RTLightmapPass.cpp" />
-    <ClCompile Include="RenderPasses\VITPass.cpp" />
-    <ClCompile Include="BasePipelineElement.cpp" />
-    <ClCompile Include="BaseRasterPass.cpp" />
-    <ClCompile Include="BaseRenderPass.cpp" />
-    <ClCompile Include="RTRad.cpp" />
+    <ClCompile Include="RTRad\RenderPasses\CITPass\CITPass.cpp" />
+    <ClCompile Include="RTRad\RenderPasses\RTLightmapPass.cpp" />
+    <ClCompile Include="RTRad\RenderPasses\VITPass.cpp" />
+    <ClCompile Include="RTRad\Core\BasePipelineElement.cpp" />
+    <ClCompile Include="RTRad\Core\BaseRasterPass.cpp" />
+    <ClCompile Include="RTRad\Core\BaseRenderPass.cpp" />
+    <ClCompile Include="RTRad\RTRad.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h" />
-    <ClInclude Include="RenderPasses\CVMPass.h" />
-    <ClInclude Include="RenderPasses\CITPass.h" />
-    <ClInclude Include="RenderPasses\RTLightmapPass.h" />
-    <ClInclude Include="RenderPasses\VITPass.h" />
-    <ClInclude Include="BasePipelineElement.h" />
-    <ClInclude Include="BaseRasterPass.h" />
-    <ClInclude Include="BaseRenderPass.h" />
-    <ClInclude Include="RTRad.h" />
-    <ClInclude Include="SettingsObject.h" />
+    <ClInclude Include="RTRad\Core\common.h" />
+    <ClInclude Include="RTRad\RenderPasses\CVMPass.h" />
+    <ClInclude Include="RTRad\RenderPasses\CITPass\CITPass.h" />
+    <ClInclude Include="RTRad\RenderPasses\RTLightmapPass.h" />
+    <ClInclude Include="RTRad\RenderPasses\VITPass.h" />
+    <ClInclude Include="RTRad\Core\BasePipelineElement.h" />
+    <ClInclude Include="RTRad\Core\BaseRasterPass.h" />
+    <ClInclude Include="RTRad\Core\BaseRenderPass.h" />
+    <ClInclude Include="RTRad\RTRad.h" />
+    <ClInclude Include="RTRad\Core\SettingsObject.h" />
     <ClInclude Include="Tools\SceneLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,17 +40,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ShaderSource Include="RenderPasses\Shaders\CITP.gs.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\CITP.ps.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\CITP.vs.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\CVMP.gs.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\CVMP.ps.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\CVMP.vs.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\FixSeams.ps.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\rayTracedLightMap2.rt.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\VITP.ps.hlsl" />
-    <ShaderSource Include="RenderPasses\Shaders\VITP.vs.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.vs.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\CVMP.gs.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\CVMP.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\CVMP.vs.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\FixSeams.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\rayTracedLightMap2.rt.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\VITP.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\Shaders\VITP.vs.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F1FBBEE3-74B4-4F58-BDC8-314D154EFF80}</ProjectGuid>
@@ -99,7 +99,7 @@
       <PreprocessorDefinitions>WIN32;SOLUTION_DIR=R"($(SolutionDir))";_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(FALCOR_CORE_DIRECTORY)\Falcor;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\deps\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman;$(FALCOR_CORE_DIRECTORY)\Externals;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nvapi;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\vulkansdk\Include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\python\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\WinPixEventRuntime\Include\WinPixEventRuntime;$(FALCOR_CORE_DIRECTORY)\Externals;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nanovdb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(FALCOR_CORE_DIRECTORY)\Falcor;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\deps\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman;$(FALCOR_CORE_DIRECTORY)\Externals;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nvapi;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\vulkansdk\Include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\python\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\WinPixEventRuntime\Include\WinPixEventRuntime;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nanovdb\include;$(FALCOR_CORE_DIRECTORY)\RTRad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -1,6 +1,10 @@
 #pragma once
 #include "Falcor.h"
-#include "RenderPasses/CITPass.h"
+
+#include <RTRad/Core/common.h>
+
+#include CITPASS_H
+
 #include "RenderPasses/VITPass.h"
 #include "RenderPasses/RTLightmapPass.h"
 #include "RenderPasses/CVMPass.h"

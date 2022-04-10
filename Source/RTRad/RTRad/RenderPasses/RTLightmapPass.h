@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Falcor.h"
-#include "../common.h"
+#include "../core/common.h"
 
 using namespace Falcor;
 

@@ -1,5 +1,5 @@
 #include "VITPass.h"
-#include "../common.h"
+#include <RTRad/Core/common.h>
 
 using namespace Falcor;
 

@@ -1,10 +1,10 @@
 #include "CITPass.h"
-#include "../RTRad.h"
+#include <RTRad/RTRad.h>
 
 using namespace Falcor;
 
 CITPass::CITPass(const Scene::SharedPtr& pScene)
-    : RR::BaseRasterPass(pScene, SHADERS_FOLDER"/CITP.vs.hlsl", SHADERS_FOLDER"/CITP.gs.hlsl", SHADERS_FOLDER"/CITP.ps.hlsl")
+    : RR::BaseRasterPass(pScene, CITPASS_DIR_SHADERS"/CITP.vs.hlsl", CITPASS_DIR_SHADERS"/CITP.gs.hlsl", CITPASS_DIR_SHADERS"/CITP.ps.hlsl")
 {
     
 }

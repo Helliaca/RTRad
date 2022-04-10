@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Falcor.h"
-#include "../BaseRasterPass.h"
-#include "../common.h"
-#include "../SettingsObject.h"
+#include <RTRad/Core/BaseRasterPass.h>
+#include <RTRad/Core/common.h>
+#include <RTRad/Core/SettingsObject.h>
 
 class RTRad;
 
