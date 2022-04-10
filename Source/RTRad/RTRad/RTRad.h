@@ -55,6 +55,7 @@ private:
     bool mMakePass = false;
     bool mMakeBatch = false;
     uint32_t mTextureRes = 64;
+    uint32_t mVoxelRes = 64;
 
     // Output/Measurement variables
     std::string mOutputString = " -- Empty -- ";

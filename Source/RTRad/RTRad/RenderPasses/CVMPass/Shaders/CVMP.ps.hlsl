@@ -7,6 +7,7 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
+import RTRad.Voxel;
 
 struct GBuffer
 {
@@ -27,18 +28,19 @@ struct GSOut
 
 cbuffer PerFrameCB {
     float3 posOffset;
+    float3 minPos;
+    float3 maxPos;
 };
 
 GBuffer pmain(GSOut vsOut)
 {
-    float3 posW = vsOut.posW.xyz;
-    posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
-    posW = posW * 63.49f; // [0, 64]
-    uint3 samp = (uint3)posW;
+    float voxRes;
+    voxTex.GetDimensions(voxRes, voxRes, voxRes);
+
+    uint3 samp = worldSpaceToVoxelSpace(vsOut.posW.xyz, minPos, maxPos, voxRes);
     voxTex[samp] = float4(0.5f * (vsOut.posW + float3(1, 1, 1)), 1);
 
     GBuffer o;
-    //o.pos = float4(0,0,0,99.f);
     return o;
 }
 

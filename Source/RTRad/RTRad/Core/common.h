@@ -51,7 +51,7 @@ struct TextureGroup {
         lgoTex->generateMips(pRenderContext);
     }
 
-    static TextureGroup makeTextures(int res, bool useVisCache, Fbo::SharedPtr outputFbo)
+    static TextureGroup makeTextures(int voxres, int res, bool useVisCache, Fbo::SharedPtr outputFbo)
     {
         TextureGroup ret;
 
@@ -82,7 +82,7 @@ struct TextureGroup {
             ret.visBuf = NULL;
         }
 
-        ret.voxTex = Texture::create3D(64, 64, 64, ResourceFormat::RGBA16Float, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        ret.voxTex = Texture::create3D(voxres, voxres, voxres, ResourceFormat::RGBA16Float, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
 
         ret.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
         ret.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);

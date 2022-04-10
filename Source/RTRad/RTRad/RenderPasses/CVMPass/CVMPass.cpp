@@ -48,6 +48,8 @@ void CVMPass::setPerFrameVars(const TextureGroup textureGroup)
 {
     // Unused
     vars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
+    vars["PerFrameCB"]["minPos"] = scene->getSceneBounds().minPoint;
+    vars["PerFrameCB"]["maxPos"] = scene->getSceneBounds().maxPoint;
 
     vars->setTexture("voxTex", textureGroup.voxTex);
 }

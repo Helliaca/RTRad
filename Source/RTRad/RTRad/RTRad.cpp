@@ -38,6 +38,16 @@ void RTRad::onGuiRender(Gui* pGui)
         uint32_t prevRes = mTextureRes;
         w.dropdown("Lightmap Resolution", reslst, mTextureRes);
 
+        Falcor::Gui::DropdownList vreslst;
+        vreslst.push_back({ 32, "32" });
+        vreslst.push_back({ 64, "64" });
+        vreslst.push_back({ 128, "128" });
+        vreslst.push_back({ 256, "256" });
+
+        uint32_t vprevRes = mVoxelRes;
+
+        w.dropdown("VoxelMap Resolution", vreslst, mVoxelRes);
+
         w.slider("Tex per Batch", rtlSettings.texPerBatch, 0.01f, 1.0f);
 
         mResetInputTextures = w.button("Reset Input Textures");
@@ -48,6 +58,11 @@ void RTRad::onGuiRender(Gui* pGui)
 
         if (mTextureRes != prevRes) {
             mResetInputTextures = true;
+        }
+
+        if (mVoxelRes != vprevRes) {
+            mResetInputTextures = true;
+            mResetVoxelMap = true;
         }
 
         if (rtlSettings.useVisCache && !textureGroup.visBuf) {
@@ -130,7 +145,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             PROFILE("CITPass");
             if (mResetInputTextures) {
                 //makeTextures();
-                textureGroup = TextureGroup::makeTextures(mTextureRes, rtlSettings.useVisCache, pTargetFbo);
+                textureGroup = TextureGroup::makeTextures(mVoxelRes, mTextureRes, rtlSettings.useVisCache, pTargetFbo);
                 citPass->render(pRenderContext, textureGroup);
                 textureGroup.generateLMips(pRenderContext);
                 mResetInputTextures = false;
