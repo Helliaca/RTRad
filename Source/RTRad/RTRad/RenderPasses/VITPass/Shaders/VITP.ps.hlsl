@@ -7,6 +7,8 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
+import RTRad.Voxel;
+
 
 cbuffer PerFrameCB_ps {
     bool showTexRes;
@@ -14,6 +16,9 @@ cbuffer PerFrameCB_ps {
     float4 interp_min;
     float4 interp_max;
     int mipmapLevel;
+
+    float3 minPos;
+    float3 maxPos;
 };
 
 Texture2D<float4> outputTex;
@@ -26,30 +31,23 @@ bool xor(bool a, bool b) {
     return (a && !b) || (!a && b);
 }
 
-uint3 toVoxelSpace(float3 posW) {
-    posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
-    posW = posW * 63.49f; // [0, 64]
-    return (uint3)posW;
-}
-
-float max3(float3 v) {
-    return max(v.x, max(v.y, v.z));
-}
-
-float3 rayMarch(float3 start, float3 end) {
-    for (float i = 0; i < 2.25f; i+=1.0f / 256.0f) {
-        float3 pos = start + i * (end - start);
-
-        if (max3(abs(pos)) > 1.0f) continue;
-
-        uint3 voxPos = toVoxelSpace(pos);
-
-        if (voxTex[voxPos].a > 0) {
-            return voxTex[voxPos].rgb;
-        }
-    }
-    return float3(0, 0, 0);
-}
+//float3 rayMarch(float3 start, float3 end) {
+//    float voxRes;
+//    voxTex.GetDimensions(voxRes, voxRes, voxRes);
+//
+//    for (float i = 0; i < 2.25f; i+=1.0f / 256.0f) {
+//        float3 pos = start + i * (end - start);
+//
+//        if (max3(abs(pos)) > 1.0f) continue;
+//
+//        uint3 voxPos = worldSpaceToVoxelSpace(pos, minPos, maxPos, voxRes);
+//
+//        if (voxTex[voxPos].a > 0) {
+//            return voxTex[voxPos].rgb;
+//        }
+//    }
+//    return float3(0, 0, 0);
+//}
 
 float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 {
@@ -71,7 +69,7 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
     }
 
     else if (showVoxelMap) {
-        col.rgb = rayMarch(gScene.camera.getPosition(), vsOut.posW.xyz);
+        col.rgb = rayMarch(gScene.camera.getPosition(), vsOut.posW.xyz, minPos, maxPos, voxTex);
     }
 
     return col;

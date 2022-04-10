@@ -11,7 +11,7 @@ import RTRad.Voxel;
 
 struct GBuffer
 {
-    float4 pos    : SV_Target0;
+
 };
 
 RWTexture3D<float4> voxTex;

@@ -64,6 +64,9 @@ void VITPass::setPerFrameVars(const TextureGroup textureGroup)
     vars["PerFrameCB_ps"]["interp_min"] = settings.interp_min;
     vars["PerFrameCB_ps"]["interp_max"] = settings.interp_max;
     vars["PerFrameCB_ps"]["mipmapLevel"] = settings.mipmapLevel;
+
+    vars["PerFrameCB_ps"]["minPos"] = scene->getSceneBounds().minPoint;
+    vars["PerFrameCB_ps"]["maxPos"] = scene->getSceneBounds().maxPoint;
 }
 
 void VITPass::onRenderGui(Gui* Gui, Gui::Window* win)
