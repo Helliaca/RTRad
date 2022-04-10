@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Falcor.h"
-#include "../core/common.h"
+#include <RTRad/Core/common.h>
 
 class RTRad;
 

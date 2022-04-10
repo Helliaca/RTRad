@@ -12,6 +12,9 @@ using namespace Falcor;
 #define VITPASS_H <RTRad/RenderPasses/VITPass/VITPass.h>
 #define VITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/VITPass/Shaders"
 
+#define CVMPASS_H <RTRad/RenderPasses/CVMPass/CVMPass.h>
+#define CVMPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/CVMPass/Shaders"
+
 #define SETTINGSOBJ_H <RTRad/Core/SettingsObject.h>
 
 #define SCENES_FOLDER "../Source/RTRad/Scenes"

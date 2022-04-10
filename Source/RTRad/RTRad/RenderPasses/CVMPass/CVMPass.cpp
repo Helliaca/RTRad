@@ -1,5 +1,4 @@
 #include "CVMPass.h"
-#include "../RTRad.h"
 
 using namespace Falcor;
 
@@ -18,13 +17,13 @@ CVMPass::SharedPtr CVMPass::create(const Scene::SharedPtr& pScene)
 
     Falcor::Program::Desc desc;
 
-    desc.addShaderLibrary(SHADERS_FOLDER"/CVMP.vs.hlsl");
-    desc.vsEntry("main");
+    desc.addShaderLibrary(CVMPASS_DIR_SHADERS"/CVMP.vs.hlsl");
+    desc.vsEntry("vmain");
 
-    desc.addShaderLibrary(SHADERS_FOLDER"/CVMP.gs.hlsl");
+    desc.addShaderLibrary(CVMPASS_DIR_SHADERS"/CVMP.gs.hlsl");
     desc.gsEntry("gmain");
 
-    desc.addShaderLibrary(SHADERS_FOLDER"/CVMP.ps.hlsl");
+    desc.addShaderLibrary(CVMPASS_DIR_SHADERS"/CVMP.ps.hlsl");
     desc.psEntry("pmain");
 
     return SharedPtr(new CVMPass(pScene, desc, dl));
