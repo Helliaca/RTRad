@@ -4,8 +4,8 @@
 #include <RTRad/Core/common.h>
 
 #include CITPASS_H
+#include VITPASS_H
 
-#include "RenderPasses/VITPass.h"
 #include "RenderPasses/RTLightmapPass.h"
 #include "RenderPasses/CVMPass.h"
 

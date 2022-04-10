@@ -5,7 +5,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RTRad\RenderPasses\CITPass\CITPass.cpp" />
     <ClCompile Include="RTRad\RenderPasses\RTLightmapPass.cpp" />
-    <ClCompile Include="RTRad\RenderPasses\VITPass.cpp" />
+    <ClCompile Include="RTRad\RenderPasses\VITPass\VITPass.cpp" />
     <ClCompile Include="RTRad\RenderPasses\CVMPass.cpp" />
     <ClCompile Include="RTRad\Core\BasePipelineElement.cpp" />
     <ClCompile Include="RTRad\Core\BaseRenderPass.cpp" />
@@ -16,7 +16,7 @@
     <ClInclude Include="RTRad\Core\common.h" />
     <ClInclude Include="RTRad\RenderPasses\CITPass\CITPass.h" />
     <ClInclude Include="RTRad\RenderPasses\RTLightmapPass.h" />
-    <ClInclude Include="RTRad\RenderPasses\VITPass.h" />
+    <ClInclude Include="RTRad\RenderPasses\VITPass\VITPass.h" />
     <ClInclude Include="Tools\SceneLoader.h" />
     <ClInclude Include="RTRad\RenderPasses\CVMPass.h" />
     <ClInclude Include="RTRad\Core\BasePipelineElement.h" />
@@ -30,8 +30,8 @@
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.vs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\Shaders\FixSeams.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\Shaders\rayTracedLightMap.rt.hlsl" />
-    <ShaderSource Include="RTRad\RenderPasses\Shaders\VITP.ps.hlsl" />
-    <ShaderSource Include="RTRad\RenderPasses\Shaders\VITP.vs.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.vs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\Shaders\rayTracedLightMap2.rt.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\Shaders\CVMP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\Shaders\CVMP.ps.hlsl" />

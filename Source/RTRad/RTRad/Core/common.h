@@ -9,6 +9,11 @@ using namespace Falcor;
 #define CITPASS_H <RTRad/RenderPasses/CITPass/CITPass.h>
 #define CITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/CITPass/Shaders"
 
+#define VITPASS_H <RTRad/RenderPasses/VITPass/VITPass.h>
+#define VITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/VITPass/Shaders"
+
+#define SETTINGSOBJ_H <RTRad/Core/SettingsObject.h>
+
 #define SCENES_FOLDER "../Source/RTRad/Scenes"
 
 #define DEFAULT_SCENE SCENES_FOLDER"/CornellLucy.pyscene"

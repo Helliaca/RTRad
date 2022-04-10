@@ -17,9 +17,9 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
     dl.add(pScene->getSceneDefines());
 
     Falcor::Program::Desc desc;
-    desc.addShaderLibrary(SHADERS_FOLDER"/VITP.vs.hlsl");
-    desc.vsEntry("main");
-    desc.addShaderLibrary(SHADERS_FOLDER"/VITP.ps.hlsl");
+    desc.addShaderLibrary(VITPASS_DIR_SHADERS"/VITP.vs.hlsl");
+    desc.vsEntry("vmain");
+    desc.addShaderLibrary(VITPASS_DIR_SHADERS"/VITP.ps.hlsl");
     desc.psEntry("pmain");
 
     return SharedPtr(new VITPass(pScene, desc, dl));

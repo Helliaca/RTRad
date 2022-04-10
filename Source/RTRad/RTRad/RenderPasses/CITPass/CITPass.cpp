@@ -1,5 +1,4 @@
 #include "CITPass.h"
-#include <RTRad/RTRad.h>
 
 using namespace Falcor;
 
