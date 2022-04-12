@@ -1,5 +1,11 @@
 import Scene.Raster;
 
+cbuffer PerFrameCB_vs {
+    float3 posOffset;
+    float3 minPos;
+    float3 maxPos;
+};
+
 VSOut vmain(VSIn vIn)
 {
     VSOut vOut;
@@ -12,7 +18,9 @@ VSOut vmain(VSIn vIn)
 
     vOut.posW = posW;
 
-    vOut.posH = float4(posW, 1.f);// mul(float4(posW, 1.f), gScene.camera.data.viewMat);
+    float3 posN = (posW.xyz - minPos) / (maxPos - minPos);  // [0, 1]
+    posN = (2.0f * posN) - float3(1, 1, 1);                 // [-1, 1] (clippos)
+    vOut.posH = float4(posN, 1);
 
     vOut.instanceID = instanceID;
     vOut.materialID = gScene.getMaterialID(instanceID);
@@ -31,7 +39,7 @@ VSOut vmain(VSIn vIn)
         prevPos = gScene.prevVertices[dynamicVertexIndex].position;
     }
     float3 prevPosW = mul(float4(prevPos, 1.f), gScene.getPrevWorldMatrix(instanceID)).xyz;
-    vOut.prevPosH = mul(float4(prevPosW, 1.f), gScene.camera.data.prevViewProjMatNoJitter);
+    vOut.prevPosH = vOut.posH;
 
     return vOut;
 

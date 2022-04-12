@@ -11,6 +11,8 @@ CVMPass::CVMPass(const Scene::SharedPtr& pScene)
     desc.setDepthClamp(true);
     desc.setLineAntiAliasing(false);
     desc.setFrontCounterCW(true);
+    desc.setScissorTest(false);
+    //desc.setForcedSampleCount(1); // What does this do?
     rastState = RasterizerState::create(desc);
 }
 
@@ -50,6 +52,10 @@ void CVMPass::setPerFrameVars(const TextureGroup textureGroup)
     vars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
     vars["PerFrameCB"]["minPos"] = scene->getSceneBounds().minPoint;
     vars["PerFrameCB"]["maxPos"] = scene->getSceneBounds().maxPoint;
+
+    vars["PerFrameCB_vs"]["posOffset"] = scene->getSceneBounds().minPoint;
+    vars["PerFrameCB_vs"]["minPos"] = scene->getSceneBounds().minPoint;
+    vars["PerFrameCB_vs"]["maxPos"] = scene->getSceneBounds().maxPoint;
 
     vars->setTexture("voxTex", textureGroup.voxTex);
 }
