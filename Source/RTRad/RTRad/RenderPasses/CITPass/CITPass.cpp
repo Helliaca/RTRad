@@ -5,7 +5,17 @@ using namespace Falcor;
 CITPass::CITPass(const Scene::SharedPtr& pScene)
     : RR::BaseRasterPass(pScene, CITPASS_DIR_SHADERS"/CITP.vs.hlsl", CITPASS_DIR_SHADERS"/CITP.gs.hlsl", CITPASS_DIR_SHADERS"/CITP.ps.hlsl")
 {
-    
+    RasterizerState::Desc desc;
+
+    //TODO: Test this. Atm it causes weird behaviour. Why?
+    //desc.setConservativeRasterization(true);  // Maybe better as true?
+    desc.setCullMode(RasterizerState::CullMode::None);
+    //desc.setDepthClamp(true);
+    //desc.setLineAntiAliasing(false);
+    //desc.setFrontCounterCW(true);
+    //desc.setScissorTest(false);
+    //desc.setForcedSampleCount(1); // What does this do?
+    rastState = RasterizerState::create(desc);
 }
 
 CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
@@ -29,7 +39,7 @@ void CITPass::render(RenderContext* pContext, const TextureGroup tg)
     Fbo::SharedPtr fbo = Fbo::create(tfbo);
 
     state->setFbo(fbo);
-    scene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
+    scene->rasterize(pContext, state.get(), vars.get(), rastState, rastState);
 }
 
 void CITPass::setPerFrameVars(const TextureGroup textureGroup)
