@@ -24,8 +24,8 @@ public:
 
     static SharedPtr create(const Scene::SharedPtr& mpScene);
 
-    void setPerFrameVars_(const TextureGroup textureGroup);
-    void renderRT(RenderContext* pContext, const TextureGroup textureGroup);
+    void setPerFrameVars(const TextureGroup textureGroup) override;
+    void render(RenderContext* pContext, const TextureGroup textureGroup) override;
 
     bool runBatch(RenderContext* pContext, const TextureGroup textureGroup);
 

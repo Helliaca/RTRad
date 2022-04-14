@@ -43,7 +43,7 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 static int c = 0;
 static int passNum = 0;
 
-void RTLightmapPass::setPerFrameVars_(const TextureGroup textureGroup)
+void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
 {
     PROFILE("setPerFrameVars");
     rtVars->setTexture("pos", textureGroup.posTex);
@@ -66,7 +66,7 @@ void RTLightmapPass::setPerFrameVars_(const TextureGroup textureGroup)
     }
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup)
+void RTLightmapPass::render(RenderContext* pContext, const TextureGroup textureGroup)
 {
     PROFILE("renderRT");
 
@@ -76,7 +76,7 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    setPerFrameVars_(textureGroup);
+    setPerFrameVars(textureGroup);
 
     //int rays_per_texel = ligTex->getWidth() * ligTex->getHeight(); //TODO: we do not consider the LOD-cheat here
     //int texels_amount = max_rays_per_batch / rays_per_texel;
@@ -95,7 +95,7 @@ bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textur
 {
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    renderRT(pContext, textureGroup);
+    render(pContext, textureGroup);
 
     if (row_offset >= xres) {
         passNum++;
