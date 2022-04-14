@@ -22,9 +22,9 @@ void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
     RtProgram::Desc rtProgDesc;
 
 #if HEMISPHERIC_SAMPLING
-    rtProgDesc.addShaderLibrary(SHADERS_FOLDER"/rayTracedLightMap2.rt.hlsl");
+    rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap2.rt.hlsl");
 #else
-    rtProgDesc.addShaderLibrary(SHADERS_FOLDER"/rayTracedLightMap.rt.hlsl");
+    rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap.rt.hlsl");
 #endif
 
     rtProgDesc.addDefines(mpScene->getSceneDefines());

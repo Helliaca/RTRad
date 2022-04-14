@@ -6,8 +6,7 @@
 #include CITPASS_H
 #include VITPASS_H
 #include CVMPASS_H
-
-#include "RenderPasses/RTLightmapPass.h"
+#include RTLPASS_H
 
 using namespace Falcor;
 
