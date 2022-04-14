@@ -117,16 +117,25 @@ bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textur
     }
 }
 
-void RTLightmapPass::onGuiRender(Gui* pGui, Gui::Window w)
+void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 {
-    Falcor::Gui::DropdownList integralModes;
+    win->text("RTLPass Settings");
 
-    //uint32_t sres = rtlSettings.sampling_res;
-    integralModes.push_back({ (int)RTPassIntegral::AREA, "Area" });
-    integralModes.push_back({ (int)RTPassIntegral::HEMISPHERIC, "Hemispheric" });
+    win->checkbox("Randomize Sample", settings.randomizeSample);
 
-    //w.dropdown("Integral Mode", integralModes, sett);
-    
+    win->checkbox("Use VisCache", settings.useVisCache);
+
+    Falcor::Gui::DropdownList sreslst;
+    uint32_t sres = settings.sampling_res;
+    sreslst.push_back({ 1, "1x1" });
+    sreslst.push_back({ 2, "2x2" });
+    sreslst.push_back({ 4, "4x4" });
+    sreslst.push_back({ 8, "8x8" });
+    sreslst.push_back({ 16, "16x16" });
+    win->dropdown("Sampling Res", sreslst, sres);
+    settings.sampling_res = sres;
+
+    win->slider("Tex per Batch", settings.texPerBatch, 0.01f, 1.0f);
 }
 
 RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)

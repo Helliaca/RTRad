@@ -9,19 +9,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
         vitPass->onRenderGui(pGui, &w);
 
-        w.checkbox("Randomize Sample", rtlPass->settings.randomizeSample);
-
-        w.checkbox("Use VisCache", rtlPass->settings.useVisCache);
-
-        Falcor::Gui::DropdownList sreslst;
-        uint32_t sres = rtlPass->settings.sampling_res;
-        sreslst.push_back({ 1, "1x1" });
-        sreslst.push_back({ 2, "2x2" });
-        sreslst.push_back({ 4, "4x4" });
-        sreslst.push_back({ 8, "8x8" });
-        sreslst.push_back({ 16, "16x16" });
-        w.dropdown("Sampling Res", sreslst, sres);
-        rtlPass->settings.sampling_res = sres;
+        rtlPass->onRenderGui(pGui, &w);
 
         Falcor::Gui::DropdownList reslst;
         reslst.push_back({ 32, "32" });
@@ -47,8 +35,6 @@ void RTRad::onGuiRender(Gui* pGui)
         uint32_t vprevRes = mVoxelRes;
 
         w.dropdown("VoxelMap Resolution", vreslst, mVoxelRes);
-
-        w.slider("Tex per Batch", rtlPass->settings.texPerBatch, 0.01f, 1.0f);
 
         mResetInputTextures = w.button("Reset Input Textures");
 

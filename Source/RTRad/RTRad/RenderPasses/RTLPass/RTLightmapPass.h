@@ -29,7 +29,7 @@ public:
 
     bool runBatch(RenderContext* pContext, const TextureGroup textureGroup);
 
-    void onGuiRender(Gui* pGui, Gui::Window w);
+    void onRenderGui(Gui* Gui, Gui::Window* win) override;
 
 private:
     RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable);
