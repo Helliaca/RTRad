@@ -43,7 +43,7 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 static int c = 0;
 static int passNum = 0;
 
-void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLightmapPassSettings settings)
+void RTLightmapPass::setPerFrameVars_(const TextureGroup textureGroup)
 {
     PROFILE("setPerFrameVars");
     rtVars->setTexture("pos", textureGroup.posTex);
@@ -66,7 +66,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLi
     }
 }
 
-void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings)
+void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textureGroup)
 {
     PROFILE("renderRT");
 
@@ -76,7 +76,7 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    setPerFrameVars(textureGroup, settings);
+    setPerFrameVars_(textureGroup);
 
     //int rays_per_texel = ligTex->getWidth() * ligTex->getHeight(); //TODO: we do not consider the LOD-cheat here
     //int texels_amount = max_rays_per_batch / rays_per_texel;
@@ -91,11 +91,11 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
     row_offset += (int)(settings.texPerBatch * xres);
 }
 
-bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings)
+bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup)
 {
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    renderRT(pContext, textureGroup, settings);
+    renderRT(pContext, textureGroup);
 
     if (row_offset >= xres) {
         passNum++;
@@ -135,4 +135,10 @@ RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::
     row_offset = 0;
 
     fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", scene->getSceneDefines());
+
+    settings.randomizeSample = false;
+    settings.sampling_res = 1;
+    settings.texPerBatch = 0.5f;
+    settings.useVisCache = false;
+    settings.integral = RTPassIntegral::AREA;
 }

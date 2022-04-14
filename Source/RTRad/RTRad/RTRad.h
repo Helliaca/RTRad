@@ -37,7 +37,6 @@ private:
     VITPass::SharedPtr vitPass;
 
     RTLightmapPass::SharedPtr rtlPass;
-    RTLightmapPassSettings rtlSettings;
 
     CVMPass::SharedPtr cvmPass;
 

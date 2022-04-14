@@ -9,33 +9,25 @@ using namespace Falcor;
 
 enum class RTPassIntegral { AREA, HEMISPHERIC };
 
-struct RTLightmapPassSettings {
+struct RTLPassSettings : public RR::BaseSettings {
     RTPassIntegral integral;
     int sampling_res;
     float texPerBatch;
     bool randomizeSample;
     bool useVisCache;
-
-    RTLightmapPassSettings() {
-        integral = RTPassIntegral::AREA;
-        sampling_res = 1;
-        texPerBatch = 1.0f;
-        randomizeSample = false;
-        useVisCache = false;
-    }
 };
 
-class RTLightmapPass : public RR::BaseRaytracePass, public std::enable_shared_from_this<RTLightmapPass>
+class RTLightmapPass : public RR::BaseRaytracePass, public RR::SettingsObject<RTLPassSettings>, public std::enable_shared_from_this<RTLightmapPass>
 {
 public:
     using SharedPtr = std::shared_ptr<RTLightmapPass>;
 
     static SharedPtr create(const Scene::SharedPtr& mpScene);
 
-    void setPerFrameVars(const TextureGroup textureGroup, const RTLightmapPassSettings settings);
-    void renderRT(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
+    void setPerFrameVars_(const TextureGroup textureGroup);
+    void renderRT(RenderContext* pContext, const TextureGroup textureGroup);
 
-    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
+    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup);
 
     void onGuiRender(Gui* pGui, Gui::Window w);
 
