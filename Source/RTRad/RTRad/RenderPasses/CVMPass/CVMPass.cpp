@@ -6,7 +6,7 @@ CVMPass::CVMPass(const Scene::SharedPtr& pScene)
     : RR::BaseRasterPass(pScene, CVMPASS_DIR_SHADERS"/CVMP.vs.hlsl", CVMPASS_DIR_SHADERS"/CVMP.gs.hlsl", CVMPASS_DIR_SHADERS"/CVMP.ps.hlsl")
 {
     RasterizerState::Desc desc;
-    desc.setConservativeRasterization(false);  // Maybe better as true?
+    desc.setConservativeRasterization(true);  // Maybe better as true?
     desc.setCullMode(RasterizerState::CullMode::None);
     desc.setDepthClamp(true);
     desc.setLineAntiAliasing(false);
