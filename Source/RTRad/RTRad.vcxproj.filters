@@ -10,6 +10,7 @@
     <ClCompile Include="RTRad\Core\BasePipelineElement.cpp" />
     <ClCompile Include="RTRad\Core\BaseRenderPass.cpp" />
     <ClCompile Include="RTRad\Core\BaseRasterPass.cpp" />
+    <ClCompile Include="RTRad\Core\BaseRaytracePass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RTRad\RTRad.h" />
@@ -23,6 +24,7 @@
     <ClInclude Include="RTRad\Core\BaseRenderPass.h" />
     <ClInclude Include="RTRad\Core\BaseRasterPass.h" />
     <ClInclude Include="RTRad\Core\SettingsObject.h" />
+    <ClInclude Include="RTRad\Core\BaseRaytracePass.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />

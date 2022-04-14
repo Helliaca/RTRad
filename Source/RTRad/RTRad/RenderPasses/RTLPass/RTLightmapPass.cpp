@@ -4,13 +4,6 @@ using namespace Falcor;
 
 RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene)
 {
-    RTLightmapPass* pass = new RTLightmapPass();
-    pass->load(mpScene);
-    return SharedPtr(pass);
-}
-
-void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
-{
     // We'll now create a raytracing program. To do that we need to setup two things:
     // - A program description (RtProgram::Desc). This holds all shader entry points, compiler flags, macro defintions, etc.
     // - A binding table (RtBindingTable). This maps shaders to geometries in the scene, and sets the ray generation and miss shaders.
@@ -42,14 +35,9 @@ void RTLightmapPass::load(const Scene::SharedPtr& mpScene)
     sbt->setHitGroupByType(0, mpScene, Scene::GeometryType::TriangleMesh, primary);
 #endif
 
-    mpRaytraceProgram = RtProgram::create(rtProgDesc);
-    mpRtVars = RtProgramVars::create(mpRaytraceProgram, sbt);
+    RTLightmapPass* pass = new RTLightmapPass(mpScene, rtProgDesc, sbt);
 
-    this->mpScene = mpScene;
-
-    row_offset = 0;
-
-    fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", mpScene->getSceneDefines());
+    return SharedPtr(pass);
 }
 
 static int c = 0;
@@ -58,23 +46,23 @@ static int passNum = 0;
 void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup, const RTLightmapPassSettings settings)
 {
     PROFILE("setPerFrameVars");
-    mpRtVars->setTexture("pos", textureGroup.posTex);
-    mpRtVars->setTexture("nrm", textureGroup.nrmTex);
-    mpRtVars->setTexture("arf", textureGroup.arfTex);
-    mpRtVars->setTexture("mat", textureGroup.matTex);
-    mpRtVars->setTexture("lig", textureGroup.lgiTex);
-    mpRtVars->setTexture("lig2", textureGroup.lgoTex);
-    mpRtVars->setTexture("voxTex", textureGroup.voxTex);
-    mpRtVars["PerFrameCB"]["row_offset"] = row_offset;
-    mpRtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
-    mpRtVars["PerFrameCB"]["posOffset"] = mpScene->getSceneBounds().minPoint;
-    mpRtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
-    mpRtVars["PerFrameCB"]["texRes"] = textureGroup.lgiTex.get()->getWidth();
-    mpRtVars["PerFrameCB"]["passNum"] = passNum;
-    mpRtVars["PerFrameCB"]["useVisCache"] = settings.useVisCache;
+    rtVars->setTexture("pos", textureGroup.posTex);
+    rtVars->setTexture("nrm", textureGroup.nrmTex);
+    rtVars->setTexture("arf", textureGroup.arfTex);
+    rtVars->setTexture("mat", textureGroup.matTex);
+    rtVars->setTexture("lig", textureGroup.lgiTex);
+    rtVars->setTexture("lig2", textureGroup.lgoTex);
+    rtVars->setTexture("voxTex", textureGroup.voxTex);
+    rtVars["PerFrameCB"]["row_offset"] = row_offset;
+    rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
+    rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
+    rtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
+    rtVars["PerFrameCB"]["texRes"] = textureGroup.lgiTex.get()->getWidth();
+    rtVars["PerFrameCB"]["passNum"] = passNum;
+    rtVars["PerFrameCB"]["useVisCache"] = settings.useVisCache;
 
     if (settings.useVisCache) {
-        mpRtVars["vis"] = textureGroup.visBuf;
+        rtVars["vis"] = textureGroup.visBuf;
     }
 }
 
@@ -82,8 +70,8 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
 {
     PROFILE("renderRT");
 
-    assert(mpScene);
-    if (is_set(mpScene->getUpdates(), Scene::UpdateFlags::GeometryChanged))
+    assert(scene);
+    if (is_set(scene->getUpdates(), Scene::UpdateFlags::GeometryChanged))
     {
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
@@ -98,7 +86,7 @@ void RTLightmapPass::renderRT(RenderContext* pContext, const TextureGroup textur
     //batch_counter++;
     //row_offset = 
 
-    mpScene->raytrace(pContext, mpRaytraceProgram.get(), mpRtVars, uint3(settings.texPerBatch*xres, yres, 1));
+    scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(settings.texPerBatch*xres, yres, 1));
 
     row_offset += (int)(settings.texPerBatch * xres);
 }
@@ -139,4 +127,12 @@ void RTLightmapPass::onGuiRender(Gui* pGui, Gui::Window w)
 
     //w.dropdown("Integral Mode", integralModes, sett);
     
+}
+
+RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)
+    : BaseRaytracePass(pScene, programDesc, bindingTable)
+{
+    row_offset = 0;
+
+    fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", scene->getSceneDefines());
 }

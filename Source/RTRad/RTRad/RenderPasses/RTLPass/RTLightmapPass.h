@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Falcor.h"
+#include <RTRad/Core/BaseRaytracePass.h>
 #include <RTRad/Core/common.h>
+#include <RTRad/Core/SettingsObject.h>
 
 using namespace Falcor;
 
@@ -23,7 +25,7 @@ struct RTLightmapPassSettings {
     }
 };
 
-class RTLightmapPass : public std::enable_shared_from_this<RTLightmapPass>
+class RTLightmapPass : public RR::BaseRaytracePass, public std::enable_shared_from_this<RTLightmapPass>
 {
 public:
     using SharedPtr = std::shared_ptr<RTLightmapPass>;
@@ -36,15 +38,11 @@ public:
     bool runBatch(RenderContext* pContext, const TextureGroup textureGroup, const RTLightmapPassSettings settings);
 
     void onGuiRender(Gui* pGui, Gui::Window w);
-private:
-    void load(const Scene::SharedPtr& mpScene);
 
-    RtProgram::SharedPtr mpRaytraceProgram = nullptr;
-    RtProgramVars::SharedPtr mpRtVars;
+private:
+    RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable);
 
     FullScreenPass::SharedPtr fsp;
-
-    Scene::SharedPtr mpScene;
 
     int batch_counter;
 

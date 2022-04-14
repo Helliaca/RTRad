@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="RTRad\Core\BaseRaytracePass.cpp" />
     <ClCompile Include="RTRad\RenderPasses\CVMPass\CVMPass.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="RTRad\RenderPasses\CITPass\CITPass.cpp" />
@@ -22,6 +23,7 @@
     <ClCompile Include="RTRad\RTRad.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="RTRad\Core\BaseRaytracePass.h" />
     <ClInclude Include="RTRad\Core\common.h" />
     <ClInclude Include="RTRad\RenderPasses\CVMPass\CVMPass.h" />
     <ClInclude Include="RTRad\RenderPasses\CITPass\CITPass.h" />
