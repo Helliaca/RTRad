@@ -8,6 +8,7 @@
 using namespace Falcor;
 
 struct VITPassSettings : RR::BaseSettings {
+    bool maskGeometry;
     bool applyToModel;
     bool showTexRes;
     bool showVoxelMap;
@@ -17,6 +18,7 @@ struct VITPassSettings : RR::BaseSettings {
     uint32_t outputTexture;
 
     VITPassSettings() {
+        maskGeometry = true;
         applyToModel = true;
         showTexRes = false;
         showVoxelMap = false;
@@ -43,5 +45,6 @@ public:
 
 private:
     VITPass(const Scene::SharedPtr& pScene);
+    Scene::SharedPtr UVPlaneScene;
 };
 

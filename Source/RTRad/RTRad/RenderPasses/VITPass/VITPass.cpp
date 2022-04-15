@@ -1,5 +1,6 @@
 #include "VITPass.h"
 #include <RTRad/Core/common.h>
+#include "Tools/SceneLoader.h"
 
 using namespace Falcor;
 
@@ -7,6 +8,8 @@ VITPass::VITPass(const Scene::SharedPtr& pScene)
     : RR::BaseRasterPass(pScene, VITPASS_DIR_SHADERS"/VITP.vs.hlsl", VITPASS_DIR_SHADERS"/VITP.ps.hlsl")
 {
     assert(pScene);
+    Camera::SharedPtr cam = scene->getCamera();
+    SceneLoader::LoadSceneFromFile(VIRPASS_DIR_UVPLANESCENE, UVPlaneScene, cam);
 }
 
 VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
@@ -21,7 +24,13 @@ void VITPass::render(RenderContext* pContext, const TextureGroup tg)
 
     // We render into the target FBO
     state->setFbo(tg.outputFbo);
-    scene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
+    if (settings.maskGeometry) {
+        scene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
+    }
+    else
+    {
+        UVPlaneScene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
+    }
 }
 
 void VITPass::setPerFrameVars(const TextureGroup textureGroup)
@@ -85,6 +94,14 @@ void VITPass::onRenderGui(Gui* Gui, Gui::Window* win)
     win->dropdown("Output Texture", lst, settings.outputTexture);
 
     win->checkbox("Apply To Model", settings.applyToModel);
+
+    if (!settings.applyToModel) {
+        win->checkbox("Mask Geometry", settings.maskGeometry);
+    }
+    else
+    {
+        settings.maskGeometry = true;
+    }
 
     win->checkbox("Show Tex Res", settings.showTexRes);
 
