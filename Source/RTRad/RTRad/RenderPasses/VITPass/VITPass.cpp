@@ -9,7 +9,7 @@ VITPass::VITPass(const Scene::SharedPtr& pScene)
 {
     assert(pScene);
     Camera::SharedPtr cam = scene->getCamera();
-    SceneLoader::LoadSceneFromFile(VIRPASS_DIR_UVPLANESCENE, UVPlaneScene, cam);
+    SceneLoader::LoadSceneFromFile(VITPASS_DIR_UVPLANESCENE, UVPlaneScene, cam);
 }
 
 VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)

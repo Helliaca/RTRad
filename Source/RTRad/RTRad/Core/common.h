@@ -11,7 +11,7 @@ using namespace Falcor;
 
 #define VITPASS_H <RTRad/RenderPasses/VITPass/VITPass.h>
 #define VITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/VITPass/Shaders"
-#define VIRPASS_DIR_UVPLANESCENE "../Source/RTRad/RTRad/RenderPasses/VITPass/UVPlaneScene/UVPlane.pyscene"
+#define VITPASS_DIR_UVPLANESCENE "../Source/RTRad/RTRad/RenderPasses/VITPass/UVPlaneScene/UVPlane.pyscene"
 
 #define CVMPASS_H <RTRad/RenderPasses/CVMPass/CVMPass.h>
 #define CVMPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/CVMPass/Shaders"
