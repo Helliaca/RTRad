@@ -15,6 +15,22 @@ struct RTLPassSettings : public RR::BaseSettings {
     float texPerBatch;
     bool randomizeSample;
     bool useVisCache;
+
+    bool batchComplete;
+    int row_offset;
+    int passNum;
+
+    RTLPassSettings() {
+        integral = RTPassIntegral::AREA;
+        sampling_res = 1;
+        texPerBatch = 0.5f;
+        randomizeSample = false;
+        useVisCache = false;
+
+        batchComplete = false;
+        row_offset = 0;
+        passNum = 0;
+    }
 };
 
 class RTLightmapPass : public RR::BaseRaytracePass, public RR::SettingsObject<RTLPassSettings>, public std::enable_shared_from_this<RTLightmapPass>
@@ -27,17 +43,11 @@ public:
     void setPerFrameVars(const TextureGroup textureGroup) override;
     void render(RenderContext* pContext, const TextureGroup textureGroup) override;
 
-    bool runBatch(RenderContext* pContext, const TextureGroup textureGroup);
-
     void onRenderGui(Gui* Gui, Gui::Window* win) override;
 
 private:
     RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable);
 
     FullScreenPass::SharedPtr fsp;
-
-    int batch_counter;
-
-    int row_offset;
 };
 

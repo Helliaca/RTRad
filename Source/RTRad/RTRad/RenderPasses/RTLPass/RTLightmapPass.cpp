@@ -40,9 +40,6 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     return SharedPtr(pass);
 }
 
-static int c = 0;
-static int passNum = 0;
-
 void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
 {
     PROFILE("setPerFrameVars");
@@ -53,12 +50,12 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
     rtVars->setTexture("lig", textureGroup.lgiTex);
     rtVars->setTexture("lig2", textureGroup.lgoTex);
     rtVars->setTexture("voxTex", textureGroup.voxTex);
-    rtVars["PerFrameCB"]["row_offset"] = row_offset;
+    rtVars["PerFrameCB"]["row_offset"] = settings.row_offset;
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
     rtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
     rtVars["PerFrameCB"]["texRes"] = textureGroup.lgiTex.get()->getWidth();
-    rtVars["PerFrameCB"]["passNum"] = passNum;
+    rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useVisCache"] = settings.useVisCache;
 
     if (settings.useVisCache) {
@@ -70,50 +67,34 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup textureG
 {
     PROFILE("renderRT");
 
+    // Scene changes
     assert(scene);
     if (is_set(scene->getUpdates(), Scene::UpdateFlags::GeometryChanged))
     {
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
+    // Set vars
     setPerFrameVars(textureGroup);
 
-    //int rays_per_texel = ligTex->getWidth() * ligTex->getHeight(); //TODO: we do not consider the LOD-cheat here
-    //int texels_amount = max_rays_per_batch / rays_per_texel;
-
+    // Get resolution
     int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
 
-    //batch_counter++;
-    //row_offset = 
-
+    // Run this batch
     scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(settings.texPerBatch*xres, yres, 1));
 
-    row_offset += (int)(settings.texPerBatch * xres);
-}
+    // set row_offset
+    settings.row_offset += (int)(settings.texPerBatch * xres);
 
-bool RTLightmapPass::runBatch(RenderContext* pContext, const TextureGroup textureGroup)
-{
-    int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
-
-    render(pContext, textureGroup);
-
-    if (row_offset >= xres) {
-        passNum++;
-        row_offset = 0;
-
-        //std::vector<Texture::SharedPtr> tfbo;
-        //tfbo.push_back(textureGroup.lgoTex);
-        //Fbo::SharedPtr fbo = Fbo::create(tfbo);
-
-        //fsp->getVars()->setTexture("ligTex", textureGroup.lgoTex);
-
-        //fsp->execute(pContext, fbo, true);
-
-
-        return true;
+    // batch finished ?
+    if (settings.row_offset >= xres) {
+        settings.row_offset = 0;
+        settings.passNum++;
+        settings.batchComplete = true;
     }
-    else {
-        return false;
+    else
+    {
+        settings.batchComplete = false;
     }
 }
 
@@ -141,13 +122,5 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)
     : BaseRaytracePass(pScene, programDesc, bindingTable)
 {
-    row_offset = 0;
-
-    fsp = FullScreenPass::create(SHADERS_FOLDER"/FixSeams.ps.hlsl", scene->getSceneDefines());
-
-    settings.randomizeSample = false;
-    settings.sampling_res = 1;
-    settings.texPerBatch = 0.5f;
-    settings.useVisCache = false;
-    settings.integral = RTPassIntegral::AREA;
+    settings = RTLPassSettings::RTLPassSettings();
 }

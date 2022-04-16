@@ -48,7 +48,6 @@
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.vs.hlsl" />
-    <ShaderSource Include="RTRad\RenderPasses\Shaders\FixSeams.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\rayTracedLightMap.rt.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\rayTracedLightMap2.rt.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.ps.hlsl" />

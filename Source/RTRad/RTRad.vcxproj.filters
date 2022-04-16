@@ -30,7 +30,6 @@
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.vs.hlsl" />
-    <ShaderSource Include="RTRad\RenderPasses\Shaders\FixSeams.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\rayTracedLightMap.rt.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.vs.hlsl" />

@@ -38,8 +38,6 @@ void RTRad::onGuiRender(Gui* pGui)
 
         mResetInputTextures = w.button("Reset Input Textures");
 
-        mResetVoxelMap = w.button("Reset Voxel Map");
-
         mMakePass = w.button("Make Pass");
 
         if (mTextureRes != prevRes) {
@@ -48,7 +46,6 @@ void RTRad::onGuiRender(Gui* pGui)
 
         if (mVoxelRes != vprevRes) {
             mResetInputTextures = true;
-            mResetVoxelMap = true;
         }
 
         if (rtlPass->settings.useVisCache && !textureGroup.visBuf) {
@@ -122,7 +119,8 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             }
 
             if (mMakeBatch) {
-                mMakeBatch = !rtlPass->runBatch(pRenderContext, textureGroup);
+                rtlPass->render(pRenderContext, textureGroup);
+                mMakeBatch = !rtlPass->settings.batchComplete;
                 textureGroup.generateLMips(pRenderContext);
             }
         }
@@ -130,19 +128,19 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         {
             PROFILE("CITPass");
             if (mResetInputTextures) {
-                //makeTextures();
+                // make new texgroup
                 textureGroup = TextureGroup::makeTextures(mVoxelRes, mTextureRes, rtlPass->settings.useVisCache, pTargetFbo);
-                citPass->render(pRenderContext, textureGroup);
-                textureGroup.generateLMips(pRenderContext);
-                mResetInputTextures = false;
-            }
-        }
 
-        {
-            PROFILE("CVMPass");
-            if (mResetVoxelMap) {
+                // Create input data
+                citPass->render(pRenderContext, textureGroup);
+
+                // Create voxelmap (if used)
                 cvmPass->render(pRenderContext, textureGroup);
-                mResetVoxelMap = false;
+
+                // Create mipmaps
+                textureGroup.generateLMips(pRenderContext);
+
+                mResetInputTextures = false;
             }
         }
 
