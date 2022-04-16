@@ -17,7 +17,6 @@
     <ClCompile Include="RTRad\RenderPasses\CITPass\CITPass.cpp" />
     <ClCompile Include="RTRad\RenderPasses\RTLPass\RTLightmapPass.cpp" />
     <ClCompile Include="RTRad\RenderPasses\VITPass\VITPass.cpp" />
-    <ClCompile Include="RTRad\Core\BasePipelineElement.cpp" />
     <ClCompile Include="RTRad\Core\BaseRasterPass.cpp" />
     <ClCompile Include="RTRad\Core\BaseRenderPass.cpp" />
     <ClCompile Include="RTRad\RTRad.cpp" />

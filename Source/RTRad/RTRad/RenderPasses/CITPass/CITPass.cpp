@@ -46,3 +46,7 @@ void CITPass::setPerFrameVars(const TextureGroup textureGroup)
 {
     vars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
 }
+
+void CITPass::onRenderGui(Gui* Gui, Gui::Window* win)
+{
+}

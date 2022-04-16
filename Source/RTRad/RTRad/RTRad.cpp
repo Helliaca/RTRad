@@ -86,6 +86,8 @@ void RTRad::loadScene(const std::string& filename)
 
     cvmPass = CVMPass::create(mpScene);
 
+    textureGroup.settings = TextureGroupSettings();
+
     mResetInputTextures = true;
 }
 
@@ -130,7 +132,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             PROFILE("CITPass");
             if (mResetInputTextures) {
                 // make new texgroup
-                textureGroup = TextureGroup::makeTextures(mVoxelRes, mTextureRes, rtlPass->settings.useVisCache, pTargetFbo);
+                textureGroup.RemakeTextures(pTargetFbo);
 
                 // Create input data
                 citPass->render(pRenderContext, textureGroup);

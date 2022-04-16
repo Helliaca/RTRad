@@ -22,6 +22,8 @@ public:
     void render(RenderContext* pContext, const TextureGroup tg) override;
     void setPerFrameVars(const TextureGroup textureGroup) override;
 
+    void onRenderGui(Gui* Gui, Gui::Window* win) override;
+
 private:
     CVMPass(const Scene::SharedPtr& pScene);
 

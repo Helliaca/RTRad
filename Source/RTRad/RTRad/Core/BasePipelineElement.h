@@ -5,9 +5,9 @@
 using namespace Falcor;
 
 namespace RR {
-    class BasePipelineElement
+    struct BasePipelineElement
     {
     public:
-        virtual void onRenderGui(Gui* Gui, Gui::Window* win);
+        virtual void onRenderGui(Gui* Gui, Gui::Window* win) = 0;
     };
 }

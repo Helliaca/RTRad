@@ -59,3 +59,7 @@ void CVMPass::setPerFrameVars(const TextureGroup textureGroup)
 
     vars->setTexture("voxTex", textureGroup.voxTex);
 }
+
+void CVMPass::onRenderGui(Gui* Gui, Gui::Window* win)
+{
+}

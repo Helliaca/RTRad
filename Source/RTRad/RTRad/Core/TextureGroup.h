@@ -2,11 +2,31 @@
 
 
 #include "Falcor.h"
+#include "BasePipelineElement.h"
 #include <RTRad/Core/common.h>
+#include SETTINGSOBJ_H
 
 using namespace Falcor;
 
-struct TextureGroup {
+struct TextureGroupSettings : public RR::BaseSettings {
+    bool useMipmaps;
+    bool useVoxelmap;
+    bool useViscache;
+
+    int voxelResolution;
+    int textureResolution;
+
+    TextureGroupSettings() {
+        useMipmaps = true;
+        useVoxelmap = true;
+        useViscache = false;
+
+        voxelResolution = 64;
+        textureResolution = 64;
+    }
+};
+
+struct TextureGroup : public RR::SettingsStruct<TextureGroupSettings>, public RR::BasePipelineElement {
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
     Texture::SharedPtr arfTex;
@@ -20,18 +40,20 @@ struct TextureGroup {
 
     Fbo::SharedPtr outputFbo;
 
+    void onRenderGui(Gui* Gui, Gui::Window* win) override {
+
+    }
+
     void generateLMips(RenderContext* pRenderContext) {
         lgiTex->generateMips(pRenderContext);
         lgoTex->generateMips(pRenderContext);
     }
 
-    static TextureGroup makeTextures(int voxres, int res, bool useVisCache, Fbo::SharedPtr outputFbo)
+    void RemakeTextures(Fbo::SharedPtr outputFbo)
     {
-        TextureGroup ret;
+        this->outputFbo = outputFbo;
 
-        ret.outputFbo = outputFbo;
-
-        if (useVisCache) {
+        if (settings.useViscache) {
             /*
             * A word on the math down here to calculate the size of the viscache:
             * res^4 is the raw amount of pairs there are in a set of res*res.
@@ -42,29 +64,31 @@ struct TextureGroup {
             */
 
             // We have to use size_t here because otherwise we overflow the integer
-            size_t rres = std::min(res, MAX_VISCACHE_RESOLUTION);
+            size_t rres = std::min(settings.textureResolution, MAX_VISCACHE_RESOLUTION);
             size_t bufSize = (rres * rres * rres * rres * (size_t)4 / (size_t)2 / (size_t)32);
             bufSize -= (rres * rres);
 
-            ret.visBuf = Buffer::create(bufSize,
+            visBuf = Buffer::create(bufSize,
                 Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,
                 Falcor::Buffer::CpuAccess::None
             );
         }
         else
         {
-            ret.visBuf = NULL;
+            visBuf = nullptr;
         }
 
-        ret.voxTex = Texture::create3D(voxres, voxres, voxres, ResourceFormat::RGBA16Float, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        int voxres = settings.voxelResolution, res = settings.textureResolution;
 
-        ret.posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-        ret.nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-        ret.arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-        ret.matTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-        ret.lgiTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
-        ret.lgoTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        if (settings.useVoxelmap) {
+            voxTex = Texture::create3D(voxres, voxres, voxres, ResourceFormat::RGBA16Float, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        }
 
-        return ret;
+        posTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        nrmTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        arfTex = Texture::create2D(res, res, Falcor::ResourceFormat::R32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        matTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        lgiTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+        lgoTex = Texture::create2D(res, res, Falcor::ResourceFormat::RGBA32Float, 1U, DEFAULT_MIPMAP_LEVELS, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     }
 };

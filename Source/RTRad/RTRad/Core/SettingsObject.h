@@ -13,5 +13,14 @@ namespace RR {
     public:
         T settings;
     };
+
+    template <typename T>
+    struct SettingsStruct
+    {
+        static_assert(std::is_base_of<BaseSettings, T>::value, "T must inherit from BaseSettings");
+
+    public:
+        T settings;
+    };
 }
 
