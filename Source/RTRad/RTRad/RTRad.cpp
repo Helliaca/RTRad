@@ -38,7 +38,9 @@ void RTRad::onGuiRender(Gui* pGui)
 
         mResetInputTextures = w.button("Reset Input Textures");
 
-        mMakePass = w.button("Make Pass");
+        if (rtlPass->settings.batchComplete) {
+            mMakePass = w.button("Make Pass");
+        }
 
         if (mTextureRes != prevRes) {
             mResetInputTextures = true;
@@ -111,16 +113,15 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         {
             PROFILE("RTRad");
 
-            if (mMakePass && !mMakeBatch) {
+            if (mMakePass) {
                 std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
-                mMakeBatch = true;
+                rtlPass->settings.batchComplete = false;
                 mMakePass = false;
                 mAccTime = 0;
             }
 
-            if (mMakeBatch) {
+            if (!rtlPass->settings.batchComplete) {
                 rtlPass->render(pRenderContext, textureGroup);
-                mMakeBatch = !rtlPass->settings.batchComplete;
                 textureGroup.generateLMips(pRenderContext);
             }
         }

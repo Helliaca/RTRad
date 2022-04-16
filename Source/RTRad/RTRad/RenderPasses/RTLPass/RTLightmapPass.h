@@ -27,7 +27,7 @@ struct RTLPassSettings : public RR::BaseSettings {
         randomizeSample = false;
         useVisCache = false;
 
-        batchComplete = false;
+        batchComplete = true;
         row_offset = 0;
         passNum = 0;
     }
