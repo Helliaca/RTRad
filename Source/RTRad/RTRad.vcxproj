@@ -25,6 +25,7 @@
   <ItemGroup>
     <ClInclude Include="RTRad\Core\BaseRaytracePass.h" />
     <ClInclude Include="RTRad\Core\common.h" />
+    <ClInclude Include="RTRad\Core\TextureGroup.h" />
     <ClInclude Include="RTRad\RenderPasses\CVMPass\CVMPass.h" />
     <ClInclude Include="RTRad\RenderPasses\CITPass\CITPass.h" />
     <ClInclude Include="RTRad\RenderPasses\RTLPass\RTLightmapPass.h" />

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Falcor.h"
-#include "common.h"
+
+using namespace Falcor;
 
 namespace RR {
     class BasePipelineElement

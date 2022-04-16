@@ -25,6 +25,7 @@
     <ClInclude Include="RTRad\Core\BaseRasterPass.h" />
     <ClInclude Include="RTRad\Core\SettingsObject.h" />
     <ClInclude Include="RTRad\Core\BaseRaytracePass.h" />
+    <ClInclude Include="RTRad\Core\TextureGroup.h" />
   </ItemGroup>
   <ItemGroup>
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />

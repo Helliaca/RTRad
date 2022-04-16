@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BasePipelineElement.h"
+#include <RTRad/Core/TextureGroup.h>
 
 namespace RR {
     class BaseRenderPass : public BasePipelineElement

@@ -2,6 +2,7 @@
 #include "Falcor.h"
 
 #include <RTRad/Core/common.h>
+#include <RTRad/Core/TextureGroup.h>
 
 #include CITPASS_H
 #include VITPASS_H
