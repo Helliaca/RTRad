@@ -18,12 +18,12 @@ VITPass::SharedPtr VITPass::create(const Scene::SharedPtr& pScene)
     return SharedPtr(new VITPass(pScene));
 }
 
-void VITPass::render(RenderContext* pContext, const TextureGroup tg)
+void VITPass::render(RenderContext* pContext, const TextureGroup* tg)
 {
     setPerFrameVars(tg);
 
     // We render into the target FBO
-    state->setFbo(tg.outputFbo);
+    state->setFbo(tg->outputFbo);
     if (settings.maskGeometry) {
         scene->rasterize(pContext, state.get(), vars.get(), RasterizerState::CullMode::None);
     }
@@ -33,7 +33,7 @@ void VITPass::render(RenderContext* pContext, const TextureGroup tg)
     }
 }
 
-void VITPass::setPerFrameVars(const TextureGroup textureGroup)
+void VITPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     // Set output texture and interpolation-values
     Texture::SharedPtr t;
@@ -44,26 +44,26 @@ void VITPass::setPerFrameVars(const TextureGroup textureGroup)
     switch (settings.outputTexture)
     {
         case 0: {
-            t = textureGroup.posTex;
+            t = textureGroup->posTex;
             settings.interp_min = float4(scene->getSceneBounds().minPoint, 1.f);
             settings.interp_max = float4(scene->getSceneBounds().maxPoint, 1.f);
             break;
         }
-        case 1: { t = textureGroup.nrmTex; break; }
-        case 2: { t = textureGroup.arfTex; break; }
-        case 3: { t = textureGroup.matTex; break; }
-        case 4: { t = textureGroup.lgiTex; break; }
-        case 5: { t = textureGroup.lgoTex; break; }
+        case 1: { t = textureGroup->nrmTex; break; }
+        case 2: { t = textureGroup->arfTex; break; }
+        case 3: { t = textureGroup->matTex; break; }
+        case 4: { t = textureGroup->lgiTex; break; }
+        case 5: { t = textureGroup->lgoTex; break; }
         case 6: { t = nullptr; settings.showVoxelMap = true; break; }
-        default: { t = textureGroup.posTex; break; }
+        default: { t = textureGroup->posTex; break; }
     }
 
-    if (!settings.showVoxelMap || textureGroup.voxTex == nullptr) {
+    if (!settings.showVoxelMap || textureGroup->voxTex == nullptr) {
         vars->setTexture("outputTex", t);
     }
     else
     {
-        vars->setTexture("voxTex", textureGroup.voxTex);
+        vars->setTexture("voxTex", textureGroup->voxTex);
     }
 
     vars["PerFrameCB_vs"]["applyToModel"] = settings.applyToModel;

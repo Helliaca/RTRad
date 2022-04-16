@@ -27,8 +27,8 @@ namespace RR {
         void setScene(const Scene::SharedPtr& scene);
 
         // render
-        virtual void render(RenderContext* pContext, const TextureGroup tg);
-        virtual void setPerFrameVars(const TextureGroup textureGroup);
+        virtual void render(RenderContext* pContext, const TextureGroup* tg);
+        virtual void setPerFrameVars(const TextureGroup* textureGroup);
 
     protected:
         BaseRenderPass(const Scene::SharedPtr& pScene, const Program::Desc& progDesc, const Program::DefineList& programDefines);

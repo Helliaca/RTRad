@@ -16,15 +16,15 @@ CVMPass::CVMPass(const Scene::SharedPtr& pScene)
     rastState = RasterizerState::create(desc);
 }
 
-bool CVMPass::CurrentFboIsValid(const TextureGroup tg)
+bool CVMPass::CurrentFboIsValid(const TextureGroup* tg)
 {
     if (voxFbo == nullptr) return false;
-    return voxFbo->getHeight() == tg.voxTex->getHeight();
+    return voxFbo->getHeight() == tg->voxTex->getHeight();
 }
 
-void CVMPass::MakeFbo(const TextureGroup tg)
+void CVMPass::MakeFbo(const TextureGroup* tg)
 {
-    Texture::SharedPtr fboTex = Texture::create2D(tg.voxTex->getHeight(), tg.voxTex->getWidth(), Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
+    Texture::SharedPtr fboTex = Texture::create2D(tg->voxTex->getHeight(), tg->voxTex->getWidth(), Falcor::ResourceFormat::RGBA32Float, 1U, 1, (const void*)nullptr, Falcor::ResourceBindFlags::UnorderedAccess | Falcor::ResourceBindFlags::RenderTarget | Falcor::ResourceBindFlags::ShaderResource);
     std::vector<Texture::SharedPtr> tfbo;
     tfbo.push_back(fboTex);
     voxFbo = Fbo::create(tfbo);
@@ -36,7 +36,7 @@ CVMPass::SharedPtr CVMPass::create(const Scene::SharedPtr& pScene)
     return SharedPtr(new CVMPass(pScene));
 }
 
-void CVMPass::render(RenderContext* pContext, const TextureGroup tg)
+void CVMPass::render(RenderContext* pContext, const TextureGroup* tg)
 {
     setPerFrameVars(tg);
 
@@ -46,7 +46,7 @@ void CVMPass::render(RenderContext* pContext, const TextureGroup tg)
     scene->rasterize(pContext, state.get(), vars.get(), rastState, rastState);
 }
 
-void CVMPass::setPerFrameVars(const TextureGroup textureGroup)
+void CVMPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     // Unused
     vars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
@@ -57,7 +57,7 @@ void CVMPass::setPerFrameVars(const TextureGroup textureGroup)
     vars["PerFrameCB_vs"]["minPos"] = scene->getSceneBounds().minPoint;
     vars["PerFrameCB_vs"]["maxPos"] = scene->getSceneBounds().maxPoint;
 
-    vars->setTexture("voxTex", textureGroup.voxTex);
+    vars->setTexture("voxTex", textureGroup->voxTex);
 }
 
 void CVMPass::onRenderGui(Gui* Gui, Gui::Window* win)

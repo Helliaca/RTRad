@@ -6,12 +6,12 @@ namespace RR {
         this->scene = scene;
     }
 
-    void BaseRenderPass::render(RenderContext* pContext, const TextureGroup tg)
+    void BaseRenderPass::render(RenderContext* pContext, const TextureGroup* tg)
     {
         setPerFrameVars(tg);
     }
 
-    void BaseRenderPass::setPerFrameVars(const TextureGroup textureGroup)
+    void BaseRenderPass::setPerFrameVars(const TextureGroup* textureGroup)
     {
     }
 

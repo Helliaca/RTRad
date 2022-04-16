@@ -19,8 +19,8 @@ public:
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
     // Render
-    void render(RenderContext* pContext, const TextureGroup tg) override;
-    void setPerFrameVars(const TextureGroup textureGroup) override;
+    void render(RenderContext* pContext, const TextureGroup* tg) override;
+    void setPerFrameVars(const TextureGroup* textureGroup) override;
 
     void onRenderGui(Gui* Gui, Gui::Window* win) override;
 
@@ -28,8 +28,8 @@ private:
     CVMPass(const Scene::SharedPtr& pScene);
 
     // Fbo
-    bool CurrentFboIsValid(const TextureGroup tg);
-    void MakeFbo(const TextureGroup tg);
+    bool CurrentFboIsValid(const TextureGroup* tg);
+    void MakeFbo(const TextureGroup* tg);
     Fbo::SharedPtr voxFbo;
 };
 

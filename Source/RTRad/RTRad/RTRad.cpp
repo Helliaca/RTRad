@@ -1,6 +1,11 @@
 #include "RTRad.h"
 #include "Tools/SceneLoader.h"
 
+RTRad::RTRad()
+{
+    textureGroup = new TextureGroup();
+}
+
 void RTRad::onGuiRender(Gui* pGui)
 {
     // MAIN CONTROLPANEL
@@ -11,30 +16,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
         rtlPass->onRenderGui(pGui, &w);
 
-        Falcor::Gui::DropdownList reslst;
-        reslst.push_back({ 32, "32" });
-        reslst.push_back({ 64, "64" });
-        reslst.push_back({ 128, "128" });
-        reslst.push_back({ 256, "256" });
-        reslst.push_back({ 384, "384" });
-        reslst.push_back({ 512, "512" });
-        reslst.push_back({ 768, "768" });
-        reslst.push_back({ 1024, "1024" });
-        reslst.push_back({ 1536, "1536" });
-        reslst.push_back({ 2048, "2048" });
-
-        uint32_t prevRes = mTextureRes;
-        w.dropdown("Lightmap Resolution", reslst, mTextureRes);
-
-        Falcor::Gui::DropdownList vreslst;
-        vreslst.push_back({ 32, "32" });
-        vreslst.push_back({ 64, "64" });
-        vreslst.push_back({ 128, "128" });
-        vreslst.push_back({ 256, "256" });
-
-        uint32_t vprevRes = mVoxelRes;
-
-        w.dropdown("VoxelMap Resolution", vreslst, mVoxelRes);
+        textureGroup->onRenderGui(pGui, &w);
 
         mResetInputTextures = w.button("Reset Input Textures");
 
@@ -42,15 +24,9 @@ void RTRad::onGuiRender(Gui* pGui)
             mMakePass = w.button("Make Pass");
         }
 
-        if (mTextureRes != prevRes) {
-            mResetInputTextures = true;
-        }
+        mResetInputTextures = mResetInputTextures || textureGroup->settingsChanged;
 
-        if (mVoxelRes != vprevRes) {
-            mResetInputTextures = true;
-        }
-
-        if (rtlPass->settings.useVisCache && !textureGroup.visBuf) {
+        if (rtlPass->settings.useVisCache && !textureGroup->visBuf) {
             mResetInputTextures = true;
         }
 
@@ -86,7 +62,8 @@ void RTRad::loadScene(const std::string& filename)
 
     cvmPass = CVMPass::create(mpScene);
 
-    textureGroup.settings = TextureGroupSettings();
+    // Reset tg settings
+    textureGroup->settings = TextureGroupSettings();
 
     mResetInputTextures = true;
 }
@@ -116,7 +93,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             PROFILE("RTRad");
 
             if (mMakePass) {
-                std::swap(textureGroup.lgiTex, textureGroup.lgoTex);
+                std::swap(textureGroup->lgiTex, textureGroup->lgoTex);
                 rtlPass->settings.batchComplete = false;
                 mMakePass = false;
                 mAccTime = 0;
@@ -124,7 +101,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
             if (!rtlPass->settings.batchComplete) {
                 rtlPass->render(pRenderContext, textureGroup);
-                textureGroup.generateLMips(pRenderContext);
+                textureGroup->generateLMips(pRenderContext);
             }
         }
 
@@ -132,7 +109,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
             PROFILE("CITPass");
             if (mResetInputTextures) {
                 // make new texgroup
-                textureGroup.RemakeTextures(pTargetFbo);
+                textureGroup->RemakeTextures(pTargetFbo);
 
                 // Create input data
                 citPass->render(pRenderContext, textureGroup);
@@ -141,7 +118,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
                 cvmPass->render(pRenderContext, textureGroup);
 
                 // Create mipmaps
-                textureGroup.generateLMips(pRenderContext);
+                textureGroup->generateLMips(pRenderContext);
 
                 mResetInputTextures = false;
             }
@@ -164,6 +141,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
 
 void RTRad::onShutdown()
 {
+    delete textureGroup;
 }
 
 bool RTRad::onKeyEvent(const KeyboardEvent& keyEvent)

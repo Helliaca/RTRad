@@ -40,30 +40,30 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     return SharedPtr(pass);
 }
 
-void RTLightmapPass::setPerFrameVars(const TextureGroup textureGroup)
+void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     PROFILE("setPerFrameVars");
-    rtVars->setTexture("pos", textureGroup.posTex);
-    rtVars->setTexture("nrm", textureGroup.nrmTex);
-    rtVars->setTexture("arf", textureGroup.arfTex);
-    rtVars->setTexture("mat", textureGroup.matTex);
-    rtVars->setTexture("lig", textureGroup.lgiTex);
-    rtVars->setTexture("lig2", textureGroup.lgoTex);
-    rtVars->setTexture("voxTex", textureGroup.voxTex);
+    rtVars->setTexture("pos", textureGroup->posTex);
+    rtVars->setTexture("nrm", textureGroup->nrmTex);
+    rtVars->setTexture("arf", textureGroup->arfTex);
+    rtVars->setTexture("mat", textureGroup->matTex);
+    rtVars->setTexture("lig", textureGroup->lgiTex);
+    rtVars->setTexture("lig2", textureGroup->lgoTex);
+    rtVars->setTexture("voxTex", textureGroup->voxTex);
     rtVars["PerFrameCB"]["row_offset"] = settings.row_offset;
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
     rtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
-    rtVars["PerFrameCB"]["texRes"] = textureGroup.lgiTex.get()->getWidth();
+    rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useVisCache"] = settings.useVisCache;
 
     if (settings.useVisCache) {
-        rtVars["vis"] = textureGroup.visBuf;
+        rtVars["vis"] = textureGroup->visBuf;
     }
 }
 
-void RTLightmapPass::render(RenderContext* pContext, const TextureGroup textureGroup)
+void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* textureGroup)
 {
     PROFILE("renderRT");
 
@@ -78,7 +78,7 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup textureG
     setPerFrameVars(textureGroup);
 
     // Get resolution
-    int xres = textureGroup.lgoTex->getWidth(), yres = textureGroup.lgoTex->getHeight();
+    int xres = textureGroup->lgoTex->getWidth(), yres = textureGroup->lgoTex->getHeight();
 
     // Run this batch
     scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(settings.texPerBatch*xres, yres, 1));

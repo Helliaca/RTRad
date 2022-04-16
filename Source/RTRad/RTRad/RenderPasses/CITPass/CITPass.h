@@ -20,8 +20,8 @@ public:
     static SharedPtr create(const Scene::SharedPtr& pScene);
 
     // Render
-    void render(RenderContext* pContext, const TextureGroup tg) override;
-    void setPerFrameVars(const TextureGroup textureGroup) override;
+    void render(RenderContext* pContext, const TextureGroup* tg) override;
+    void setPerFrameVars(const TextureGroup* textureGroup) override;
 
     void onRenderGui(Gui* Gui, Gui::Window* win) override;
 

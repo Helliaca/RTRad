@@ -14,6 +14,8 @@ using namespace Falcor;
 class RTRad : public IRenderer
 {
 public:
+    RTRad();
+
     // GUI Controls
     void onGuiRender(Gui* pGui) override;
 
@@ -42,7 +44,7 @@ private:
     CVMPass::SharedPtr cvmPass;
 
     // Texture group for the pipeline
-    TextureGroup textureGroup;
+    TextureGroup* textureGroup;
 
     // Scene data
     Scene::SharedPtr mpScene;

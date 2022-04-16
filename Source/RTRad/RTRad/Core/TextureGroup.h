@@ -13,8 +13,8 @@ struct TextureGroupSettings : public RR::BaseSettings {
     bool useVoxelmap;
     bool useViscache;
 
-    int voxelResolution;
-    int textureResolution;
+    uint32_t voxelResolution;
+    uint32_t textureResolution;
 
     TextureGroupSettings() {
         useMipmaps = true;
@@ -26,7 +26,8 @@ struct TextureGroupSettings : public RR::BaseSettings {
     }
 };
 
-struct TextureGroup : public RR::SettingsStruct<TextureGroupSettings>, public RR::BasePipelineElement {
+class TextureGroup : public RR::SettingsStruct<TextureGroupSettings>, public RR::BasePipelineElement {
+public:
     Texture::SharedPtr posTex;
     Texture::SharedPtr nrmTex;
     Texture::SharedPtr arfTex;
@@ -40,8 +41,40 @@ struct TextureGroup : public RR::SettingsStruct<TextureGroupSettings>, public RR
 
     Fbo::SharedPtr outputFbo;
 
-    void onRenderGui(Gui* Gui, Gui::Window* win) override {
+    bool settingsChanged;
 
+    TextureGroup() {
+        settings = TextureGroupSettings();
+    }
+
+    void onRenderGui(Gui* Gui, Gui::Window* win) override {
+        win->text("TextureGroup Settings");
+
+        Falcor::Gui::DropdownList reslst;
+        reslst.push_back({ 32, "32" });
+        reslst.push_back({ 64, "64" });
+        reslst.push_back({ 128, "128" });
+        reslst.push_back({ 256, "256" });
+        reslst.push_back({ 384, "384" });
+        reslst.push_back({ 512, "512" });
+        reslst.push_back({ 768, "768" });
+        reslst.push_back({ 1024, "1024" });
+        reslst.push_back({ 1536, "1536" });
+        reslst.push_back({ 2048, "2048" });
+
+        uint32_t prevRes = settings.textureResolution;
+        win->dropdown("Lightmap Resolution", reslst, settings.textureResolution);
+
+        Falcor::Gui::DropdownList vreslst;
+        vreslst.push_back({ 32, "32" });
+        vreslst.push_back({ 64, "64" });
+        vreslst.push_back({ 128, "128" });
+        vreslst.push_back({ 256, "256" });
+
+        uint32_t vprevRes = settings.voxelResolution;
+        win->dropdown("VoxelMap Resolution", vreslst, settings.voxelResolution);
+
+        settingsChanged = prevRes != settings.textureResolution || vprevRes != settings.voxelResolution;
     }
 
     void generateLMips(RenderContext* pRenderContext) {
@@ -51,6 +84,7 @@ struct TextureGroup : public RR::SettingsStruct<TextureGroupSettings>, public RR
 
     void RemakeTextures(Fbo::SharedPtr outputFbo)
     {
+        settingsChanged = false;
         this->outputFbo = outputFbo;
 
         if (settings.useViscache) {
@@ -64,7 +98,7 @@ struct TextureGroup : public RR::SettingsStruct<TextureGroupSettings>, public RR
             */
 
             // We have to use size_t here because otherwise we overflow the integer
-            size_t rres = std::min(settings.textureResolution, MAX_VISCACHE_RESOLUTION);
+            size_t rres = std::min((int)settings.textureResolution, MAX_VISCACHE_RESOLUTION);
             size_t bufSize = (rres * rres * rres * rres * (size_t)4 / (size_t)2 / (size_t)32);
             bufSize -= (rres * rres);
 
