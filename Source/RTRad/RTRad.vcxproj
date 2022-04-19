@@ -54,6 +54,9 @@
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.vs.hlsl" />
     <ShaderSource Include="Voxel.slang" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{F1FBBEE3-74B4-4F58-BDC8-314D154EFF80}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

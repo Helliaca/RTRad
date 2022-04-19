@@ -39,4 +39,7 @@
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.vs.hlsl" />
     <ShaderSource Include="Voxel.slang" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
 </Project>
