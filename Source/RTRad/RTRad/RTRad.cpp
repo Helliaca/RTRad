@@ -8,15 +8,21 @@ RTRad::RTRad()
 
 void RTRad::onGuiRender(Gui* pGui)
 {
+    // TEXGROUP
+    {
+        Gui::Window w(pGui, "TextureGroup Settings", { 300, 150 }, { 1600, 80 });
+        textureGroup->onRenderGui(pGui, &w);
+    }
+
+    // VIS
+    {
+        Gui::Window w(pGui, "Visualization Settings", { 300, 150 }, { 1600, 240 });
+        vitPass->onRenderGui(pGui, &w);
+    }
+
     // MAIN CONTROLPANEL
     {
-        Gui::Window w(pGui, "RTRad", { 300, 330 }, { 10, 80 });
-
-        vitPass->onRenderGui(pGui, &w);
-
-        rtlPass->onRenderGui(pGui, &w);
-
-        textureGroup->onRenderGui(pGui, &w);
+        Gui::Window w(pGui, "RTRad", { 300, 100 }, { 10, 80 });
 
         mResetInputTextures = w.button("Reset Input Textures");
 
@@ -24,20 +30,23 @@ void RTRad::onGuiRender(Gui* pGui)
             mMakePass = w.button("Make Pass");
         }
 
-        mResetInputTextures = mResetInputTextures || textureGroup->settingsChanged;
-
-        if (rtlPass->settings.useVisCache && !textureGroup->visBuf) {
-            mResetInputTextures = true;
+        if (Profiler::instance().isEnabled()) {
+            w.text(mOutputString);
         }
+    }
 
-        w.text(mOutputString);
+    // RTPASS
+    {
+        Gui::Window w(pGui, "Radiosity Settings", { 300, 200 }, { 10, 190 });
+
+        rtlPass->onRenderGui(pGui, &w);
     }
 
     // SCENE CONTROLS
     {
-        Gui::Window w2(pGui, "Scene Settings", { 300, 420 }, { 10, 400 });
+        Gui::Window w(pGui, "Scene Settings", { 300, 420 }, { 10, 400 });
 
-        if (w2.button("Load Scene"))
+        if (w.button("Load Scene"))
         {
             std::string filename;
             if (openFileDialog(Scene::getFileExtensionFilters(), filename))
@@ -46,7 +55,16 @@ void RTRad::onGuiRender(Gui* pGui)
             }
         }
 
-        mpScene->renderUI(w2);
+        mpScene->renderUI(w);
+    }
+
+    // UPDATE VARS
+    {
+        mResetInputTextures = mResetInputTextures || textureGroup->settingsChanged;
+
+        if (rtlPass->settings.useVisCache && !textureGroup->visBuf) {
+            mResetInputTextures = true;
+        }
     }
 }
 
