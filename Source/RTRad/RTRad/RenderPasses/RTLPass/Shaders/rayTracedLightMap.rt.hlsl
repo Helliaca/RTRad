@@ -201,6 +201,9 @@ void rayGen()
     }
     return;*/
 
+    //bool voxelRayMarch = false;
+    //voxelRayMarch = self_c.x & 4 > 0;
+
     for (uint x = 0; x < dim1; x += sampling_res) {
         for (uint y = 0; y < dim2; y += sampling_res) {
 
@@ -237,7 +240,7 @@ void rayGen()
             float3 other_wpos = pos[other_c].xyz + posOffset;
 
             //bool voxelRayMarch = distSquared(other_wpos, self_wpos) > 4.6f;//length(other_wpos - self_wpos) > 1.8f;
-            bool voxelRayMarch = false;
+            //bool voxelRayMarch = false;
 
             if (voxelRayMarch) {
                 if (rayMarchVisible(self_c, other_c)) {

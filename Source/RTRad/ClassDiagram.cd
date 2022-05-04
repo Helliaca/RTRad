@@ -56,7 +56,7 @@
       <FileName>RTRad\RenderPasses\VITPass\VITPass.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Struct Name="RR::BasePipelineElement" Collapsed="true">
+  <Struct Name="RR::BasePipelineElement">
     <Position X="1.5" Y="1" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
