@@ -21,6 +21,9 @@ struct RTLPassSettings : public RR::BaseSettings {
     uint2 currentOffset;
     uint2 batchDims;
 
+    // We need this for correct GUI output. It will be set each frame by RTRad
+    uint2 textureResolution;
+
     RTLPassSettings() {
         integral = RTPassIntegral::AREA;
         sampling_res = 1;
@@ -31,7 +34,9 @@ struct RTLPassSettings : public RR::BaseSettings {
         passNum = 0;
 
         currentOffset = uint2(0, 0);
-        batchDims = uint2(1, 1);
+        batchDims = uint2(64, 1);
+
+        textureResolution = uint2(64, 64);
     }
 };
 

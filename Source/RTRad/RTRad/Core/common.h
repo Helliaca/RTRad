@@ -33,3 +33,5 @@ using namespace Falcor;
 #define HEMISPHERIC_SAMPLING 0
 
 #define MAX_VISCACHE_RESOLUTION 512
+
+#define MAX_SAMPLES_PER_BATCH 268435456

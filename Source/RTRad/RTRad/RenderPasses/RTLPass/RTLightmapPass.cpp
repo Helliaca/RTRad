@@ -138,26 +138,35 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
     win->dropdown("Sampling Res", sreslst, sres);
     settings.sampling_res = sres;
 
-    // TODO: get texture dims in here instead of 64 limit
+    // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples
+    // of sample-steps are taken per batch.
 
-    int batch_width = settings.batchDims.x;
-    win->slider("Batch width", batch_width, 1, 64);
+    int max_samples = MAX_SAMPLES_PER_BATCH;
 
-    int batch_height = settings.batchDims.y;
-    win->slider("Batch height", batch_height, 1, 64);
+    int samples_per_patch = (settings.textureResolution.x / settings.sampling_res) * (settings.textureResolution.y / settings.sampling_res);
 
-    int batch_size = settings.batchDims.x * settings.batchDims.y;
-    win->slider("Batch size", batch_size, 1, 64 * 64);
+    int max_batchsize = glm::min((int)(settings.textureResolution.x * settings.textureResolution.x), max_samples / samples_per_patch);
 
-    int samples_per_patch = (64 / settings.sampling_res) * (64 / settings.sampling_res);
-    int sample_count = settings.batchDims.x * settings.batchDims.y * samples_per_patch;
-    win->slider("Samples per batch", sample_count, 1 * samples_per_patch, 64 * 64 * samples_per_patch);
+    int batch_width = glm::clamp(settings.batchDims.x, glm::uint(1), settings.textureResolution.x);
+    win->slider("Batch width", batch_width, 1, (int)settings.textureResolution.x);
 
-    if (sample_count != settings.batchDims.x * settings.batchDims.y * samples_per_patch) {
+    glm::uint max_h = glm::min(max_batchsize / batch_width, (int)settings.textureResolution.y);
+    int batch_height = glm::clamp(settings.batchDims.y, glm::uint(1), max_h);
+    win->slider("Batch height", batch_height, 1, glm::min(max_batchsize/batch_width, (int)settings.textureResolution.y));
+
+    int _batch_size = glm::clamp((int)(settings.batchDims.x * settings.batchDims.y), 1, max_batchsize);
+    int batch_size = _batch_size;
+    win->slider("Batch size", batch_size, 1, max_batchsize);
+
+    int _sample_count = glm::clamp((int)(settings.batchDims.x*settings.batchDims.y * samples_per_patch), 1, max_samples);
+    int sample_count = _sample_count;
+    win->slider("Samples per batch", sample_count, 1 * samples_per_patch, max_batchsize*samples_per_patch);
+
+    if (sample_count != _sample_count) {
         batch_size = sample_count / samples_per_patch;
     }
 
-    if (batch_size != settings.batchDims.x * settings.batchDims.y) {
+    if (batch_size != _batch_size) {
         batch_width = batch_height = (int)glm::sqrt(batch_size);
     }
 

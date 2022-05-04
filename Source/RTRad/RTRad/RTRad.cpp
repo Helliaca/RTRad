@@ -39,6 +39,8 @@ void RTRad::onGuiRender(Gui* pGui)
     {
         Gui::Window w(pGui, "Radiosity Settings", { 300, 200 }, { 10, 190 });
 
+        rtlPass->settings.textureResolution = uint2(textureGroup->settings.textureResolution, textureGroup->settings.textureResolution);
+
         rtlPass->onRenderGui(pGui, &w);
     }
 
