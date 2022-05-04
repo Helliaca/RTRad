@@ -12,24 +12,26 @@ enum class RTPassIntegral { AREA, HEMISPHERIC };
 struct RTLPassSettings : public RR::BaseSettings {
     RTPassIntegral integral;
     int sampling_res;
-    float texPerBatch;
     bool randomizeSample;
     bool useVisCache;
 
     bool batchComplete;
-    int row_offset;
     int passNum;
+
+    uint2 currentOffset;
+    uint2 batchDims;
 
     RTLPassSettings() {
         integral = RTPassIntegral::AREA;
         sampling_res = 1;
-        texPerBatch = 0.5f;
         randomizeSample = false;
         useVisCache = false;
 
         batchComplete = true;
-        row_offset = 0;
         passNum = 0;
+
+        currentOffset = uint2(0, 0);
+        batchDims = uint2(1, 1);
     }
 };
 

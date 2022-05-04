@@ -25,7 +25,7 @@ struct VITPassSettings : RR::BaseSettings {
         interp_min = float4(0.0f);
         interp_max = float4(1.0f);
         mipmapLevel = 0;
-        outputTexture = 0;
+        outputTexture = 5;
     }
 };
 

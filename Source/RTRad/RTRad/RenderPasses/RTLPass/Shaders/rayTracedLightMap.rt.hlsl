@@ -18,6 +18,9 @@ RWBuffer<uint> vis : register(t9);
 
 cbuffer PerFrameCB {
     int row_offset;
+
+    uint2 currentOffset;
+
     int sampling_res;
     float3 posOffset;
     bool randomizeSamples;
@@ -164,9 +167,9 @@ float distSquared(float3 pos1, float3 pos2) {
 [shader("raygeneration")]
 void rayGen()
 {
-    uint2 self_c = DispatchRaysIndex().xy;
+    uint2 self_c = DispatchRaysIndex().xy + currentOffset;
 
-    self_c.x += row_offset;
+    //self_c.x += row_offset;
 
     // If pos alpha is less than 1, skip this.
     if (pos[self_c].a < 0.1f) {

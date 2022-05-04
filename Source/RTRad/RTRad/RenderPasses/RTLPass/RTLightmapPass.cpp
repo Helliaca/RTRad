@@ -50,7 +50,9 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars->setTexture("lig", textureGroup->lgiTex);
     rtVars->setTexture("lig2", textureGroup->lgoTex);
     rtVars->setTexture("voxTex", textureGroup->voxTex);
-    rtVars["PerFrameCB"]["row_offset"] = settings.row_offset;
+
+    rtVars["PerFrameCB"]["currentOffset"] = settings.currentOffset;
+
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
     rtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
@@ -74,26 +76,46 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
-    // Set vars
-    setPerFrameVars(textureGroup);
-
     // Get resolution
-    int xres = textureGroup->lgoTex->getWidth(), yres = textureGroup->lgoTex->getHeight();
+    glm::uint xres = textureGroup->lgoTex->getWidth(), yres = textureGroup->lgoTex->getHeight();
 
-    // Run this batch
-    scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(settings.texPerBatch*xres, yres, 1));
+    // Calculate batching
+    /*uint batchS = 128;
+
+    uint2 batchVec = uint2(
+        glm::sqrt(batchS),
+        glm::sqrt(batchS)
+    );*/
+
+    uint2 batchVec = uint2(
+        glm::clamp(settings.batchDims.x, glm::uint(1), xres - settings.currentOffset.x),
+        glm::clamp(settings.batchDims.y, glm::uint(1), yres - settings.currentOffset.y)
+    );
+    
+
+
+
+    // Set vars
+    setPerFrameVars(textureGroup);    
+
+    scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x, batchVec.y, 1));
 
     // set row_offset
-    settings.row_offset += (int)(settings.texPerBatch * xres);
+    settings.currentOffset.y += batchVec.y;
 
-    // batch finished ?
-    if (settings.row_offset >= xres) {
-        settings.row_offset = 0;
+    // batch finished
+    if (settings.currentOffset.x >= xres && settings.currentOffset.y >= yres) {
+        settings.currentOffset = uint2(0, 0);
         settings.passNum++;
         settings.batchComplete = true;
     }
-    else
-    {
+    // Row finished
+    else if (settings.currentOffset.y >= yres) {
+        settings.currentOffset.y = 0;
+        settings.currentOffset.x += batchVec.x;
+        settings.batchComplete = false;
+    }
+    else {
         settings.batchComplete = false;
     }
 }
@@ -116,7 +138,23 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
     win->dropdown("Sampling Res", sreslst, sres);
     settings.sampling_res = sres;
 
-    win->slider("Tex per Batch", settings.texPerBatch, 0.01f, 1.0f);
+    // TODO: get texture dims in here instead of 64 limit
+
+    int batch_width = settings.batchDims.x;
+    win->slider("Batch width", batch_width, 1, 64);
+
+    int batch_height = settings.batchDims.y;
+    win->slider("Batch height", batch_height, 1, 64);
+
+    int batch_size = settings.batchDims.x * settings.batchDims.y;
+    win->slider("Batch size", batch_size, 1, 64 * 64);
+
+    if (batch_size != settings.batchDims.x * settings.batchDims.y) {
+        batch_width = batch_height = (int)glm::sqrt(batch_size);
+    }
+
+    settings.batchDims.x = batch_width;
+    settings.batchDims.y = batch_height;
 }
 
 RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)
