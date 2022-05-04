@@ -149,6 +149,14 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
     int batch_size = settings.batchDims.x * settings.batchDims.y;
     win->slider("Batch size", batch_size, 1, 64 * 64);
 
+    int samples_per_patch = (64 / settings.sampling_res) * (64 / settings.sampling_res);
+    int sample_count = settings.batchDims.x * settings.batchDims.y * samples_per_patch;
+    win->slider("Samples per batch", sample_count, 1 * samples_per_patch, 64 * 64 * samples_per_patch);
+
+    if (sample_count != settings.batchDims.x * settings.batchDims.y * samples_per_patch) {
+        batch_size = sample_count / samples_per_patch;
+    }
+
     if (batch_size != settings.batchDims.x * settings.batchDims.y) {
         batch_width = batch_height = (int)glm::sqrt(batch_size);
     }
