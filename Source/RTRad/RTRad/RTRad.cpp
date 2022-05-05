@@ -63,10 +63,6 @@ void RTRad::onGuiRender(Gui* pGui)
     // UPDATE VARS
     {
         mResetInputTextures = mResetInputTextures || textureGroup->settingsChanged;
-
-        if (rtlPass->settings.useVisCache && !textureGroup->visBuf) {
-            mResetInputTextures = true;
-        }
     }
 }
 

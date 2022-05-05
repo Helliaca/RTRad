@@ -13,7 +13,6 @@ struct RTLPassSettings : public RR::BaseSettings {
     RTPassIntegral integral;
     int sampling_res;
     bool randomizeSample;
-    bool useVisCache;
 
     bool batchComplete;
     int passNum;
@@ -28,7 +27,6 @@ struct RTLPassSettings : public RR::BaseSettings {
         integral = RTPassIntegral::AREA;
         sampling_res = 1;
         randomizeSample = false;
-        useVisCache = false;
 
         batchComplete = true;
         passNum = 0;

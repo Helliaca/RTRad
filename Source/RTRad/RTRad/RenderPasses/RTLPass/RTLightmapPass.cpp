@@ -58,9 +58,9 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
-    rtVars["PerFrameCB"]["useVisCache"] = settings.useVisCache;
+    rtVars["PerFrameCB"]["useVisCache"] = textureGroup->settings.useViscache;
 
-    if (settings.useVisCache) {
+    if (textureGroup->settings.useViscache) {
         rtVars["vis"] = textureGroup->visBuf;
     }
 }
@@ -125,8 +125,6 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
     win->text("RTLPass Settings");
 
     win->checkbox("Randomize Sample", settings.randomizeSample);
-
-    win->checkbox("Use VisCache", settings.useVisCache);
 
     Falcor::Gui::DropdownList sreslst;
     uint32_t sres = settings.sampling_res;

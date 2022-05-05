@@ -74,7 +74,15 @@ public:
         uint32_t vprevRes = settings.voxelResolution;
         win->dropdown("VoxelMap Resolution", vreslst, settings.voxelResolution);
 
-        settingsChanged = prevRes != settings.textureResolution || vprevRes != settings.voxelResolution;
+        bool prevVisc = settings.useViscache;
+        win->checkbox("Use Viscache", settings.useViscache);
+
+        settingsChanged =
+            prevRes != settings.textureResolution ||
+            vprevRes != settings.voxelResolution ||
+            prevVisc != settings.useViscache ||
+            settings.useViscache && !visBuf
+            ;
     }
 
     void generateLMips(RenderContext* pRenderContext) {
