@@ -260,7 +260,7 @@ void rayGen()
                 RayPayload rpl = { self_c, other_c };
 
                 TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
-                    RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
+                    RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_SKIP_CLOSEST_HIT_SHADER,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
                     0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
                     0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
                     0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
