@@ -5,10 +5,13 @@ using namespace Falcor;
 CITPass::CITPass(const Scene::SharedPtr& pScene)
     : RR::BaseRasterPass(pScene, CITPASS_DIR_SHADERS"/CITP.vs.hlsl", CITPASS_DIR_SHADERS"/CITP.gs.hlsl", CITPASS_DIR_SHADERS"/CITP.ps.hlsl")
 {
-    RasterizerState::Desc desc;
+    setRastState(false);
+}
 
-    //TODO: Test this. Atm it causes weird behaviour. Why?
-    //desc.setConservativeRasterization(true);  // Maybe better as true?
+void CITPass::setRastState(bool consv)
+{
+    RasterizerState::Desc desc;
+    desc.setConservativeRasterization(consv);  // Maybe better as true?
     desc.setCullMode(RasterizerState::CullMode::None);
     //desc.setDepthClamp(true);
     //desc.setLineAntiAliasing(false);
@@ -26,6 +29,10 @@ CITPass::SharedPtr CITPass::create(const Scene::SharedPtr& pScene)
 
 void CITPass::render(RenderContext* pContext, const TextureGroup* tg)
 {
+    if (rastState->isConservativeRasterizationEnabled() != tg->settings.useConservativeRasterization) {
+        setRastState(tg->settings.useConservativeRasterization);
+    }
+
     setPerFrameVars(tg);
 
     // Create FBO. TODO: cache this?

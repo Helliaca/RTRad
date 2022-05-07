@@ -27,5 +27,7 @@ public:
 
 private:
     CITPass(const Scene::SharedPtr& pScene);
+
+    void setRastState(bool consv);
 };
 

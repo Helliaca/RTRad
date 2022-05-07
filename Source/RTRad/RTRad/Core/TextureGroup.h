@@ -12,6 +12,7 @@ struct TextureGroupSettings : public RR::BaseSettings {
     bool useMipmaps;
     bool useVoxelmap;
     bool useViscache;
+    bool useConservativeRasterization;
 
     uint32_t voxelResolution;
     uint32_t textureResolution;
@@ -20,6 +21,7 @@ struct TextureGroupSettings : public RR::BaseSettings {
         useMipmaps = true;
         useVoxelmap = true;
         useViscache = false;
+        useConservativeRasterization = false;
 
         voxelResolution = 64;
         textureResolution = 64;
@@ -77,10 +79,14 @@ public:
         bool prevVisc = settings.useViscache;
         win->checkbox("Use Viscache", settings.useViscache);
 
+        bool prevCons = settings.useConservativeRasterization;
+        win->checkbox("Cons. Rasterization", settings.useConservativeRasterization);
+
         settingsChanged =
             prevRes != settings.textureResolution ||
             vprevRes != settings.voxelResolution ||
             prevVisc != settings.useViscache ||
+            prevCons != settings.useConservativeRasterization ||
             settings.useViscache && !visBuf
             ;
     }
