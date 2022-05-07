@@ -17,8 +17,6 @@ RWTexture2D<float4> lig2;
 RWBuffer<uint> vis : register(t9);
 
 cbuffer PerFrameCB {
-    int row_offset;
-
     uint2 currentOffset;
 
     int sampling_res;

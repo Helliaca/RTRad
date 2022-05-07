@@ -11,12 +11,17 @@ Texture2D<float4> mat;
 Texture2D<float4> lig;
 RWTexture2D<float4> lig2;
 
+Texture3D<float4> voxTex;
+
 cbuffer PerFrameCB {
-    int row_offset;
+    uint2 currentOffset;
+
     int sampling_res;
     float3 posOffset;
     bool randomizeSamples;
     int passNum;
+    bool useVisCache;
+    int texRes;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -129,9 +134,7 @@ float3 getCosHemisphereSample(inout uint randSeed, float3 hitNorm)
 [shader("raygeneration")]
 void rayGen()
 {
-    uint2 self_c = DispatchRaysIndex().xy;
-
-    self_c.x += row_offset;
+    uint2 self_c = DispatchRaysIndex().xy + currentOffset;
 
     // If pos alpha is less than 1, skip this.
     if (pos[self_c].a < 1.f) {
