@@ -146,7 +146,7 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         }
 
         float gt = Profiler::instance().getEvent("/onFrameRender/RTRad")->getGpuTime();
-        if (gt > 1.f) {
+        if (!rtlPass->settings.batchComplete || gt > 1.0f) {
             mAccTime += gt;
         }
         mOutputString = "rad_time= "+std::to_string(mAccTime / 1000.f) + "s";
