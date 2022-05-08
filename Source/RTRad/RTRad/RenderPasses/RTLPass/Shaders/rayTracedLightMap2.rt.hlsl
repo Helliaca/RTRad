@@ -140,19 +140,6 @@ float3 getCosHemisphereSample(inout uint randSeed, float3 hitNorm)
     return tangent * (r * cos(phi).x) + bitangent * (r * sin(phi)) + hitNorm.xyz * sqrt(1 - randVal.x);
 }
 
-float3 toTangentSpace(float3 vec, float3 nrm) {
-    float3 bitangent = perp(nrm);
-    float3 tangent = cross(bitangent, nrm);
-
-    float3x3 m = {
-        tangent,
-        bitangent,
-        nrm
-    };
-
-    return mul(m, vec);
-}
-
 #define samples 100
 
 [shader("raygeneration")]
@@ -186,10 +173,18 @@ void rayGen()
 
     uint seed = initRand(passNum, passNum + 4124512);
 
+    float3 bitangent = perp(surface_normal);
+    float3 tangent = cross(bitangent, surface_normal);
+
+    float3x3 m = {
+        tangent,
+        bitangent,
+        surface_normal
+    };
+
     for (int i = 0; i < samples; i++) {
         //float3 rv = getCosHemisphereSample(seed, surface_normal);
-        float3 rv = sampledirs[i];
-        rv = toTangentSpace(rv, surface_normal);
+        float3 rv = mul(m, sampledirs[i]);
         make_ray(self_wpos, rv, self_c);
     }
 }
@@ -204,7 +199,7 @@ void make_ray(float3 self_wpos, float3 dirv, uint2 self_c) {
     dirv = toForward(dirv, surface_normal);
     ray.Direction = dirv;
 
-    ray.TMin = 0.001f;
+    ray.TMin = 0.01f;
     ray.TMax = 10000;
 
     RayPayload rpl = { self_c };
@@ -242,6 +237,8 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     float r = length(self_to_other);
 
+    if (r < 0.1f) return;
+
     self_to_other = normalize(self_to_other);
 
     float3 self_nrm = 2.0f * (nrm[self_c].xyz - 0.5f);
@@ -252,13 +249,13 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     float view_factor = self_cos * other_cos * (1.0f / (PI * r * r));
 
-    float4 col = lig.SampleLevel(sampleWrap, uv, 0);
+    float4 col = lig.SampleLevel(sampleWrap, uv, 1);
 
     float4 self_color = float4(mat[rpl.self_c].rgb, 1.0f);
 
     float ref = 0.9;
 
-    lig2[self_c] += (col / samples) * self_color * ref * view_factor;
+    lig2[self_c] += (col * self_color * ref * view_factor) / samples;
 }
 
 [shader("anyhit")]
