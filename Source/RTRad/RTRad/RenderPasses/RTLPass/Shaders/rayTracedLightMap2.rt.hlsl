@@ -101,6 +101,13 @@ float3 perp(float3 u)
     return cross(u, float3(xm, ym, zm));
 }
 
+float3 simplePerp(float3 v, float3 q)
+{
+    v = normalize(v);
+    q = normalize(q);
+    return cross(v, q);
+}
+
 // Generates a seed for a random number generator from 2 inputs plus a backoff
 uint initRand(uint val0, uint val1, uint backoff = 16)
 {
@@ -170,21 +177,33 @@ void rayGen()
     if (length(emissive) > 0.1f) return;
 
     float3 surface_normal = 2.0f * (nrm[self_c].xyz - 0.5f);
+    surface_normal = normalize(surface_normal);
 
     uint seed = initRand(passNum, passNum + 4124512);
 
-    float3 bitangent = perp(surface_normal);
-    float3 tangent = cross(bitangent, surface_normal);
+    //float3 bitangent = perp(surface_normal);
+    //float3 tangent = cross(bitangent, surface_normal);
+
+    float3 pe = float3(0, 0, 1);
+
+    if (abs(surface_normal.z) > 0.9f) pe = float3(1, 0, 0);
+
+    float3 bitangent = simplePerp(surface_normal, float3(0, 0, 1));
+    float3 tangent = simplePerp(bitangent, surface_normal);
 
     float3x3 m = {
-        tangent,
         bitangent,
-        surface_normal
+        tangent,
+        surface_normal,
     };
+    //m = transpose(m);
 
     for (int i = 0; i < samples; i++) {
+        float3 rv;
+        if (i > 100) rv = getCosHemisphereSample(seed, surface_normal);
+        else rv = mul(m, sampledirs[i]);
         //float3 rv = getCosHemisphereSample(seed, surface_normal);
-        float3 rv = mul(m, sampledirs[i]);
+        //float3 rv = mul(m, sampledirs[i]);
         make_ray(self_wpos, rv, self_c);
     }
 }
@@ -247,6 +266,8 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     float self_cos = dot(self_nrm, self_to_other);
     float other_cos = dot(other_nrm, -self_to_other);
 
+    if (self_cos <= 0.0f || other_cos <= 0.0f) return;
+
     float view_factor = self_cos * other_cos * (1.0f / (PI * r * r));
 
     float4 col = lig.SampleLevel(sampleWrap, uv, 1);
@@ -256,6 +277,10 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     float ref = 0.9;
 
     lig2[self_c] += (col * self_color * ref * view_factor) / samples;
+
+    //if (other_wpos.x < -0.9f && other_wpos.y < -0.9f && other_wpos.z < -0.9f) {
+    //    lig2[self_c] = float4(1, 1, 1, 1);
+    //}
 }
 
 [shader("anyhit")]
