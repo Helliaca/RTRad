@@ -188,7 +188,7 @@ void rayGen()
 
     if (abs(surface_normal.z) > 0.9f) pe = float3(1, 0, 0);
 
-    float3 bitangent = simplePerp(surface_normal, float3(0, 0, 1));
+    float3 bitangent = simplePerp(surface_normal, pe);
     float3 tangent = simplePerp(bitangent, surface_normal);
 
     float3x3 m = {
@@ -278,7 +278,7 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     lig2[self_c] += (col * self_color * ref * view_factor) / samples;
 
-    //if (other_wpos.x < -0.9f && other_wpos.y < -0.9f && other_wpos.z < -0.9f) {
+    //if (other_wpos.x < -0.9f && other_wpos.y < -0.8f && other_wpos.y > -0.9f && other_wpos.z > 0.9f) {
     //    lig2[self_c] = float4(1, 1, 1, 1);
     //}
 }
