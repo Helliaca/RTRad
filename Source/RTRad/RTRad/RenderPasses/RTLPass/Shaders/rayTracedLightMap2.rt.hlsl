@@ -3,6 +3,8 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
+import RTRad.HemisphericSampling;
+
 
 Texture2D<float4> pos;
 Texture2D<float4> nrm;
@@ -90,6 +92,15 @@ float3 getPerpendicularVector(float3 u)
     return cross(u, float3(xm, ym, zm));
 }
 
+float3 perp(float3 u)
+{
+    float3 a = abs(u);
+    uint xm = ((a.x - a.y) < 0 && (a.x - a.z) < 0) ? 1 : 0;
+    uint ym = (a.y - a.z) < 0 ? (1 ^ xm) : 0;
+    uint zm = 1 ^ (xm | ym);
+    return cross(u, float3(xm, ym, zm));
+}
+
 // Generates a seed for a random number generator from 2 inputs plus a backoff
 uint initRand(uint val0, uint val1, uint backoff = 16)
 {
@@ -129,7 +140,20 @@ float3 getCosHemisphereSample(inout uint randSeed, float3 hitNorm)
     return tangent * (r * cos(phi).x) + bitangent * (r * sin(phi)) + hitNorm.xyz * sqrt(1 - randVal.x);
 }
 
-#define samples 10000
+float3 toTangentSpace(float3 vec, float3 nrm) {
+    float3 bitangent = perp(nrm);
+    float3 tangent = cross(bitangent, nrm);
+
+    float3x3 m = {
+        tangent,
+        bitangent,
+        nrm
+    };
+
+    return mul(m, vec);
+}
+
+#define samples 100
 
 [shader("raygeneration")]
 void rayGen()
@@ -163,23 +187,11 @@ void rayGen()
     uint seed = initRand(passNum, passNum + 4124512);
 
     for (int i = 0; i < samples; i++) {
-        float3 rv = getCosHemisphereSample(seed, surface_normal);
+        //float3 rv = getCosHemisphereSample(seed, surface_normal);
+        float3 rv = sampledirs[i];
+        rv = toTangentSpace(rv, surface_normal);
         make_ray(self_wpos, rv, self_c);
-
     }
-
-
-    //make_ray(self_wpos, float3(0.f, 1.f, 0.f), self_c);
-
-    //make_ray(self_wpos, float3(1.f, 1.f, 0.f), self_c);
-    //make_ray(self_wpos, float3(0.f, 1.f, 1.f), self_c);
-    //make_ray(self_wpos, float3(-1.f, 1.f, 0.f), self_c);
-    //make_ray(self_wpos, float3(0.f, 1.f, -1.f), self_c);
-
-    //make_ray(self_wpos, float3(1.f, 1.f, 1.f), self_c);
-    //make_ray(self_wpos, float3(-1.f, 1.f, 1.f), self_c);
-    //make_ray(self_wpos, float3(-1.f, 1.f, -1.f), self_c);
-    //make_ray(self_wpos, float3(1.f, 1.f, -1.f), self_c);
 }
 
 void make_ray(float3 self_wpos, float3 dirv, uint2 self_c) {
