@@ -17,7 +17,7 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 #if HEMISPHERIC_SAMPLING
     rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap2.rt.hlsl");
 #else
-    rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap.rt.hlsl");
+    rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap_prog_ref.rt.hlsl");
 #endif
 
     rtProgDesc.addDefines(mpScene->getSceneDefines());
@@ -98,7 +98,7 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
     // Set vars
     setPerFrameVars(textureGroup);    
 
-    scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x, batchVec.y, 1));
+    scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x / 4, batchVec.y / 4, 1));
 
     // set row_offset
     settings.currentOffset.y += batchVec.y;

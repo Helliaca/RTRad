@@ -44,7 +44,7 @@ struct RayPayload
 [shader("raygeneration")]
 void rayGen()
 {
-    uint2 self_c = DispatchRaysIndex().xy + currentOffset;
+    uint2 self_c = DispatchRaysIndex().xy * 4;
 
     //self_c.x += row_offset;
 
@@ -65,24 +65,11 @@ void rayGen()
     uint matID = (uint) mat[self_c].a;
     float3 emissive = gScene.materials[matID].emissive;
 
+    lig2[self_c] = float4(1, 0, 0, 1);
+    return;
+
     lig2[self_c] = float4(emissive, 1.f);
 
-    // Lets not run this for light-sources
-    // TODO: renable. I turned it off for bugfixing
-    //if (length(emissive) > 0.1f) return;
-
-    
-    //lig2[self_c] = lig[self_c];
-
-    // Use this to display a cool way of what points rayMarch determines to be visible from a given point
-    /*lig2[self_c] = float4(0, 0, 0, 1);
-    if (rayMarchVisible(self_wpos, float3(0.f, 0.f, -1.0f))) {
-        lig2[self_c] = float4(1,1,1,1);
-    }
-    return;*/
-
-    bool voxelRayMarch = false;
-    //voxelRayMarch = self_c.x & 4 > 0;
 
     for (uint x = 0; x < dim1; x += sampling_res) {
         for (uint y = 0; y < dim2; y += sampling_res) {
@@ -91,61 +78,25 @@ void rayGen()
 
             if (self_c.x == other_c.x && self_c.y == other_c.y) continue;
 
-            if (useVisCache && passNum > 0) {
-                // Get viscache
-                uint bufPos = getBufferPos(self_c, other_c);
-
-                if (bufPos <= max_bufferpos) {
-                    if (getVisible(bufPos)) {
-                        setColor(self_c, other_c);
-                    }
-                    continue;
-                }
-            }
-
-            if (randomizeSamples) {
-                uint2 seed = uint2(
-                    random((self_c.x + 1) * (self_c.y + 1) + passNum, 7864128),
-                    random((self_c.x + 1) * (self_c.y + 1) + passNum, 5490141)
-                    );
-
-                uint2 rnd = random(seed, uint2(sampling_res, sampling_res));
-
-                other_c += uint2(
-                    rnd.x,
-                    rnd.y
-                    );
-            }
-
             float3 other_wpos = pos[other_c].xyz + posOffset;
 
-            //bool voxelRayMarch = distSquared(other_wpos, self_wpos) > 4.6f;//length(other_wpos - self_wpos) > 1.8f;
-            //bool voxelRayMarch = false;
+            RayDesc ray;
+            ray.Origin = self_wpos;
+            ray.Direction = normalize(other_wpos - self_wpos);
+            ray.TMin = 0.0001f;
+            ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
-            if (voxelRayMarch) {
-                if (rayMarchVisible(self_c, other_c)) {
-                    setColor(self_c, other_c);
-                }
-            }
-            else {
-                RayDesc ray;
-                ray.Origin = self_wpos;
-                ray.Direction = normalize(other_wpos - self_wpos);
-                ray.TMin = 0.0001f;
-                ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
+            RayPayload rpl = { self_c, other_c };
 
-                RayPayload rpl = { self_c, other_c };
-
-                TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
-                    RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_SKIP_CLOSEST_HIT_SHADER,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
-                    0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
-                    0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
-                    0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
-                    0,                                    // Miss program index (i.e., when missing, call miss shader #0)
-                    ray,                                  // Data structure describing the ray to trace
-                    rpl
-                );
-            }
+            TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
+                RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_SKIP_CLOSEST_HIT_SHADER,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
+                0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
+                0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
+                0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
+                0,                                    // Miss program index (i.e., when missing, call miss shader #0)
+                ray,                                  // Data structure describing the ray to trace
+                rpl
+            );
         }
     }
 }
@@ -155,26 +106,6 @@ void primaryMiss(inout RayPayload rpl)
 {
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
-
-    // Set visCache
-    //uint bufPos = getBufferPos(self_c, other_c);
-
-    //if (vis[bufPos] != 100) lig2[self_c] += float4(0.01, 0, 0, 0);
-
-    //vis[bufPos] = 100;
-
-    //bufPos = getBufferPos(other_c, self_c);
-
-    //vis[bufPos] = 100;
-
-    if (useVisCache) {
-        uint bufPos = getBufferPos(self_c, other_c);
-        if (bufPos <= max_bufferpos) {
-            setVisible(bufPos);
-        }
-    }
-    //setVisible(other_c, self_c);
-
 
     setColor(self_c, other_c);
 }
