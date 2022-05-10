@@ -111,7 +111,7 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
 
         // Run refinement pass
         std::vector<Texture::SharedPtr> tfbo;
-        tfbo.push_back(textureGroup->lgoTex);
+        tfbo.push_back(textureGroup->posTex);
         Fbo::SharedPtr fbo = Fbo::create(tfbo);
         fsp->getVars()->setTexture("lig", textureGroup->lgoTex);
         fsp->getVars()->setTexture("pos", textureGroup->posTex);
