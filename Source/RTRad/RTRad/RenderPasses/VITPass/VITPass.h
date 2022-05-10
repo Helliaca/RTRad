@@ -13,6 +13,7 @@ struct VITPassSettings : RR::BaseSettings {
     bool showTexRes;
     bool showVoxelMap;
     bool showAlphaChannel;
+    bool bilinearFiltering;
     float4 interp_min;
     float4 interp_max;
     int mipmapLevel;
@@ -24,6 +25,7 @@ struct VITPassSettings : RR::BaseSettings {
         showTexRes = false;
         showVoxelMap = false;
         showAlphaChannel = false;
+        bilinearFiltering = true;
         interp_min = float4(0.0f);
         interp_max = float4(1.0f);
         mipmapLevel = 0;

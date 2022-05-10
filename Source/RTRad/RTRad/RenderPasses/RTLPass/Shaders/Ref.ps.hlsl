@@ -67,11 +67,18 @@ float4 main(GsOut vsOut) : SV_TARGET0
     float3 mean = 0.25f * (lig[c0].rgb + lig[c1].rgb + lig[c2].rgb + lig[c3].rgb);
     float gradient = length(mean - lig[c0].rgb);
 
-    if (gradient < 0.1f) {
+    if (gradient < 0.05f) {
         lig[c0].a = lig[c0].a + lig[c1].a + lig[c2].a + lig[c3].a;
         lig[c1].a = 0.0f;
         lig[c2].a = 0.0f;
         lig[c3].a = 0.0f;
+
+        // preview
+        for (int x = 0; x < step; x++) {
+            for (int y = 0; y < step; y++) {
+                lig[uv + uint2(x,y)].rgb = lig[c0].rgb;
+            }
+        }
     }
 
 

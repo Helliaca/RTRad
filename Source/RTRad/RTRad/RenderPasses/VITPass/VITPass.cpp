@@ -75,6 +75,16 @@ void VITPass::setPerFrameVars(const TextureGroup* textureGroup)
     vars["PerFrameCB_ps"]["interp_max"] = settings.interp_max;
     vars["PerFrameCB_ps"]["mipmapLevel"] = settings.mipmapLevel;
 
+    Sampler::Desc desc;
+    if (settings.bilinearFiltering) {
+        desc.setFilterMode(Sampler::Filter::Linear, Sampler::Filter::Linear, Sampler::Filter::Linear);
+    }
+    else {
+        desc.setFilterMode(Sampler::Filter::Point, Sampler::Filter::Point, Sampler::Filter::Linear);
+    }
+    Sampler::SharedPtr sampler = Sampler::create(desc);
+    vars["sampleWrap"] = sampler;
+
     vars["PerFrameCB_ps"]["minPos"] = scene->getSceneBounds().minPoint;
     vars["PerFrameCB_ps"]["maxPos"] = scene->getSceneBounds().maxPoint;
 }
@@ -107,6 +117,7 @@ void VITPass::onRenderGui(Gui* Gui, Gui::Window* win)
     win->checkbox("Show Tex Res", settings.showTexRes);
 
     win->checkbox("Show Alpha", settings.showAlphaChannel);
+    win->checkbox("Bilinear Filter", settings.bilinearFiltering);
 
     win->slider("Mipmaplevel", settings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
 }
