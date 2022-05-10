@@ -108,6 +108,23 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
         settings.currentOffset = uint2(0, 0);
         settings.passNum++;
         settings.batchComplete = true;
+
+        // Run refinement pass
+        std::vector<Texture::SharedPtr> tfbo;
+        tfbo.push_back(textureGroup->lgoTex);
+        Fbo::SharedPtr fbo = Fbo::create(tfbo);
+        fsp->getVars()->setTexture("lig", textureGroup->lgoTex);
+        fsp->getVars()->setTexture("pos", textureGroup->posTex);
+        fsp->getVars()->setTexture("nrm", textureGroup->nrmTex);
+
+        fsp->getVars()["PerFrameCB"]["step"] = 1;
+        fsp->execute(pContext, fbo, true);
+
+        fsp->getVars()["PerFrameCB"]["step"] = 2;
+        fsp->execute(pContext, fbo, true);
+
+        fsp->getVars()["PerFrameCB"]["step"] = 4;
+        fsp->execute(pContext, fbo, true);
     }
     // Row finished
     else if (settings.currentOffset.y >= yres) {
@@ -176,4 +193,6 @@ RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::
     : BaseRaytracePass(pScene, programDesc, bindingTable)
 {
     settings = RTLPassSettings::RTLPassSettings();
+
+    fsp = FullScreenPass::create(RTLPASS_DIR_SHADERS"/Ref.ps.hlsl", scene->getSceneDefines());
 }
