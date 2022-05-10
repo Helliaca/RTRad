@@ -70,6 +70,7 @@ void VITPass::setPerFrameVars(const TextureGroup* textureGroup)
 
     vars["PerFrameCB_ps"]["showTexRes"] = settings.showTexRes;
     vars["PerFrameCB_ps"]["showVoxelMap"] = settings.showVoxelMap;
+    vars["PerFrameCB_ps"]["showAlphaChannel"] = settings.showAlphaChannel;
     vars["PerFrameCB_ps"]["interp_min"] = settings.interp_min;
     vars["PerFrameCB_ps"]["interp_max"] = settings.interp_max;
     vars["PerFrameCB_ps"]["mipmapLevel"] = settings.mipmapLevel;
@@ -104,6 +105,8 @@ void VITPass::onRenderGui(Gui* Gui, Gui::Window* win)
     }
 
     win->checkbox("Show Tex Res", settings.showTexRes);
+
+    win->checkbox("Show Alpha", settings.showAlphaChannel);
 
     win->slider("Mipmaplevel", settings.mipmapLevel, 0, DEFAULT_MIPMAP_LEVELS);
 }

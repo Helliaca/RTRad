@@ -13,6 +13,7 @@ import RTRad.Voxel;
 cbuffer PerFrameCB_ps {
     bool showTexRes;
     bool showVoxelMap;
+    bool showAlphaChannel;
     float4 interp_min;
     float4 interp_max;
     int mipmapLevel;
@@ -70,6 +71,10 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 
     else if (showVoxelMap) {
         col.rgb = rayMarch(gScene.camera.getPosition(), vsOut.posW.xyz, minPos, maxPos, voxTex);
+    }
+
+    else if (showAlphaChannel) {
+        col.rgb = float3(col.a, 0, 0);
     }
 
     return col;
