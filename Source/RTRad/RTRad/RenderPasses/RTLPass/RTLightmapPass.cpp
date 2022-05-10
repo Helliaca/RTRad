@@ -60,6 +60,16 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useVisCache"] = textureGroup->settings.useViscache;
 
+    if (settings.passNum == 0) {
+        rtVars["PerFrameCB"]["step"] = 4;
+    }
+    else if (settings.passNum == 1) {
+        rtVars["PerFrameCB"]["step"] = 2;
+    }
+    else if (settings.passNum == 2) {
+        rtVars["PerFrameCB"]["step"] = 1;
+    }
+
     if (textureGroup->settings.useViscache) {
         rtVars["vis"] = textureGroup->visBuf;
     }
@@ -98,7 +108,15 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
     // Set vars
     setPerFrameVars(textureGroup);    
 
-    scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x / 4, batchVec.y / 4, 1));
+    if (settings.passNum == 0) {
+        scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x / 4, batchVec.y / 4, 1));
+    }
+    else if (settings.passNum == 1) {
+        scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x / 2, batchVec.y / 2, 1));
+    }
+    else if (settings.passNum == 2) {
+        scene->raytrace(pContext, rtProgram.get(), rtVars, uint3(batchVec.x / 1, batchVec.y / 1, 1));
+    }
 
     // set row_offset
     settings.currentOffset.y += batchVec.y;

@@ -27,6 +27,7 @@ cbuffer PerFrameCB {
     int texRes;
 
     // New stuff just for progressive refinement
+    int step;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -44,10 +45,55 @@ struct RayPayload
 [shader("raygeneration")]
 void rayGen()
 {
-    uint2 self_c = DispatchRaysIndex().xy * 4;
+    // Top left corner
+    uint2 self_c = DispatchRaysIndex().xy * step;
 
-    //self_c.x += row_offset;
+    if (pos[self_c].a < 0.1f) {
+        return;
+    }
 
+    int parent_step = 2 * step;
+
+    //lig2[self_c] = float4(DispatchRaysIndex().x / 16.0f, DispatchRaysIndex().y / 16.0f, 0, 1);
+
+    if (passNum > 0 && self_c.x % parent_step == 0 && self_c.y % parent_step == 0) {
+        lig2[self_c] = lig[self_c];
+        return;
+    }
+
+    if (passNum > 0) {
+        // Get parent:
+        uint2 parent_c = self_c - (self_c % parent_step);
+
+        // horizontal gradient
+        uint2 right_parent = parent_c + uint2(parent_step, 0);
+        float3 col1 = lig[parent_c].rgb;
+        float3 col2 = lig[right_parent].rgb;
+        float grad = length(col1 - col2);
+
+        // vertical gradient
+        uint2 bottom_parent = parent_c + uint2(0, parent_step);
+        col2 = lig[bottom_parent].rgb;
+        grad += length(col1 - col2);
+
+        // normal gradient
+        float3 nrm1 = nrm[parent_c].rgb;
+        float3 nrm2 = nrm[right_parent].rgb;
+        float3 nrm3 = nrm[bottom_parent].rgb;
+        grad += length(nrm2 - nrm1);
+        grad += length(nrm3 - nrm1);
+
+        if (grad < 0.1f) {
+            lig2[self_c] = lig[parent_c];
+            //lig2[self_c] = float4(1,1,0,1);
+            return;
+        }
+    }
+
+    calcAndStoreLighting(self_c);
+}
+
+void calcAndStoreLighting(uint2 self_c) {
     // If pos alpha is less than 1, skip this.
     if (pos[self_c].a < 0.1f) {
         return;
@@ -65,8 +111,8 @@ void rayGen()
     uint matID = (uint) mat[self_c].a;
     float3 emissive = gScene.materials[matID].emissive;
 
-    lig2[self_c] = float4(1, 0, 0, 1);
-    return;
+    //lig2[self_c] = float4(1, 0, 0, 1);
+    //return;
 
     lig2[self_c] = float4(emissive, 1.f);
 
