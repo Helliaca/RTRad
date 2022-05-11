@@ -59,6 +59,8 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useVisCache"] = textureGroup->settings.useViscache;
+    rtVars["PerFrameCB"]["useSubstructuring"] = settings.useSubstructuring;
+
 
     if (textureGroup->settings.useViscache) {
         rtVars["vis"] = textureGroup->visBuf;
@@ -76,24 +78,18 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
         throw std::runtime_error("This sample does not support scene geometry changes. Aborting.");
     }
 
+    if (settings.currentOffset.x == 0 && settings.currentOffset.y == 0) {
+        onBatchStarted(pContext, textureGroup);
+    }
+
     // Get resolution
     glm::uint xres = textureGroup->lgoTex->getWidth(), yres = textureGroup->lgoTex->getHeight();
-
-    // Calculate batching
-    /*uint batchS = 128;
-
-    uint2 batchVec = uint2(
-        glm::sqrt(batchS),
-        glm::sqrt(batchS)
-    );*/
 
     uint2 batchVec = uint2(
         glm::clamp(settings.batchDims.x, glm::uint(1), xres - settings.currentOffset.x),
         glm::clamp(settings.batchDims.y, glm::uint(1), yres - settings.currentOffset.y)
     );
     
-
-
 
     // Set vars
     setPerFrameVars(textureGroup);    
@@ -105,26 +101,10 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
 
     // batch finished
     if (settings.currentOffset.x >= xres && settings.currentOffset.y >= yres) {
+        onBatchComplete(pContext, textureGroup);
         settings.currentOffset = uint2(0, 0);
         settings.passNum++;
         settings.batchComplete = true;
-
-        // Run refinement pass
-        std::vector<Texture::SharedPtr> tfbo;
-        tfbo.push_back(textureGroup->posTex);
-        Fbo::SharedPtr fbo = Fbo::create(tfbo);
-        fsp->getVars()->setTexture("lig", textureGroup->lgoTex);
-        fsp->getVars()->setTexture("pos", textureGroup->posTex);
-        fsp->getVars()->setTexture("nrm", textureGroup->nrmTex);
-
-        fsp->getVars()["PerFrameCB"]["step"] = 1;
-        fsp->execute(pContext, fbo, true);
-
-        fsp->getVars()["PerFrameCB"]["step"] = 2;
-        fsp->execute(pContext, fbo, true);
-
-        fsp->getVars()["PerFrameCB"]["step"] = 4;
-        fsp->execute(pContext, fbo, true);
     }
     // Row finished
     else if (settings.currentOffset.y >= yres) {
@@ -152,6 +132,8 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
     sreslst.push_back({ 16, "16x16" });
     win->dropdown("Sampling Res", sreslst, sres);
     settings.sampling_res = sres;
+
+    win->checkbox("Use Substructuring", settings.useSubstructuring);
 
     // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples
     // of sample-steps are taken per batch.
@@ -187,6 +169,32 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     settings.batchDims.x = batch_width;
     settings.batchDims.y = batch_height;
+}
+
+void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup* textureGroup)
+{
+    if (settings.useSubstructuring) {
+        // Run refinement pass
+        std::vector<Texture::SharedPtr> tfbo;
+        tfbo.push_back(textureGroup->posTex);
+        Fbo::SharedPtr fbo = Fbo::create(tfbo);
+        fsp->getVars()->setTexture("lig", textureGroup->lgiTex);
+        fsp->getVars()->setTexture("pos", textureGroup->posTex);
+        fsp->getVars()->setTexture("nrm", textureGroup->nrmTex);
+
+        fsp->getVars()["PerFrameCB"]["step"] = 1;
+        fsp->execute(pContext, fbo, true);
+
+        fsp->getVars()["PerFrameCB"]["step"] = 2;
+        fsp->execute(pContext, fbo, true);
+
+        fsp->getVars()["PerFrameCB"]["step"] = 4;
+        fsp->execute(pContext, fbo, true);
+    }
+}
+
+void RTLightmapPass::onBatchComplete(RenderContext* pContext, const TextureGroup* textureGroup)
+{
 }
 
 RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)

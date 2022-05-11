@@ -40,8 +40,10 @@ float4 main(GsOut vsOut) : SV_TARGET0
     // Make sure we run for the correct pixels
     if (uv.x % step != 0 || uv.y % step != 0) return pos[uv];
 
-    /*int parent_step = 2 * step;
-    uint2 parent = uv - (uv % parent_step);*/
+    if (pos[uv].a < 1.0f) {
+        lig[uv].a = 0.0f;
+        return pos[uv];
+    }
 
     if (step == 1) {
         lig[uv].a = 1.0f;
@@ -66,6 +68,9 @@ float4 main(GsOut vsOut) : SV_TARGET0
     // otherwise:
     float3 mean = 0.25f * (lig[c0].rgb + lig[c1].rgb + lig[c2].rgb + lig[c3].rgb);
     float gradient = length(mean - lig[c0].rgb);
+
+    mean = 0.25f * (nrm[c0].rgb + nrm[c1].rgb + nrm[c2].rgb + nrm[c3].rgb);
+    gradient = 0.5f * (gradient + length(mean - nrm[c0].rgb));
 
     if (gradient < 0.05f) {
         lig[c0].a = lig[c0].a + lig[c1].a + lig[c2].a + lig[c3].a;

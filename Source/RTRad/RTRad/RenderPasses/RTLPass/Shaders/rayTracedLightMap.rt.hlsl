@@ -25,6 +25,8 @@ cbuffer PerFrameCB {
     int passNum;
     bool useVisCache;
     int texRes;
+
+    bool useSubstructuring;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -210,6 +212,8 @@ void rayGen()
 
             uint2 other_c = uint2(x, y);
 
+            if (pos[other_c].a < 1.0f || (useSubstructuring && lig[other_c].a < 1.0f)) continue;
+
             if (self_c.x == other_c.x && self_c.y == other_c.y) continue;
 
             if (useVisCache && passNum > 0) {
@@ -342,7 +346,8 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     float4 col = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
 
-    lig2[self_c] += (col / fpa) * self_color * ref * view_factor;
+    lig2[self_c] += lig[other_c].a * (col / fpa) * self_color * ref * view_factor;
+    lig2[self_c].a = 1.0f;
 
     //lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;
 }

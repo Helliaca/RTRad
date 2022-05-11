@@ -17,6 +17,8 @@ struct RTLPassSettings : public RR::BaseSettings {
     bool batchComplete;
     int passNum;
 
+    bool useSubstructuring;
+
     uint2 currentOffset;
     uint2 batchDims;
 
@@ -30,6 +32,8 @@ struct RTLPassSettings : public RR::BaseSettings {
 
         batchComplete = true;
         passNum = 0;
+
+        useSubstructuring = false;
 
         currentOffset = uint2(0, 0);
         batchDims = uint2(64, 1);
@@ -49,6 +53,9 @@ public:
     void render(RenderContext* pContext, const TextureGroup* textureGroup) override;
 
     void onRenderGui(Gui* Gui, Gui::Window* win) override;
+
+    void onBatchStarted(RenderContext* pContext, const TextureGroup* textureGroup);
+    void onBatchComplete(RenderContext* pContext, const TextureGroup* textureGroup);
 
 private:
     RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable);
