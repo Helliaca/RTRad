@@ -135,6 +135,21 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     win->checkbox("Use Substructuring", settings.useSubstructuring);
 
+    if (settings.useSubstructuring) {
+        win->text("Substructuring");
+
+        win->checkbox("Write Preview into LigIn", settings.writeSubstructurePreviewIntoLigIn);
+        win->slider("Gradient Threshold", settings.subStructureSplitThreshold, 0.001f, 0.5f);
+        Falcor::Gui::DropdownList ssreslst;
+        uint32_t ssres = settings.subStructureNodeRes;
+        ssreslst.push_back({ 2, "2x2" });
+        ssreslst.push_back({ 4, "4x4" });
+        ssreslst.push_back({ 8, "8x8" });
+        ssreslst.push_back({ 16, "16x16" });
+        win->dropdown("Max. Node Size", ssreslst, ssres);
+        settings.subStructureNodeRes = ssres;
+    }
+
     // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples
     // of sample-steps are taken per batch.
 
@@ -181,15 +196,16 @@ void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup*
         fsp->getVars()->setTexture("lig", textureGroup->lgiTex);
         fsp->getVars()->setTexture("pos", textureGroup->posTex);
         fsp->getVars()->setTexture("nrm", textureGroup->nrmTex);
+        fsp->getVars()["PerFrameCB"]["writeSubstructurePreviewIntoLigIn"] = settings.writeSubstructurePreviewIntoLigIn;
+        fsp->getVars()["PerFrameCB"]["subStructureSplitThreshold"] = settings.subStructureSplitThreshold;
 
-        fsp->getVars()["PerFrameCB"]["step"] = 1;
-        fsp->execute(pContext, fbo, true);
-
-        fsp->getVars()["PerFrameCB"]["step"] = 2;
-        fsp->execute(pContext, fbo, true);
-
-        fsp->getVars()["PerFrameCB"]["step"] = 4;
-        fsp->execute(pContext, fbo, true);
+        int step = 1;
+        while (step < settings.subStructureNodeRes)
+        {
+            fsp->getVars()["PerFrameCB"]["step"] = step;
+            fsp->execute(pContext, fbo, true);
+            step *= 2;
+        }
     }
 }
 

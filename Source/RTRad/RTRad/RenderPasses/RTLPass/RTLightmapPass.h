@@ -18,6 +18,9 @@ struct RTLPassSettings : public RR::BaseSettings {
     int passNum;
 
     bool useSubstructuring;
+    bool writeSubstructurePreviewIntoLigIn;
+    float subStructureSplitThreshold;
+    int subStructureNodeRes;
 
     uint2 currentOffset;
     uint2 batchDims;
@@ -34,6 +37,9 @@ struct RTLPassSettings : public RR::BaseSettings {
         passNum = 0;
 
         useSubstructuring = false;
+        writeSubstructurePreviewIntoLigIn = false;
+        subStructureSplitThreshold = 0.05f;
+        subStructureNodeRes = 4;
 
         currentOffset = uint2(0, 0);
         batchDims = uint2(64, 1);

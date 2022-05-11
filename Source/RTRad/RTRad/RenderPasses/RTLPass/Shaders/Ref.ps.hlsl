@@ -10,6 +10,8 @@ Texture2D<float4> nrm;
 
 cbuffer PerFrameCB {
     int step;
+    bool writeSubstructurePreviewIntoLigIn;
+    float subStructureSplitThreshold;
 };
 
 struct GsOut
@@ -72,16 +74,18 @@ float4 main(GsOut vsOut) : SV_TARGET0
     mean = 0.25f * (nrm[c0].rgb + nrm[c1].rgb + nrm[c2].rgb + nrm[c3].rgb);
     gradient = 0.5f * (gradient + length(mean - nrm[c0].rgb));
 
-    if (gradient < 0.05f) {
+    if (gradient < subStructureSplitThreshold) {
         lig[c0].a = lig[c0].a + lig[c1].a + lig[c2].a + lig[c3].a;
         lig[c1].a = 0.0f;
         lig[c2].a = 0.0f;
         lig[c3].a = 0.0f;
 
         // preview
-        for (int x = 0; x < step; x++) {
-            for (int y = 0; y < step; y++) {
-                lig[uv + uint2(x,y)].rgb = lig[c0].rgb;
+        if (writeSubstructurePreviewIntoLigIn) {
+            for (int x = 0; x < step; x++) {
+                for (int y = 0; y < step; y++) {
+                    lig[uv + uint2(x, y)].rgb = lig[c0].rgb;
+                }
             }
         }
     }
