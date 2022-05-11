@@ -7,17 +7,19 @@
 
 using namespace Falcor;
 
-enum class RTPassIntegral { AREA, HEMISPHERIC };
+enum class RTPassIntegral { AREA=0, HEMISPHERIC=1 };
+enum class RTPassUndersampling { NONE=0, STATIC_BILINEAR=1, STATIC_RANDOMIZED=2, SUBSTRUCTURING=3 };
 
 struct RTLPassSettings : public RR::BaseSettings {
     RTPassIntegral integral;
-    int sampling_res;
-    bool randomizeSample;
 
     bool batchComplete;
     int passNum;
 
-    bool useSubstructuring;
+    RTPassUndersampling underSamplingMethod;
+
+    int sampling_res;
+
     bool writeSubstructurePreviewIntoLigIn;
     float subStructureSplitThreshold;
     int subStructureNodeRes;
@@ -31,12 +33,12 @@ struct RTLPassSettings : public RR::BaseSettings {
     RTLPassSettings() {
         integral = RTPassIntegral::AREA;
         sampling_res = 1;
-        randomizeSample = false;
 
         batchComplete = true;
         passNum = 0;
 
-        useSubstructuring = false;
+        underSamplingMethod = RTPassUndersampling::NONE;
+
         writeSubstructurePreviewIntoLigIn = false;
         subStructureSplitThreshold = 0.05f;
         subStructureNodeRes = 4;

@@ -55,11 +55,11 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
-    rtVars["PerFrameCB"]["randomizeSamples"] = settings.randomizeSample;
+    rtVars["PerFrameCB"]["randomizeSamples"] = settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED;
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useVisCache"] = textureGroup->settings.useViscache;
-    rtVars["PerFrameCB"]["useSubstructuring"] = settings.useSubstructuring;
+    rtVars["PerFrameCB"]["useSubstructuring"] = settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING;
 
 
     if (textureGroup->settings.useViscache) {
@@ -119,24 +119,30 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
 
 void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 {
-    win->text("RTLPass Settings");
+    win->text("Undersampling Settings");
 
-    win->checkbox("Randomize Sample", settings.randomizeSample);
+    Falcor::Gui::DropdownList usmlst;
+    uint32_t usm = (uint32_t)settings.underSamplingMethod;
+    usmlst.push_back({ (uint32_t)RTPassUndersampling::NONE, "None" });
+    usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_BILINEAR, "Static (Bilinear)" });
+    usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_RANDOMIZED, "Static (Randomized)" });
+    usmlst.push_back({ (uint32_t)RTPassUndersampling::SUBSTRUCTURING, "Substructuring" });
+    win->dropdown("Undersampling Method", usmlst, usm);
+    settings.underSamplingMethod = (RTPassUndersampling)usm;
 
-    Falcor::Gui::DropdownList sreslst;
-    uint32_t sres = settings.sampling_res;
-    sreslst.push_back({ 1, "1x1" });
-    sreslst.push_back({ 2, "2x2" });
-    sreslst.push_back({ 4, "4x4" });
-    sreslst.push_back({ 8, "8x8" });
-    sreslst.push_back({ 16, "16x16" });
-    win->dropdown("Sampling Res", sreslst, sres);
-    settings.sampling_res = sres;
+    if (settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR || settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED) {
+        Falcor::Gui::DropdownList sreslst;
+        uint32_t sres = settings.sampling_res;
+        sreslst.push_back({ 1, "1x1" });
+        sreslst.push_back({ 2, "2x2" });
+        sreslst.push_back({ 4, "4x4" });
+        sreslst.push_back({ 8, "8x8" });
+        sreslst.push_back({ 16, "16x16" });
+        win->dropdown("Sampling Res", sreslst, sres);
+        settings.sampling_res = sres;
+    }
 
-    win->checkbox("Use Substructuring", settings.useSubstructuring);
-
-    if (settings.useSubstructuring) {
-        win->text("Substructuring");
+    else if (settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) {
 
         win->checkbox("Write Preview into LigIn", settings.writeSubstructurePreviewIntoLigIn);
         win->slider("Gradient Threshold", settings.subStructureSplitThreshold, 0.001f, 0.5f);
@@ -152,6 +158,9 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples
     // of sample-steps are taken per batch.
+
+    win->separator();
+    win->text("Batching");
 
     int max_samples = MAX_SAMPLES_PER_BATCH;
 
@@ -188,7 +197,7 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
 void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup* textureGroup)
 {
-    if (settings.useSubstructuring) {
+    if (settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) {
         // Run refinement pass
         std::vector<Texture::SharedPtr> tfbo;
         tfbo.push_back(textureGroup->posTex);
