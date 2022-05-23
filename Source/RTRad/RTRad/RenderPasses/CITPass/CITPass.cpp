@@ -52,6 +52,7 @@ void CITPass::render(RenderContext* pContext, const TextureGroup* tg)
 void CITPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     vars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
+    vars["PerFrameCB_GS"]["texDims"] = glm::float2(textureGroup->lgoTex->getWidth(), textureGroup->lgoTex->getHeight());
 }
 
 void CITPass::onRenderGui(Gui* Gui, Gui::Window* win)

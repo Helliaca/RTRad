@@ -21,11 +21,11 @@ cbuffer PerFrameCB {
 
     int sampling_res;
     float3 posOffset;
-    bool randomizeSamples;
     int passNum;
     bool useVisCache;
     int texRes;
 
+    bool randomizeSamples;
     bool useSubstructuring;
 };
 
@@ -330,11 +330,7 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     float ref = 0.9;
 
-    // Account for surface area of other
-    float dim1;
-    float dim2;
-    pos.GetDimensions(dim1, dim2);
-    float fpa = (dim1 * dim2) / (sampling_res * sampling_res) * arf[other_c].r; // -> fragments per unit area on other
+    float a_other = arf[other_c].r; // surface area of other
 
     float4 self_color = float4(mat[self_c].rgb, 1.0f);
 
@@ -342,11 +338,14 @@ void setColor(uint2 self_c, uint2 other_c) {
     //uint matID = (uint) mat[self_c].r;
     //float4 self_color = gScene.materials[matID].baseColor;
 
+    float dim1;
+    float dim2;
+    pos.GetDimensions(dim1, dim2);
     float2 uvs = float2(float(other_c.x), float(other_c.y)) / float2(float(dim1), float(dim2));
 
     float4 col = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
 
-    lig2[self_c] += lig[other_c].a * (col / fpa) * self_color * ref * view_factor;
+    lig2[self_c] += (lig[other_c].a * col * self_color * ref * view_factor * a_other);
     lig2[self_c].a = 1.0f;
 
     //lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;

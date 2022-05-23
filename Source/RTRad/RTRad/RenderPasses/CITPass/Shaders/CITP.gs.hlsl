@@ -11,6 +11,10 @@ struct GSOut
     uint materialID  : MATERIAL_ID;
 };
 
+cbuffer PerFrameCB_GS {
+    float2 texDims;
+};
+
 [maxvertexcount(3)]
 void gmain(triangle VSOut input[3], inout TriangleStream<GSOut> OutputStream)
 {
@@ -30,7 +34,7 @@ void gmain(triangle VSOut input[3], inout TriangleStream<GSOut> OutputStream)
         output.normalW = input[i].normalW;
         output.materialID = input[i].materialID;
 
-        output.areaFactor = uvA / vvA;
+        output.areaFactor = vvA / (texDims.x * texDims.y * uvA); // surface are of this single patch is = A(tri) / (A(uv) * texres^2)
 
         OutputStream.Append(output);
     }
