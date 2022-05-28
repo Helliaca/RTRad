@@ -230,8 +230,8 @@ void rayGen()
 
             if (randomizeSamples) {
                 uint2 seed = uint2(
-                    random((self_c.x + 1) * (self_c.y + 1) + passNum, 7864128),
-                    random((self_c.x + 1) * (self_c.y + 1) + passNum, 5490141)
+                    random((other_c.x + 1) * (other_c.y + 1) + passNum, 7864128),
+                    random((other_c.x + 1) * (other_c.y + 1) + passNum, 5490141)
                     );
 
                 uint2 rnd = random(seed, uint2(sampling_res, sampling_res));
@@ -345,7 +345,7 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     float4 col = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
 
-    lig2[self_c] += (lig[other_c].a * col * self_color * ref * view_factor * a_other);
+    lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * col * self_color * ref * view_factor * a_other);
     lig2[self_c].a = 1.0f;
 
     //lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;
