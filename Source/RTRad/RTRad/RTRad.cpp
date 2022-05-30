@@ -162,13 +162,13 @@ void RTRad::onShutdown()
 
 bool RTRad::onKeyEvent(const KeyboardEvent& keyEvent)
 {
-    /* //Old code to toggle raytracing with spacebar
-    if (keyEvent.key == KeyboardEvent::Key::Space && keyEvent.type == KeyboardEvent::Type::KeyPressed)
+    if (keyEvent.key == KeyboardEvent::Key::Escape && keyEvent.type == KeyboardEvent::Type::KeyPressed)
     {
-        mRayTrace = !mRayTrace;
+        rtlPass->settings.batchComplete = true;
+        mMakePass = false;
         return true;
     }
-    */
+    
     if (mpScene && mpScene->onKeyEvent(keyEvent)) return true;
     return false;
 }
