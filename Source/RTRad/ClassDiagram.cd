@@ -24,7 +24,7 @@
   <Class Name="CITPass" Collapsed="true">
     <Position X="5.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEAQIAA=</HashCode>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAABAAEAQIAA=</HashCode>
       <FileName>RTRad\RenderPasses\CITPass\CITPass.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -38,7 +38,7 @@
   <Class Name="RTLightmapPass" Collapsed="true">
     <Position X="5.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBAgAAQIAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAIAgAAAAAAAAAAAAAAAAAIBAgAAQIAA=</HashCode>
       <FileName>RTRad\RenderPasses\RTLPass\RTLightmapPass.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -63,20 +63,6 @@
       <FileName>RTRad\Core\BasePipelineElement.h</FileName>
     </TypeIdentifier>
   </Struct>
-  <Struct Name="RR::BaseSettings" Collapsed="true">
-    <Position X="11" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>RTRad\Core\SettingsObject.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="TextureGroupSettings" Collapsed="true">
-    <Position X="9.5" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAAAAABAAAAAAAAAAAAAAAACIAAAAAAgAAAA=</HashCode>
-      <FileName>RTRad\Core\TextureGroup.h</FileName>
-    </TypeIdentifier>
-  </Struct>
   <Struct Name="TextureGroup" Collapsed="true">
     <Position X="4.75" Y="3" Width="1.5" />
     <TypeIdentifier>
@@ -85,38 +71,10 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="RR::SettingsStruct&lt;T&gt;" Collapsed="true">
-    <Position X="5" Y="1" Width="1.5" />
+    <Position X="5" Y="1" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>RTRad\Core\SettingsObject.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="CITPassSettings" Collapsed="true">
-    <Position X="11" Y="4.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>RTRad\RenderPasses\CITPass\CITPass.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="CVMPassSettings" Collapsed="true">
-    <Position X="11" Y="5.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>RTRad\RenderPasses\CVMPass\CVMPass.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="RTLPassSettings" Collapsed="true">
-    <Position X="11" Y="6" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAABAAIAAAQAAAAACAAAAABAAEAAAAQAFA=</HashCode>
-      <FileName>RTRad\RenderPasses\RTLPass\RTLightmapPass.h</FileName>
-    </TypeIdentifier>
-  </Struct>
-  <Struct Name="VITPassSettings" Collapsed="true">
-    <Position X="11" Y="6.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAACAAAAEUAAAAAIAAAAAgAAEIAAAAAAAAE=</HashCode>
-      <FileName>RTRad\RenderPasses\VITPass\VITPass.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Font Name="Segoe UI" Size="9" />

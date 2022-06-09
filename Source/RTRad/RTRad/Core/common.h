@@ -22,8 +22,8 @@ using namespace Falcor;
 
 #define DEFAULT_SCENE SCENES_FOLDER"/CornellLucy.pyscene"
 
-#define DEFAULT_WIN_HEIGHT 1080
-#define DEFAULT_WIN_WIDTH 1920
+#define DEFAULT_WIN_HEIGHT 900
+#define DEFAULT_WIN_WIDTH 900
 
 #define CLEAR_COLOR float4(0.38f, 0.52f, 0.10f, 1)
 

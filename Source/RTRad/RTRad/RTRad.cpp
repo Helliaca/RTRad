@@ -152,7 +152,8 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
         mOutputString = "rad_time= "+std::to_string(mAccTime / 1000.f) + "s";
     }
 
-    TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });
+    // Disable this line to disable the FPB counter. Then you can press F2 to hide the GUI and take proper screenshots.
+    //TextRenderer::render(pRenderContext, gpFramework->getFrameRate().getMsg(), pTargetFbo, { 20, 20 });
 }
 
 void RTRad::onShutdown()
