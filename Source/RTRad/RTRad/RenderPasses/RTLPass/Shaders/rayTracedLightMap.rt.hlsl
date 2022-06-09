@@ -304,6 +304,8 @@ void primaryMiss(inout RayPayload rpl)
     setColor(self_c, other_c);
 }
 
+#define ref 0.9f
+
 void setColor(uint2 self_c, uint2 other_c) {
     float3 self_wpos = pos[self_c].xyz + posOffset;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
     float3 other_wpos = pos[other_c].xyz + posOffset;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
@@ -316,6 +318,7 @@ void setColor(uint2 self_c, uint2 other_c) {
     //if (r < 0.1f) return;
     if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) return;
 
+    // Form factor
     self_to_other = normalize(self_to_other);
 
     float3 self_nrm = 2.0f * (nrm[self_c].xyz - 0.5f);
@@ -326,27 +329,20 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     if (self_cos <= 0.0f || other_cos <= 0.0f) return;
 
-    float view_factor = self_cos * other_cos * (1.0f / (PI * r * r));
+    float F = self_cos * other_cos * (1.0f / (PI * r * r));
 
-    float ref = 0.9;
-
-    float a_other = arf[other_c].r; // surface area of other
+    // Lighting
+    float other_surface = arf[other_c].r; // surface area of other
 
     float4 self_color = float4(mat[self_c].rgb, 1.0f);
-
-    // old version (where we stored a matid in mat.r)
-    //uint matID = (uint) mat[self_c].r;
-    //float4 self_color = gScene.materials[matID].baseColor;
 
     float dim1;
     float dim2;
     pos.GetDimensions(dim1, dim2);
     float2 uvs = float2(float(other_c.x), float(other_c.y)) / float2(float(dim1), float(dim2));
 
-    float4 col = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
+    float4 other_lig = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
 
-    lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * col * self_color * ref * view_factor * a_other);
+    lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * other_lig * self_color * ref * F * other_surface);
     lig2[self_c].a = 1.0f;
-
-    //lig2[self_c] += (lig[other_c] / fpa) * self_color * ref * view_factor;
 }
