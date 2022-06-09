@@ -188,7 +188,7 @@ void rayGen()
     uint matID = (uint) mat[self_c].a;
     float3 emissive = gScene.materials[matID].emissive;
 
-    lig2[self_c] = float4(emissive, 1.f);
+    //lig2[self_c] = float4(emissive, 1.f);
 
     // Lets not run this for light-sources
     // TODO: renable. I turned it off for bugfixing
@@ -207,8 +207,13 @@ void rayGen()
     bool voxelRayMarch = false;
     //voxelRayMarch = self_c.x & 4 > 0;
 
-    for (uint x = 0; x < dim1; x += sampling_res) {
-        for (uint y = 0; y < dim2; y += sampling_res) {
+    uint2 start = self_c;
+    start.y += 1;
+
+    for (uint x = start.x; x < dim1; x += sampling_res) {
+        for (uint y = start.y; y < dim2; y += sampling_res) {
+            start = uint2(0, 0);
+
 
             uint2 other_c = uint2(x, y);
 
@@ -345,4 +350,17 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * other_lig * self_color * ref * F * other_surface);
     lig2[self_c].a = 1.0f;
+
+
+
+    float self_surface = arf[self_c].r; // surface area of other
+
+    float4 other_color = float4(mat[other_c].rgb, 1.0f);
+
+    float2 uvs2 = float2(float(self_c.x), float(self_c.y)) / float2(float(dim1), float(dim2));
+
+    float4 self_lig = lig.SampleLevel(sampleWrap, uvs2, log2(sampling_res));
+
+    lig2[other_c] += (sampling_res * sampling_res) * (lig[self_c].a * self_lig * other_color * ref * F * self_surface);
+    lig2[other_c].a = 1.0f;
 }
