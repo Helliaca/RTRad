@@ -136,6 +136,9 @@ void RTRad::onFrameRender(RenderContext* pRenderContext, const Fbo::SharedPtr& p
                 // Create mipmaps
                 textureGroup->generateLMips(pRenderContext);
 
+                rtlPass->settings.batchComplete = true;
+                rtlPass->settings.passNum = 0;
+
                 mResetInputTextures = false;
             }
         }

@@ -231,25 +231,12 @@ void primaryMiss(inout RayPayload rpl)
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
 
-    // Set visCache
-    //uint bufPos = getBufferPos(self_c, other_c);
-
-    //if (vis[bufPos] != 100) lig2[self_c] += float4(0.01, 0, 0, 0);
-
-    //vis[bufPos] = 100;
-
-    //bufPos = getBufferPos(other_c, self_c);
-
-    //vis[bufPos] = 100;
-
     #if VISCACHE
     uint bufPos = getBufferPos(self_c, other_c, texRes);
     if (bufPos <= max_bufferpos) {
         setVisible(bufPos, vis);
     }
     #endif
-    //setVisible(other_c, self_c);
-
 
     setColor(self_c, other_c);
 }
