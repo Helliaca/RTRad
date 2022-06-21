@@ -7,7 +7,7 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
-import RTRad.Voxel;
+import RTRad.RTRad.Slang.Voxel;
 
 
 cbuffer PerFrameCB_ps {

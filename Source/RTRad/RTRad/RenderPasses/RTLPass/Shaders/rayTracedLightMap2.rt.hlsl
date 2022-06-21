@@ -3,7 +3,7 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
-import RTRad.HemisphericSampling;
+import RTRad.RTRad.Slang.HemisphericSampling;
 
 
 Texture2D<float4> pos;

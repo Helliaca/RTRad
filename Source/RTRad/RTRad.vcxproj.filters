@@ -37,8 +37,8 @@
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.vs.hlsl" />
-    <ShaderSource Include="Voxel.slang" />
-    <ShaderSource Include="HemisphericSampling.slang" />
+    <ShaderSource Include="RTRad\Slang\Voxel.slang" />
+    <ShaderSource Include="RTRad\Slang\HemisphericSampling.slang" />
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Ref.ps.hlsl" />
   </ItemGroup>
   <ItemGroup>

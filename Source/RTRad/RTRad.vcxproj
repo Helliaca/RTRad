@@ -42,7 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ShaderSource Include="HemisphericSampling.slang" />
+    <ShaderSource Include="RTRad\Slang\HemisphericSampling.slang" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.vs.hlsl" />
@@ -54,7 +54,7 @@
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Ref.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.vs.hlsl" />
-    <ShaderSource Include="Voxel.slang" />
+    <ShaderSource Include="RTRad\Slang\Voxel.slang" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
