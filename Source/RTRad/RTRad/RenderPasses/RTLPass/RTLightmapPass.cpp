@@ -21,6 +21,9 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 #endif
 
     rtProgDesc.addDefines(mpScene->getSceneDefines());
+
+    //rtProgDesc.addDefine("VISCACHE", "1");
+
     rtProgDesc.setMaxTraceRecursionDepth(1); // 1 for calling TraceRay from RayGen, 1 for calling it from the primary-ray ClosestHit shader for reflections, 1 for reflection ray tracing a shadow ray
     rtProgDesc.setMaxPayloadSize(24); // The largest ray payload struct (PrimaryRayData) is 24 bytes. The payload size should be set as small as possible for maximum performance.
 
@@ -43,6 +46,14 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     PROFILE("setPerFrameVars");
+    if (textureGroup->settings.useViscache) {
+        addProgramDefine("VISCACHE", "1", true);
+    }
+    else
+    {
+        removeProgramDefine("VISCACHE", true);
+    }
+
     rtVars->setTexture("pos", textureGroup->posTex);
     rtVars->setTexture("nrm", textureGroup->nrmTex);
     rtVars->setTexture("arf", textureGroup->arfTex);

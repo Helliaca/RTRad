@@ -10,8 +10,8 @@ namespace RR {
         virtual ~BaseRenderPass() = default;
 
         // Program
-        void addProgramDefine(const std::string& name, const std::string& value = "", bool updateVars = false);
-        void removeProgramDefine(const std::string& name, bool updateVars = false);
+        virtual void addProgramDefine(const std::string& name, const std::string& value = "", bool updateVars = false);
+        virtual void removeProgramDefine(const std::string& name, bool updateVars = false);
         GraphicsProgram::SharedPtr getProgram() const { return state->getProgram(); }
 
         // state

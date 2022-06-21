@@ -130,10 +130,8 @@ void rayGen()
 {
     uint2 self_c = DispatchRaysIndex().xy + currentOffset;
 
-    //self_c.x += row_offset;
-
     // If pos alpha is less than 1, skip this.
-    if (pos[self_c].a < 0.1f) {
+    if (pos[self_c].a < 1.0f) {
         return;
     }
 
@@ -144,19 +142,9 @@ void rayGen()
     float dim2;
     pos.GetDimensions(dim1, dim2);
 
-    float4 sum_c = float4(0, 0, 0, 0);
-
     uint matID = (uint) mat[self_c].a;
     float3 emissive = gScene.materials[matID].emissive;
-
-    //lig2[self_c] = float4(emissive, 1.f);
-
-    // Lets not run this for light-sources
-    // TODO: renable. I turned it off for bugfixing
-    //if (length(emissive) > 0.1f) return;
-
-    
-    //lig2[self_c] = lig[self_c];
+    //if (length(emissive) > 0.1f) return; // don't run for light-sources
 
     // Use this to display a cool way of what points rayMarch determines to be visible from a given point
     /*lig2[self_c] = float4(0, 0, 0, 1);
@@ -177,7 +165,8 @@ void rayGen()
 
             if (self_c.x == other_c.x && self_c.y == other_c.y) continue;
 
-            if (useVisCache && passNum > 0) {
+            #if VISCACHE
+            if (passNum > 0) {
                 // Get viscache
                 uint bufPos = getBufferPos(self_c, other_c, texRes);
 
@@ -188,6 +177,7 @@ void rayGen()
                     continue;
                 }
             }
+            #endif
 
             if (randomizeSamples) {
                 uint2 seed = uint2(
@@ -253,12 +243,12 @@ void primaryMiss(inout RayPayload rpl)
 
     //vis[bufPos] = 100;
 
-    if (useVisCache) {
-        uint bufPos = getBufferPos(self_c, other_c, texRes);
-        if (bufPos <= max_bufferpos) {
-            setVisible(bufPos, vis);
-        }
+    #if VISCACHE
+    uint bufPos = getBufferPos(self_c, other_c, texRes);
+    if (bufPos <= max_bufferpos) {
+        setVisible(bufPos, vis);
     }
+    #endif
     //setVisible(other_c, self_c);
 
 
