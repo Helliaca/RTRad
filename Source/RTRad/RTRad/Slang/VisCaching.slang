@@ -1,12 +1,5 @@
-uint InvCantorIndex(uint x, uint y, int texRes)
+uint Cantor(uint x, uint y)
 {
-    if (x > y) {
-        uint tmp = x;
-        x = y;
-        y = tmp;
-    }
-
-    x = texRes - x;
     return (x + y) * (x + y + 1) / 2 + x;
 }
 
@@ -15,7 +8,10 @@ uint getBufferPos(uint2 self_c, uint2 other_c, int texRes)
     uint self_p = self_c.x + self_c.y * texRes;
     uint other_p = other_c.x + other_c.y * texRes;
 
-    return InvCantorIndex(self_p, other_p, texRes);
+    return Cantor(
+        (texRes*texRes) - min(self_p, other_p),
+        max(self_p, other_p)
+    );
 }
 
 bool getVisible(uint bufferpos, RWBuffer<uint> vis) {

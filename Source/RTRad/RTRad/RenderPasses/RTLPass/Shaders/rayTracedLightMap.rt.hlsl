@@ -32,7 +32,7 @@ cbuffer PerFrameCB {
 SamplerState sampleWrap : register(s0);
 
 #define PI 3.14159265359f
-#define max_bufferpos 1073676288
+#define max_bufferpos 4294705152
 
 struct RayPayload
 {
@@ -130,9 +130,9 @@ void rayGen()
     uint2 self_c = DispatchRaysIndex().xy + currentOffset;
 
     // If pos alpha is less than 1, skip this.
-    if (pos[self_c].a < 1.0f) {
-        return;
-    }
+    //if (pos[self_c].a < 1.0f) {
+    //    return;
+    //}
 
     // Worls position of current texel
     float3 self_wpos = pos[self_c].xyz + posOffset;
@@ -175,6 +175,8 @@ void rayGen()
                     }
                     continue;
                 }
+                lig2[self_c] = float4(1, 1, 1, 1);
+                continue;
             }
             #endif
 
