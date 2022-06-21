@@ -23,7 +23,6 @@ cbuffer PerFrameCB {
     int sampling_res;
     float3 posOffset;
     int passNum;
-    bool useVisCache;
     int texRes;
 
     bool randomizeSamples;

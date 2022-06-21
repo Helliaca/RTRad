@@ -43,15 +43,18 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     return SharedPtr(pass);
 }
 
+static bool useVisCache = false;
 void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     PROFILE("setPerFrameVars");
-    if (textureGroup->settings.useViscache) {
-        addProgramDefine("VISCACHE", "1", true);
+
+    // Viscache
+    if (textureGroup->settings.useViscache != useVisCache) {
+        useVisCache = textureGroup->settings.useViscache;
+        addProgramDefine("VISCACHE", std::to_string(useVisCache), true);
     }
-    else
-    {
-        removeProgramDefine("VISCACHE", true);
+    if (useVisCache) {
+        rtVars["vis"] = textureGroup->visBuf;
     }
 
     rtVars->setTexture("pos", textureGroup->posTex);
@@ -69,13 +72,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["randomizeSamples"] = settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED;
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
-    rtVars["PerFrameCB"]["useVisCache"] = textureGroup->settings.useViscache;
     rtVars["PerFrameCB"]["useSubstructuring"] = settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING;
-
-
-    if (textureGroup->settings.useViscache) {
-        rtVars["vis"] = textureGroup->visBuf;
-    }
 }
 
 void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* textureGroup)
