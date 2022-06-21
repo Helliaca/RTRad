@@ -3,6 +3,7 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
+import RTRad.RTRad.Slang.VisCaching;
 
 Texture2D<float4> pos;
 Texture2D<float4> nrm;
@@ -119,46 +120,6 @@ uint2 random(uint2 seed, uint2 max)
     );
 }
 
-uint cantor(uint x, uint y)
-{
-    if (x > y) {
-        uint tmp = x;
-        x = y;
-        y = tmp;
-    }
-
-    x = texRes - x;
-    return (x + y)* (x + y + 1) / 2 + x;
-}
-
-uint getBufferPos(uint2 self_c, uint2 other_c)
-{
-    uint self_p = self_c.x + self_c.y * texRes;
-    uint other_p = other_c.x + other_c.y * texRes;
-
-    return cantor(self_p, other_p);
-}
-
-bool getVisible(uint bufferpos) {
-    uint bitpos = bufferpos % 32;
-
-    bufferpos = bufferpos / 32;
-
-    uint v = vis[bufferpos];
-
-    return ((v >> bitpos) & 1) > 0;
-}
-
-void setVisible(uint bufferpos) {
-    uint bitpos = bufferpos % 32;
-
-    bufferpos = bufferpos / 32;
-
-    uint v = vis[bufferpos];
-
-    vis[bufferpos] = v | (1 << bitpos);
-}
-
 float distSquared(float3 pos1, float3 pos2) {
     float3 c = pos1 - pos2;
     return dot(c, c);
@@ -218,10 +179,10 @@ void rayGen()
 
             if (useVisCache && passNum > 0) {
                 // Get viscache
-                uint bufPos = getBufferPos(self_c, other_c);
+                uint bufPos = getBufferPos(self_c, other_c, texRes);
 
                 if (bufPos <= max_bufferpos) {
-                    if (getVisible(bufPos)) {
+                    if (getVisible(bufPos, vis)) {
                         setColor(self_c, other_c);
                     }
                     continue;
@@ -293,9 +254,9 @@ void primaryMiss(inout RayPayload rpl)
     //vis[bufPos] = 100;
 
     if (useVisCache) {
-        uint bufPos = getBufferPos(self_c, other_c);
+        uint bufPos = getBufferPos(self_c, other_c, texRes);
         if (bufPos <= max_bufferpos) {
-            setVisible(bufPos);
+            setVisible(bufPos, vis);
         }
     }
     //setVisible(other_c, self_c);
