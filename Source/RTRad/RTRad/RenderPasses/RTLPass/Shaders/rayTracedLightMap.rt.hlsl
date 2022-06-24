@@ -169,6 +169,23 @@ void rayGen()
                 // Get viscache
                 uint bufPos = getBufferPos(self_c, other_c, texRes);
 
+                //=====================
+
+                if (self_c.x == 4 && self_c.y == 4) {
+                    
+                    if (getVisible(bufPos, vis)) {
+                        lig2[other_c] = float4(1, 1, 1, 1);
+                    }
+                    else {
+                        lig2[other_c] = float4(0, 0, 0, 1);
+                    }
+
+                    lig2[self_c] = float4(1, 0, 0, 1);
+                }
+                continue;
+                 
+                //=====================
+
                 if (bufPos <= max_bufferpos) {
                     if (getVisible(bufPos, vis)) {
                         setColor(self_c, other_c);

@@ -115,6 +115,7 @@ public:
             size_t rres = std::min((int)settings.textureResolution, MAX_VISCACHE_RESOLUTION);
             size_t bufSize = (rres * rres * rres * rres * (size_t)4 / (size_t)2 / (size_t)32);
             bufSize -= (rres * rres);
+            bufSize = rres * rres * rres * rres;
 
             visBuf = Buffer::create(bufSize,
                 Falcor::ResourceBindFlags::ShaderResource | Falcor::ResourceBindFlags::UnorderedAccess,

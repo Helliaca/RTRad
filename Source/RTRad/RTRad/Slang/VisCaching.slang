@@ -9,8 +9,8 @@ uint getBufferPos(uint2 self_c, uint2 other_c, int texRes)
     uint other_p = other_c.x + other_c.y * texRes;
 
     return Cantor(
-        (texRes*texRes) - min(self_p, other_p),
-        max(self_p, other_p)
+        min(self_p, other_p),
+        (texRes*texRes) - max(self_p, other_p) - 1
     );
 }
 
@@ -19,9 +19,7 @@ bool getVisible(uint bufferpos, RWBuffer<uint> vis) {
 
     bufferpos = bufferpos / 32;
 
-    uint v = vis[bufferpos];
-
-    return ((v >> bitpos) & 1) > 0;
+    return ((vis[bufferpos] >> bitpos) & 1) > 0;
 }
 
 void setVisible(uint bufferpos, RWBuffer<uint> vis) {
@@ -29,7 +27,5 @@ void setVisible(uint bufferpos, RWBuffer<uint> vis) {
 
     bufferpos = bufferpos / 32;
 
-    uint v = vis[bufferpos];
-
-    vis[bufferpos] = v | (1 << bitpos);
+    vis[bufferpos] = vis[bufferpos] | (1 << bitpos);
 }
