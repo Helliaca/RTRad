@@ -4,6 +4,7 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 import RTRad.RTRad.Slang.VisCaching;
+import RTRad.RTRad.Slang.Voxel;
 
 Texture2D<float4> pos;
 Texture2D<float4> nrm;
@@ -27,6 +28,9 @@ cbuffer PerFrameCB {
 
     bool randomizeSamples;
     bool useSubstructuring;
+
+    float3 minPos;
+    float3 maxPos;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -39,61 +43,6 @@ struct RayPayload
     uint2 self_c;
     uint2 other_c;
 };
-
-uint3 toVoxelSpace(float3 posW) {
-    posW = 0.5f * (posW + float3(1, 1, 1)); // [0,1]
-    posW = posW * 63.49f; // [0, 64]
-    return (uint3)posW;
-}
-
-float max3(float3 v) {
-    return max(v.x, max(v.y, v.z));
-}
-
-bool rayMarchVisible(float3 self_pos, float3 other_pos)
-{
-    //epsilon
-    self_pos = self_pos + normalize(other_pos - self_pos) * 0.07f;
-    other_pos = other_pos + normalize(self_pos - other_pos) * 0.07f;
-
-    for (float i = 0.0f; i < 1.0f; i += 1.0f / 128.0f) {
-        float3 pos = self_pos + i * (other_pos - self_pos);
-
-        if (max3(abs(pos)) > 1.0f) return true;
-
-        uint3 voxPos = toVoxelSpace(pos);
-
-        if (voxTex[voxPos].a > 0) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool rayMarchVisible(uint2 self_c, uint2 other_c)
-{
-    float3 self_pos = pos[self_c].xyz;
-    float3 other_pos = pos[other_c].xyz;
-
-    //epsilon
-    self_pos = self_pos + normalize(other_pos - self_pos) * 0.07f;
-    other_pos = other_pos + normalize(self_pos - other_pos) * 0.07f;
-
-    //float delta = 1.0f / (length(self_pos - other_pos) * 32.0f);
-
-    for (float i = 0.0f; i < 1.0f; i += 1.0f / 32.0f) {
-        float3 pos = self_pos + i * (other_pos - self_pos);
-
-        if (max3(abs(pos)) > 1.0f) return true;
-
-        uint3 voxPos = toVoxelSpace(pos);
-
-        if (voxTex[voxPos].a > 0) {
-            return false;
-        }
-    }
-    return true;
-}
 
 // Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
 uint Hash(uint seed)
@@ -152,7 +101,7 @@ void rayGen()
     }
     return;*/
 
-    bool voxelRayMarch = false;
+    bool voxelRayMarch = true;
     //voxelRayMarch = self_c.x & 4 > 0;
 
 
@@ -200,7 +149,7 @@ void rayGen()
             //bool voxelRayMarch = false;
 
             if (voxelRayMarch) {
-                if (rayMarchVisible(self_c, other_c)) {
+                if (vRayMarch(self_wpos, other_wpos, voxTex, minPos, maxPos)) {
                     setColor(self_c, other_c);
                 }
             }

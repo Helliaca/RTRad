@@ -73,6 +73,9 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useSubstructuring"] = settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING;
+
+    rtVars["PerFrameCB"]["minPos"] = scene->getSceneBounds().minPoint;
+    rtVars["PerFrameCB"]["maxPos"] = scene->getSceneBounds().maxPoint;
 }
 
 void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* textureGroup)

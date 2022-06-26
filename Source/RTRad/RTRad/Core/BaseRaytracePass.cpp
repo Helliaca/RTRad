@@ -2,6 +2,8 @@
 
 RR::BaseRaytracePass::BaseRaytracePass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable) : BaseRenderPass(pScene)
 {
+    scene = pScene;
+
     rtBindingTable = bindingTable;
 
     // Create RtProgram from RtProgram::Desc

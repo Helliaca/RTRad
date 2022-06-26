@@ -70,7 +70,7 @@ float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
     }
 
     else if (showVoxelMap) {
-        col.rgb = rayMarch(gScene.camera.getPosition(), vsOut.posW.xyz, minPos, maxPos, voxTex);
+        col.rgb = vRayMarchCol(gScene.camera.getPosition(), vsOut.posW.xyz, voxTex, minPos, maxPos);
     }
 
     else if (showAlphaChannel) {

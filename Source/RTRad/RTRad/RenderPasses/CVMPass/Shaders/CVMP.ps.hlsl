@@ -38,7 +38,7 @@ GBuffer pmain(GSOut vsOut)
     voxTex.GetDimensions(voxRes, voxRes, voxRes);
 
     uint3 samp = worldSpaceToVoxelSpace(vsOut.posW.xyz, minPos, maxPos, voxRes);
-    voxTex[samp] = float4(vsOut.posW.xyz, 1);
+    voxTex[samp] = float4((vsOut.posW.xyz-minPos)/(maxPos-minPos), 1);
 
     GBuffer o;
     return o;
