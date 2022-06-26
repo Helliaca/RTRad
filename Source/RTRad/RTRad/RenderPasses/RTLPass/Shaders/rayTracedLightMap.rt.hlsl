@@ -22,7 +22,6 @@ cbuffer PerFrameCB {
     uint2 currentOffset;
 
     int sampling_res;
-    float3 posOffset;
     int passNum;
     int texRes;
 
@@ -86,7 +85,7 @@ void rayGen()
     //}
 
     // Worls position of current texel
-    float3 self_wpos = pos[self_c].xyz + posOffset;
+    float3 self_wpos = pos[self_c].xyz + minPose;
 
     float dim1;
     float dim2;
@@ -141,7 +140,7 @@ void rayGen()
                     );
             }
 
-            float3 other_wpos = pos[other_c].xyz + posOffset;
+            float3 other_wpos = pos[other_c].xyz + minPose;
 
             #if VOXELRAYMARCH
             if ((other_c.x + other_c.y * dim2) % voxelRaymarchRatio == 0) {
@@ -192,8 +191,8 @@ void primaryMiss(inout RayPayload rpl)
 #define ref 0.9f
 
 void setColor(uint2 self_c, uint2 other_c) {
-    float3 self_wpos = pos[self_c].xyz + posOffset;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
-    float3 other_wpos = pos[other_c].xyz + posOffset;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 self_wpos = pos[self_c].xyz + minPose;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 other_wpos = pos[other_c].xyz + minPose;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
 
     float3 self_to_other = other_wpos - self_wpos;
 

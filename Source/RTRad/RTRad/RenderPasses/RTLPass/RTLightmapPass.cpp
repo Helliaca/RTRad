@@ -77,7 +77,6 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["voxelRaymarchRatio"] = settings.voxelRaymarchRatio;
 
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
-    rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
     rtVars["PerFrameCB"]["randomizeSamples"] = settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED;
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
