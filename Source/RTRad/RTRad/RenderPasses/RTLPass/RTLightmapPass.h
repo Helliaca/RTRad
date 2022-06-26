@@ -24,6 +24,9 @@ struct RTLPassSettings : public RR::BaseSettings {
     float subStructureSplitThreshold;
     int subStructureNodeRes;
 
+    bool useVoxelRaymarching;
+    int voxelRaymarchRatio;
+
     uint2 currentOffset;
     uint2 batchDims;
 
@@ -42,6 +45,9 @@ struct RTLPassSettings : public RR::BaseSettings {
         writeSubstructurePreviewIntoLigIn = false;
         subStructureSplitThreshold = 0.05f;
         subStructureNodeRes = 4;
+
+        useVoxelRaymarching = false;
+        voxelRaymarchRatio = 4;
 
         currentOffset = uint2(0, 0);
         batchDims = uint2(64, 1);

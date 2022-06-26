@@ -23,7 +23,7 @@ bool vRayMarch(float3 start, float3 end, Texture3D<float4> voxTex, float3 minPos
     start += normalize(end - start) * 0.07f;
     end += normalize(start - end) * 0.07f;
 
-    float step = 1.0f / voxRes;
+    float step = 2.0f / voxRes;
 
     for (float i = 0; i < 1.0f; i += step) {
         float3 pos = start + i * (end - start);

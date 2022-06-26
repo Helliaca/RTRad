@@ -44,6 +44,7 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 }
 
 static bool useVisCache = false;
+static bool useVoxelRaymarching = false;
 void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     PROFILE("setPerFrameVars");
@@ -57,6 +58,12 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
         rtVars["vis"] = textureGroup->visBuf;
     }
 
+    // VXRM
+    if (settings.useVoxelRaymarching != useVoxelRaymarching) {
+        useVoxelRaymarching = settings.useVoxelRaymarching;
+        addProgramDefine("VOXELRAYMARCH", std::to_string(useVoxelRaymarching), true);
+    }
+
     rtVars->setTexture("pos", textureGroup->posTex);
     rtVars->setTexture("nrm", textureGroup->nrmTex);
     rtVars->setTexture("arf", textureGroup->arfTex);
@@ -66,6 +73,8 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars->setTexture("voxTex", textureGroup->voxTex);
 
     rtVars["PerFrameCB"]["currentOffset"] = settings.currentOffset;
+
+    rtVars["PerFrameCB"]["voxelRaymarchRatio"] = settings.voxelRaymarchRatio;
 
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
     rtVars["PerFrameCB"]["posOffset"] = scene->getSceneBounds().minPoint;
@@ -165,6 +174,12 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
         ssreslst.push_back({ 16, "16x16" });
         win->dropdown("Max. Node Size", ssreslst, ssres);
         settings.subStructureNodeRes = ssres;
+    }
+
+    win->separator();
+    win->checkbox("VoxelRaymarching", settings.useVoxelRaymarching);
+    if (settings.useVoxelRaymarching) {
+        win->slider("Ratio", settings.voxelRaymarchRatio, 0, 256);
     }
 
     // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples

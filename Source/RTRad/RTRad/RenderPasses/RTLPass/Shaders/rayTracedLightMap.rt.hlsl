@@ -31,6 +31,8 @@ cbuffer PerFrameCB {
 
     float3 minPos;
     float3 maxPos;
+
+    int voxelRaymarchRatio;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -101,10 +103,6 @@ void rayGen()
     }
     return;*/
 
-    bool voxelRayMarch = true;
-    //voxelRayMarch = self_c.x & 4 > 0;
-
-
     for (uint x = 0; x < dim1; x += sampling_res) {
         for (uint y = 0; y < dim2; y += sampling_res) {
             uint2 other_c = uint2(x, y);
@@ -145,33 +143,32 @@ void rayGen()
 
             float3 other_wpos = pos[other_c].xyz + posOffset;
 
-            //bool voxelRayMarch = distSquared(other_wpos, self_wpos) > 4.6f;//length(other_wpos - self_wpos) > 1.8f;
-            //bool voxelRayMarch = false;
-
-            if (voxelRayMarch) {
+            #if VOXELRAYMARCH
+            if ((other_c.x + other_c.y * dim2) % voxelRaymarchRatio == 0) {
                 if (vRayMarch(self_wpos, other_wpos, voxTex, minPos, maxPos)) {
                     setColor(self_c, other_c);
                 }
+                continue;
             }
-            else {
-                RayDesc ray;
-                ray.Origin = self_wpos;
-                ray.Direction = normalize(other_wpos - self_wpos);
-                ray.TMin = 0.0001f;
-                ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
+            #endif
 
-                RayPayload rpl = { self_c, other_c };
+            RayDesc ray;
+            ray.Origin = self_wpos;
+            ray.Direction = normalize(other_wpos - self_wpos);
+            ray.TMin = 0.0001f;
+            ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
-                TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
-                    RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_SKIP_CLOSEST_HIT_SHADER,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
-                    0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
-                    0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
-                    0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
-                    0,                                    // Miss program index (i.e., when missing, call miss shader #0)
-                    ray,                                  // Data structure describing the ray to trace
-                    rpl
-                );
-            }
+            RayPayload rpl = { self_c, other_c };
+
+            TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
+                RAY_FLAG_ACCEPT_FIRST_HIT_AND_END_SEARCH | RAY_FLAG_SKIP_CLOSEST_HIT_SHADER,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
+                0xFF,                                 // Instance inclusion mask.  0xFF => no instances discarded from this mask
+                0,                                    // Hit group to index (i.e., when intersecting, call hit shader #0)
+                0,//hitProgramCount,                      // Number of hit groups ('hitProgramCount' is built-in from Falcor with the right number)
+                0,                                    // Miss program index (i.e., when missing, call miss shader #0)
+                ray,                                  // Data structure describing the ray to trace
+                rpl
+            );
         }
     }
 }
