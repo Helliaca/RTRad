@@ -82,8 +82,8 @@ void rayGen()
 
             if (pos[other_c].a < 1.0f || (useSubstructuring && lig[other_c].a < 1.0f)) continue;
 
-            if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) continue;
 
+            // Viscaching and randomization are mutually exclusive.
             #if VISCACHE
             if (passNum > 0) {
                 // Get viscache
@@ -98,8 +98,7 @@ void rayGen()
                 lig2[self_c] = float4(1, 1, 1, 1);
                 continue;
             }
-            #endif
-
+            #elif RANDOMIZE
             if (randomizeSamples) {
                 uint2 seed = uint2(
                     random((other_c.x + 1) * (other_c.y + 1) + passNum, 7864128),
@@ -113,6 +112,9 @@ void rayGen()
                     rnd.y
                     );
             }
+            #endif
+
+            if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) continue;
 
             float3 other_wpos = pos[other_c].xyz + minPos;
 
@@ -194,12 +196,15 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     float4 self_color = float4(mat[self_c].rgb, 1.0f);
 
+    #if MIPMAPPED_UNDERSAMPLING
     float dim1;
     float dim2;
     pos.GetDimensions(dim1, dim2);
     float2 uvs = float2(float(other_c.x), float(other_c.y)) / float2(float(dim1), float(dim2));
-
     float4 other_lig = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
+    #else
+    float4 other_lig = lig[other_c];
+    #endif
 
     lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * other_lig * self_color * ref * F * other_surface);
     lig2[self_c].a = 1.0f;

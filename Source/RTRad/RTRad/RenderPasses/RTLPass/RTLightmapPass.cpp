@@ -43,26 +43,15 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     return SharedPtr(pass);
 }
 
-static bool useVisCache = false;
-static bool useVoxelRaymarching = false;
 void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     PROFILE("setPerFrameVars");
 
-    // Viscache
-    if (textureGroup->settings.useViscache != useVisCache) {
-        useVisCache = textureGroup->settings.useViscache;
-        addProgramDefine("VISCACHE", std::to_string(useVisCache), true);
-    }
-    if (useVisCache) {
-        rtVars["vis"] = textureGroup->visBuf;
-    }
-
-    // VXRM
-    if (settings.useVoxelRaymarching != useVoxelRaymarching) {
-        useVoxelRaymarching = settings.useVoxelRaymarching;
-        addProgramDefine("VOXELRAYMARCH", std::to_string(useVoxelRaymarching), true);
-    }
+    // Defines
+    addProgramDefine("VISCACHE", std::to_string(textureGroup->settings.useViscache), false);
+    addProgramDefine("VOXELRAYMARCH", std::to_string(settings.useVoxelRaymarching), false);
+    addProgramDefine("RANDOMIZE", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED), false);
+    addProgramDefine("MIPMAPPED_UNDERSAMPLING", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR), true);
 
     rtVars->setTexture("pos", textureGroup->posTex);
     rtVars->setTexture("nrm", textureGroup->nrmTex);
@@ -71,6 +60,10 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars->setTexture("lig", textureGroup->lgiTex);
     rtVars->setTexture("lig2", textureGroup->lgoTex);
     rtVars->setTexture("voxTex", textureGroup->voxTex);
+
+    if (textureGroup->settings.useViscache) {
+        rtVars["vis"] = textureGroup->visBuf;
+    }
 
     rtVars["PerFrameCB"]["currentOffset"] = settings.currentOffset;
 
