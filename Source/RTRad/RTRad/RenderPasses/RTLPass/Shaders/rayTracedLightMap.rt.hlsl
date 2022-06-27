@@ -58,7 +58,7 @@ void rayGen()
     //    return;
     //}
 
-    // Worls position of current texel
+    // World position of current texel
     float3 self_wpos = pos[self_c].xyz + minPos;
 
     float dim1;
@@ -114,7 +114,7 @@ void rayGen()
             }
             #endif
 
-            if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) continue;
+            if (other_c.x - self_c.x < sampling_res && other_c.y - self_c.y < sampling_res) continue;
 
             float3 other_wpos = pos[other_c].xyz + minPos;
 
@@ -167,16 +167,12 @@ void primaryMiss(inout RayPayload rpl)
 #define ref 0.9f
 
 void setColor(uint2 self_c, uint2 other_c) {
-    float3 self_wpos = pos[self_c].xyz + minPos;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
-    float3 other_wpos = pos[other_c].xyz + minPos;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 self_wpos = pos[self_c].xyz + minPos;
+    float3 other_wpos = pos[other_c].xyz + minPos;
 
     float3 self_to_other = other_wpos - self_wpos;
 
     float r = length(self_to_other);
-
-    // Avoiding self-illuimination
-    //if (r < 0.1f) return;
-    //if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) return;
 
     // Form factor
     self_to_other = normalize(self_to_other);
@@ -190,6 +186,7 @@ void setColor(uint2 self_c, uint2 other_c) {
     if (self_cos <= 0.0f || other_cos <= 0.0f) return;
 
     float F = self_cos * other_cos * (1.0f / (PI * r * r));
+    F = min(1.0f, F); // Limiting view factor to 1.0f
 
     // Lighting
     float other_surface = arf[other_c].r; // surface area of other
@@ -200,7 +197,8 @@ void setColor(uint2 self_c, uint2 other_c) {
     float dim1;
     float dim2;
     pos.GetDimensions(dim1, dim2);
-    float2 uvs = float2(float(other_c.x), float(other_c.y)) / float2(float(dim1), float(dim2));
+    float ha = float(sampling_res) * 0.5f;
+    float2 uvs = float2(float(other_c.x)+ha, float(other_c.y)+ha) / float2(float(dim1), float(dim2));
     float4 other_lig = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
     #else
     float4 other_lig = lig[other_c];
