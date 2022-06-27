@@ -54,6 +54,7 @@
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Ref.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.vs.hlsl" />
+    <ShaderSource Include="RTRad\Slang\Random.slang" />
     <ShaderSource Include="RTRad\Slang\VisCaching.slang" />
     <ShaderSource Include="RTRad\Slang\Voxel.slang" />
   </ItemGroup>

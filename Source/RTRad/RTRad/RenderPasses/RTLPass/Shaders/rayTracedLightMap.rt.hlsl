@@ -5,6 +5,7 @@ import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 import RTRad.RTRad.Slang.VisCaching;
 import RTRad.RTRad.Slang.Voxel;
+import RTRad.RTRad.Slang.Random;
 
 Texture2D<float4> pos;
 Texture2D<float4> nrm;
@@ -45,35 +46,6 @@ struct RayPayload
     uint2 other_c;
 };
 
-// Hash function from H. Schechter & R. Bridson, goo.gl/RXiKaH
-uint Hash(uint seed)
-{
-    seed = (seed ^ 61) ^ (seed >> 16);
-    seed *= 9;
-    seed = seed ^ (seed >> 4);
-    seed *= 0x27d4eb2d;
-    seed = seed ^ (seed >> 15);
-    return seed;
-}
-
-uint random(uint seed, uint max)
-{
-    return Hash(seed) % max;
-}
-
-uint2 random(uint2 seed, uint2 max)
-{
-    return uint2(
-        Hash(seed.x) % max.x,
-        Hash(seed.y) % max.y
-    );
-}
-
-float distSquared(float3 pos1, float3 pos2) {
-    float3 c = pos1 - pos2;
-    return dot(c, c);
-}
-
 [shader("raygeneration")]
 void rayGen()
 {
@@ -85,7 +57,7 @@ void rayGen()
     //}
 
     // Worls position of current texel
-    float3 self_wpos = pos[self_c].xyz + minPose;
+    float3 self_wpos = pos[self_c].xyz + minPos;
 
     float dim1;
     float dim2;
@@ -108,7 +80,7 @@ void rayGen()
 
             if (pos[other_c].a < 1.0f || (useSubstructuring && lig[other_c].a < 1.0f)) continue;
 
-            if (self_c.x == other_c.x && self_c.y == other_c.y) continue;
+            if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) continue;
 
             #if VISCACHE
             if (passNum > 0) {
@@ -140,7 +112,7 @@ void rayGen()
                     );
             }
 
-            float3 other_wpos = pos[other_c].xyz + minPose;
+            float3 other_wpos = pos[other_c].xyz + minPos;
 
             #if VOXELRAYMARCH
             if ((other_c.x + other_c.y * dim2) % voxelRaymarchRatio == 0) {
@@ -191,8 +163,8 @@ void primaryMiss(inout RayPayload rpl)
 #define ref 0.9f
 
 void setColor(uint2 self_c, uint2 other_c) {
-    float3 self_wpos = pos[self_c].xyz + minPose;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
-    float3 other_wpos = pos[other_c].xyz + minPose;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 self_wpos = pos[self_c].xyz + minPos;// (2.0f * pos[self_c]).xyz - float3(1.f, 1.f, 1.f);
+    float3 other_wpos = pos[other_c].xyz + minPos;// (2.0f * pos[other_c]).xyz - float3(1.f, 1.f, 1.f);
 
     float3 self_to_other = other_wpos - self_wpos;
 
@@ -200,7 +172,7 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     // Avoiding self-illuimination
     //if (r < 0.1f) return;
-    if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) return;
+    //if (abs(self_c.x - other_c.x) < sampling_res && abs(self_c.y - other_c.y) < sampling_res) return;
 
     // Form factor
     self_to_other = normalize(self_to_other);
