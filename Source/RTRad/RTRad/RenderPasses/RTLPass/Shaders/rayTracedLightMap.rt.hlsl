@@ -3,22 +3,27 @@ import Scene.Shading;
 import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
+
 import RTRad.RTRad.Slang.VisCaching;
 import RTRad.RTRad.Slang.Voxel;
 import RTRad.RTRad.Slang.Random;
 
-Texture2D<float4> pos;
-Texture2D<float4> nrm;
-Texture2D<float> arf;
-Texture2D<float4> mat;
-Texture2D<float4> lig;
+#define PI 3.14159265359f
+#define max_bufferpos 4294705152
 
-Texture3D<float4> voxTex;
+// Texture-Group
+Texture2D<float4> pos;      // position
+Texture2D<float4> nrm;      // normal
+Texture2D<float> arf;       // surface area
+Texture2D<float4> mat;      // material/color
+Texture2D<float4> lig;      // lighting-input
+RWTexture2D<float4> lig2;   // lighting-output
+Texture3D<float4> voxTex;   // voxel-map
 
-RWTexture2D<float4> lig2;
-
+// vis-caching buffer
 RWBuffer<uint> vis : register(t9);
 
+// Uniforms
 cbuffer PerFrameCB {
     uint2 currentOffset;
 
@@ -36,9 +41,6 @@ cbuffer PerFrameCB {
 };
 
 SamplerState sampleWrap : register(s0);
-
-#define PI 3.14159265359f
-#define max_bufferpos 4294705152
 
 struct RayPayload
 {
