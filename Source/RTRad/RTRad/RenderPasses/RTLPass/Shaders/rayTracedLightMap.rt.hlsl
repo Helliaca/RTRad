@@ -298,7 +298,7 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     float4 self_color = float4(mat[rpl.self_c].rgb, 1.0f);
 
-    lig2[self_c] = col;// (col * self_color * ref * view_factor);
+    lig2[self_c] += (col * self_color * ref * view_factor) / 100;
 }
 
 [shader("anyhit")]
