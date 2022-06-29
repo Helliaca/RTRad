@@ -209,6 +209,10 @@ void rayGen()
 [shader("miss")]
 void primaryMiss(inout RayPayload rpl)
 {
+    #if HEMISPHERIC
+    return;
+    #endif
+
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
 
