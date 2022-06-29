@@ -290,9 +290,9 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     float self_cos = dot(self_nrm, self_to_other);
     float other_cos = dot(other_nrm, -self_to_other);
 
-    if (self_cos <= 0.0f || other_cos <= 0.0f) return;
+    if (self_cos <= 0.0f) return;
 
-    float view_factor = self_cos * other_cos * (1.0f / (PI * r * r));
+    float view_factor = self_cos * (1.0f / (PI * max(r * r, 0.1f)));
 
     float4 col = lig.SampleLevel(sampleWrap, uv, 1);
 
