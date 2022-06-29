@@ -42,6 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ShaderSource Include="RTRad\Slang\Hemispheric.slang" />
     <ShaderSource Include="RTRad\Slang\HemisphericSampling.slang" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.ps.hlsl" />

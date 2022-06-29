@@ -32,6 +32,9 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     sbt->setRayGen(rtProgDesc.addRayGen("rayGen"));
     sbt->setMiss(0, rtProgDesc.addMiss("primaryMiss"));
 
+    auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
+    sbt->setHitGroupByType(0, mpScene, Scene::GeometryType::TriangleMesh, primary);
+
 #if HEMISPHERIC_SAMPLING
     // This code only if we run hit-shaders
     auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
@@ -51,6 +54,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     addProgramDefine("VISCACHE", std::to_string(textureGroup->settings.useViscache), false);
     addProgramDefine("VOXELRAYMARCH", std::to_string(settings.useVoxelRaymarching), false);
     addProgramDefine("RANDOMIZE", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED), false);
+    addProgramDefine("HEMISPHERIC", std::to_string(settings.integral == RTPassIntegral::HEMISPHERIC), false);
     addProgramDefine("MIPMAPPED_UNDERSAMPLING", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR), true);
 
     rtVars->setTexture("pos", textureGroup->posTex);
@@ -131,6 +135,15 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
 
 void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 {
+    bool h = settings.integral == RTPassIntegral::HEMISPHERIC;
+    win->checkbox("Hemispheric Integral", h, false);
+    if (h) {
+        settings.integral = RTPassIntegral::HEMISPHERIC;
+    }
+    else {
+        settings.integral = RTPassIntegral::AREA;
+    }
+
     win->text("Undersampling Settings");
 
     Falcor::Gui::DropdownList usmlst;
