@@ -87,7 +87,9 @@ void rayGen()
 
     float3 pe = float3(0, 0, 1);
 
-    if (abs(surface_normal.z) > 0.9f) pe = float3(1, 0, 0);
+    if (abs(surface_normal.z) > 0.99f) {
+        pe = float3(0.01f, 0, 0.99f);
+    }
 
     float3 bitangent = simplePerp(surface_normal, pe);
     float3 tangent = simplePerp(bitangent, surface_normal);
