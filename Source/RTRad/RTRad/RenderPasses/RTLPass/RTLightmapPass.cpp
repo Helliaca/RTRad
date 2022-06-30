@@ -82,6 +82,8 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 
     rtVars["PerFrameCB"]["reflectivity_factor"] = settings.reflectivity_factor;
     rtVars["PerFrameCB"]["distance_factor"] = settings.distance_factor;
+
+    rtVars["PerFrameCB"]["hemisphere_samples"] = settings.hemisphere_samples;
 }
 
 void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* textureGroup)
@@ -147,6 +149,8 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 2.0f);
     win->slider("Distance", settings.distance_factor, 0.0f, 2.0f);
+
+    win->slider("Samples", settings.hemisphere_samples, 1, MAX_HEMISPHERIC_SAMPLES);
 
     win->text("Undersampling Settings");
 

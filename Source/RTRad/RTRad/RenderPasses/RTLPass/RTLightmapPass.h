@@ -19,6 +19,7 @@ struct RTLPassSettings : public RR::BaseSettings {
     RTPassUndersampling underSamplingMethod;
 
     int sampling_res;
+    int hemisphere_samples;
 
     bool writeSubstructurePreviewIntoLigIn;
     float subStructureSplitThreshold;
@@ -39,6 +40,7 @@ struct RTLPassSettings : public RR::BaseSettings {
     RTLPassSettings() {
         integral = RTPassIntegral::AREA;
         sampling_res = 1;
+        hemisphere_samples = 100;
 
         batchComplete = true;
         passNum = 0;

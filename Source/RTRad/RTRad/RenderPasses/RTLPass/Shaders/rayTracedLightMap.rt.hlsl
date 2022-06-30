@@ -43,6 +43,8 @@ cbuffer PerFrameCB {
 
     float reflectivity_factor;
     float distance_factor;
+
+    uint hemisphere_samples;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -113,7 +115,7 @@ void rayGen()
     };
     m = transpose(m);
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < hemisphere_samples; i++) {
         float3 rv = mul(m, sampledirs[i]);
 
         RayDesc ray;
@@ -315,7 +317,7 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     float4 self_color = float4(mat[rpl.self_c].rgb, 1.0f);
     
-    lig2[self_c] += (col * self_color * reflectivity_factor * view_factor) / 100.0f;
+    lig2[self_c] += (col * self_color * reflectivity_factor * view_factor) / float(hemisphere_samples);
 }
 
 [shader("anyhit")]
