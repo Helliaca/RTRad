@@ -82,39 +82,42 @@ void rayGen()
 
     #if HEMISPHERIC
 
-    float3 surface_normal = 2.0f * (nrm[self_c].xyz - 0.5f);
+    float3 surface_normal = nrm[self_c].xyz;
     surface_normal = normalize(surface_normal);
 
-    float3 pe = float3(0, 0, 1);
+    float3 tangent;
+    float3 bitangent;
 
-    if (abs(surface_normal.z) > 0.99f) {
-        pe = float3(0.01f, 0, 0.99f);
+    float3 c1 = cross(surface_normal, float3(0.0, 0.0, 1.0));
+    float3 c2 = cross(surface_normal, float3(0.0, 1.0, 0.0));
+
+    if (length(c1) > length(c2))
+    {
+        tangent = c1;
+    }
+    else
+    {
+        tangent = c2;
     }
 
-    float3 bitangent = simplePerp(surface_normal, pe);
-    float3 tangent = simplePerp(bitangent, surface_normal);
+    tangent = normalize(tangent);
+
+    bitangent = cross(surface_normal, tangent);
+    bitangent = normalize(bitangent);
 
     float3x3 m = {
-        bitangent,
         tangent,
+        bitangent,
         surface_normal,
     };
-    //m = transpose(m);
+    m = transpose(m);
 
     for (int i = 0; i < 100; i++) {
         float3 rv = mul(m, sampledirs[i]);
-        //float3 rv = getCosHemisphereSample(seed, surface_normal);
-        //float3 rv = mul(m, sampledirs[i]);
-        //make_ray(self_wpos, rv, self_c);
-        //lig2[self_c].rgb = rv;
-
-        //float3 surface_normal = 2.0f * (nrm[self_c].xyz - 0.5f);
 
         RayDesc ray;
         ray.Origin = self_wpos;
 
-        //ray.Direction = normalize(surface_normal);
-        //dirv = toForward(dirv, surface_normal);
         ray.Direction = rv;
 
         ray.TMin = 0.01f;
@@ -239,8 +242,8 @@ void setColor(uint2 self_c, uint2 other_c) {
     // Form factor
     self_to_other = normalize(self_to_other);
 
-    float3 self_nrm = 2.0f * (nrm[self_c].xyz - 0.5f);
-    float3 other_nrm = 2.0f * (nrm[other_c].xyz - 0.5f);
+    float3 self_nrm = nrm[self_c].xyz;
+    float3 other_nrm = nrm[other_c].xyz;
 
     float self_cos = dot(self_nrm, self_to_other);
     float other_cos = dot(other_nrm, -self_to_other);
@@ -290,8 +293,8 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     self_to_other = normalize(self_to_other);
 
-    float3 self_nrm = 2.0f * (nrm[self_c].xyz - 0.5f);
-    float3 other_nrm = 2.0f * (nrm.SampleLevel(sampleWrap, uv, 0).xyz - 0.5f);
+    float3 self_nrm = nrm[self_c].xyz;
+    float3 other_nrm = nrm.SampleLevel(sampleWrap, uv, 0).xyz;
 
     float self_cos = dot(self_nrm, self_to_other);
     float other_cos = dot(other_nrm, -self_to_other);

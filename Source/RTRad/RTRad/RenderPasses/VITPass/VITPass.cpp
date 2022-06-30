@@ -45,11 +45,16 @@ void VITPass::setPerFrameVars(const TextureGroup* textureGroup)
     {
         case 0: {
             t = textureGroup->posTex;
-            settings.interp_min = float4(scene->getSceneBounds().minPoint, 1.f);
-            settings.interp_max = float4(scene->getSceneBounds().maxPoint, 1.f);
+            settings.interp_min = float4(0.f, 0.f, 0.f, 1.f);
+            settings.interp_max = float4(scene->getSceneBounds().maxPoint - scene->getSceneBounds().minPoint, 1.f);
             break;
         }
-        case 1: { t = textureGroup->nrmTex; break; }
+        case 1: {
+            t = textureGroup->nrmTex;
+            settings.interp_min = float4(-1.f, -1.f, -1.f, 1.f);
+            settings.interp_max = float4(1.f, 1.f, 1.f, 1.f);
+            break;
+        }
         case 2: { t = textureGroup->arfTex; break; }
         case 3: { t = textureGroup->matTex; break; }
         case 4: { t = textureGroup->lgiTex; break; }

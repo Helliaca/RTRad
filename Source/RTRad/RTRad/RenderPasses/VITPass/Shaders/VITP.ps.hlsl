@@ -32,30 +32,12 @@ bool xor(bool a, bool b) {
     return (a && !b) || (!a && b);
 }
 
-//float3 rayMarch(float3 start, float3 end) {
-//    float voxRes;
-//    voxTex.GetDimensions(voxRes, voxRes, voxRes);
-//
-//    for (float i = 0; i < 2.25f; i+=1.0f / 256.0f) {
-//        float3 pos = start + i * (end - start);
-//
-//        if (max3(abs(pos)) > 1.0f) continue;
-//
-//        uint3 voxPos = worldSpaceToVoxelSpace(pos, minPos, maxPos, voxRes);
-//
-//        if (voxTex[voxPos].a > 0) {
-//            return voxTex[voxPos].rgb;
-//        }
-//    }
-//    return float3(0, 0, 0);
-//}
-
 float4 pmain(VSOut vsOut, uint triangleIndex : SV_PrimitiveID) : SV_TARGET
 {
 
     float4 col = outputTex.SampleLevel(sampleWrap, vsOut.texC, mipmapLevel);
 
-    col = col / (interp_max - interp_min);
+    col = (col - interp_min) / (interp_max - interp_min);
 
     if (showTexRes) {
         float dim1;
