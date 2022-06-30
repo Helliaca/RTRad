@@ -22,8 +22,6 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 
     rtProgDesc.addDefines(mpScene->getSceneDefines());
 
-    //rtProgDesc.addDefine("VISCACHE", "1");
-
     rtProgDesc.setMaxTraceRecursionDepth(1); // 1 for calling TraceRay from RayGen, 1 for calling it from the primary-ray ClosestHit shader for reflections, 1 for reflection ray tracing a shadow ray
     rtProgDesc.setMaxPayloadSize(24); // The largest ray payload struct (PrimaryRayData) is 24 bytes. The payload size should be set as small as possible for maximum performance.
 
@@ -81,6 +79,9 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 
     rtVars["PerFrameCB"]["minPos"] = scene->getSceneBounds().minPoint;
     rtVars["PerFrameCB"]["maxPos"] = scene->getSceneBounds().maxPoint;
+
+    rtVars["PerFrameCB"]["reflectivity_factor"] = settings.reflectivity_factor;
+    rtVars["PerFrameCB"]["distance_factor"] = settings.distance_factor;
 }
 
 void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* textureGroup)
@@ -143,6 +144,9 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
     else {
         settings.integral = RTPassIntegral::AREA;
     }
+
+    win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 2.0f);
+    win->slider("Distance", settings.distance_factor, 0.0f, 2.0f);
 
     win->text("Undersampling Settings");
 

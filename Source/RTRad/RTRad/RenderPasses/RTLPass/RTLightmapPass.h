@@ -30,6 +30,9 @@ struct RTLPassSettings : public RR::BaseSettings {
     uint2 currentOffset;
     uint2 batchDims;
 
+    float reflectivity_factor;
+    float distance_factor;
+
     // We need this for correct GUI output. It will be set each frame by RTRad
     uint2 textureResolution;
 
@@ -51,6 +54,9 @@ struct RTLPassSettings : public RR::BaseSettings {
 
         currentOffset = uint2(0, 0);
         batchDims = uint2(64, 1);
+
+        reflectivity_factor = 0.9f;
+        distance_factor = 1.0f;
 
         textureResolution = uint2(64, 64);
     }

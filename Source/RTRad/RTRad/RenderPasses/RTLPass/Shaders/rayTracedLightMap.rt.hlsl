@@ -13,8 +13,6 @@ import RTRad.RTRad.Slang.Hemispheric;
 #define PI 3.14159265359f
 #define max_bufferpos 4294705152
 
-#define ref 0.9f
-
 // Texture-Group
 Texture2D<float4> pos;      // position
 Texture2D<float4> nrm;      // normal
@@ -42,6 +40,9 @@ cbuffer PerFrameCB {
     float3 maxPos;
 
     int voxelRaymarchRatio;
+
+    float reflectivity_factor;
+    float distance_factor;
 };
 
 SamplerState sampleWrap : register(s0);
@@ -58,9 +59,9 @@ void rayGen()
     uint2 self_c = DispatchRaysIndex().xy + currentOffset;
 
     // If pos alpha is less than 1, skip this.
-    //if (pos[self_c].a < 1.0f) {
-    //    return;
-    //}
+    if (pos[self_c].a < 1.0f) {
+        return;
+    }
 
     // World position of current texel
     float3 self_wpos = pos[self_c].xyz + minPos;
@@ -237,7 +238,7 @@ void setColor(uint2 self_c, uint2 other_c) {
 
     float3 self_to_other = other_wpos - self_wpos;
 
-    float r = length(self_to_other);
+    float r = length(self_to_other) * distance_factor;
 
     // Form factor
     self_to_other = normalize(self_to_other);
@@ -269,7 +270,7 @@ void setColor(uint2 self_c, uint2 other_c) {
     float4 other_lig = lig[other_c];
     #endif
 
-    lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * other_lig * self_color * ref * F * other_surface);
+    lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * other_lig * self_color * reflectivity_factor * F * other_surface);
     lig2[self_c].a = 1.0f;
 }
 
@@ -282,12 +283,19 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     float2 uv = v.texC;
 
+    // Use this to create an image of which patches are sampled:
+    //if (self_c.x == 4 && self_c.y == 4) {
+    //    lig2[self_c] = float4(1, 0, 0, 1);
+    //    lig2[uv * uint2(texRes, texRes)] = float4(1, 1, 1, 1);
+    //}
+    //return;
+
     float3 self_wpos = pos[self_c].xyz + minPos;
     float3 other_wpos = pos.SampleLevel(sampleWrap, uv, 0).xyz + minPos;
 
     float3 self_to_other = other_wpos - self_wpos;
 
-    float r = length(self_to_other);
+    float r = length(self_to_other) * distance_factor;
 
     if (r < 0.1f) return;
 
@@ -306,8 +314,8 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     float4 col = lig.SampleLevel(sampleWrap, uv, 1);
 
     float4 self_color = float4(mat[rpl.self_c].rgb, 1.0f);
-
-    lig2[self_c] += (col * self_color * ref * view_factor) / 100;
+    
+    lig2[self_c] += (col * self_color * reflectivity_factor * view_factor) / 100.0f;
 }
 
 [shader("anyhit")]
