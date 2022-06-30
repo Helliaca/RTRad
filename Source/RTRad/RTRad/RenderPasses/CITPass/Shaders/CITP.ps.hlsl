@@ -37,7 +37,7 @@ GBuffer pmain(GSOut vsOut)
 {
     // coord transformation
     vsOut.posW = vsOut.posW - posOffset;
-    vsOut.normalW = 0.5f * (vsOut.normalW + float3(1.f));
+    vsOut.normalW = normalize(vsOut.normalW);// 0.5f * (vsOut.normalW + float3(1.f));
 
     GBuffer o;
     o.pos = float4(vsOut.posW, 1.f);
