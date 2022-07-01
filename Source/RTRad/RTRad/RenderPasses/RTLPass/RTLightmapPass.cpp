@@ -50,8 +50,8 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars->setTexture("nrm", textureGroup->nrmTex);
     rtVars->setTexture("arf", textureGroup->arfTex);
     rtVars->setTexture("mat", textureGroup->matTex);
-    rtVars->setTexture("lig", textureGroup->lgiTex);
-    rtVars->setTexture("lig2", textureGroup->lgoTex);
+    rtVars->setTexture("lig_in", textureGroup->lgiTex);
+    rtVars->setTexture("lig_out", textureGroup->lgoTex);
     rtVars->setTexture("voxTex", textureGroup->voxTex);
 
     if (textureGroup->settings.useViscache) {
@@ -63,7 +63,6 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
     rtVars["PerFrameCB"]["voxelRaymarchRatio"] = settings.voxelRaymarchRatio;
 
     rtVars["PerFrameCB"]["sampling_res"] = settings.sampling_res;
-    rtVars["PerFrameCB"]["randomizeSamples"] = settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED;
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useSubstructuring"] = settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING;

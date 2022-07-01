@@ -29,8 +29,8 @@ Texture2D<float4> pos;      // position
 Texture2D<float4> nrm;      // normal
 Texture2D<float> arf;       // surface area
 Texture2D<float4> mat;      // material/color
-Texture2D<float4> lig;      // lighting-input
-RWTexture2D<float4> lig2;   // lighting-output
+Texture2D<float4> lig_in;      // lighting-input
+RWTexture2D<float4> lig_out;   // lighting-output
 Texture3D<float4> voxTex;   // voxel-map
 
 // vis-caching buffer
@@ -38,34 +38,52 @@ RWBuffer<uint> vis : register(t9);
 
 // Uniforms
 cbuffer PerFrameCB {
+    // What pixel in the output texture do we start at
     uint2 currentOffset;
 
+    // Whats the sampling resolution (eg, sample one patch every RxR pixels
     int sampling_res;
+
+    // Number of pass
     int passNum;
+
+    // Resolution of the lightmap texture on one axis. Lightmaps are assumed to be squares
     int texRes;
 
-    bool randomizeSamples;
+    // Use an adaptive subdivision embeded within the alpha channel of the lig texture
     bool useSubstructuring;
 
+    // Corners of the scenes bounding box
     float3 minPos;
     float3 maxPos;
 
+    // Ration of rays to replace by voxel-raymarches. Every x'th ray will be replaced.
     int voxelRaymarchRatio;
 
+    // Factor of reflectiviy rho
     float reflectivity_factor;
+
+    // Factor of distance. Inverse square attenuation will be scaled by this factor
     float distance_factor;
 
+    // Amount of directional samples to take in hemispherical mode
     uint hemisphere_samples;
 };
 
+// Texture sampler
 SamplerState sampleWrap : register(s0);
 
+// Ray payload. The target coordinate is not required for hemispheric sampling
 struct RayPayload
 {
     uint2 self_c;
+#if HEMISPHERIC
+#else
     uint2 other_c;
+#endif
 };
 
+// RAY GENERATION
 [shader("raygeneration")]
 void rayGen()
 {
@@ -79,65 +97,35 @@ void rayGen()
     // World position of current texel
     float3 self_wpos = pos[self_c].xyz + minPos;
 
-    float dim1;
-    float dim2;
-    pos.GetDimensions(dim1, dim2);
-
     uint matID = (uint) mat[self_c].a;
     float3 emissive = gScene.materials[matID].emissive;
     //if (length(emissive) > 0.1f) return; // don't run for light-sources
 
     // Use this to display a cool way of what points rayMarch determines to be visible from a given point
-    /*lig2[self_c] = float4(0, 0, 0, 1);
+    /*lig_out[self_c] = float4(0, 0, 0, 1);
     if (rayMarchVisible(self_wpos, float3(0.f, 0.f, -1.0f))) {
-        lig2[self_c] = float4(1,1,1,1);
+        lig_out[self_c] = float4(1,1,1,1);
     }
     return;*/
 
     #if HEMISPHERIC
 
-    float3 surface_normal = nrm[self_c].xyz;
-    surface_normal = normalize(surface_normal);
+    //// HEMISPHERIC SAMPLING
 
-    float3 tangent;
-    float3 bitangent;
-
-    float3 c1 = cross(surface_normal, float3(0.0, 0.0, 1.0));
-    float3 c2 = cross(surface_normal, float3(0.0, 1.0, 0.0));
-
-    if (length(c1) > length(c2))
-    {
-        tangent = c1;
-    }
-    else
-    {
-        tangent = c2;
-    }
-
-    tangent = normalize(tangent);
-
-    bitangent = cross(surface_normal, tangent);
-    bitangent = normalize(bitangent);
-
-    float3x3 m = {
-        tangent,
-        bitangent,
-        surface_normal,
-    };
-    m = transpose(m);
+    // Matrix to convert from tangent space to world space
+    float3x3 m = getTangentToWorldMatrix(nrm[self_c].xyz);
 
     for (int i = 0; i < hemisphere_samples; i++) {
-        float3 rv = mul(m, sampledirs[i]);
-
         RayDesc ray;
         ray.Origin = self_wpos;
 
-        ray.Direction = rv;
+        // Get ray direction. sampledirs is defined in HemisphericSampling.slang and includes 512 tangent space sampling directions.
+        ray.Direction = mul(m, sampledirs[i]);
 
         ray.TMin = 0.01f;
         ray.TMax = 10000;
 
-        RayPayload rpl = { self_c, uint2(0,0) };
+        RayPayload rpl = { self_c };
 
         TraceRay(gScene.rtAccel,                        // A Falcor built-in containing the raytracing acceleration structure
             RAY_FLAG_CULL_BACK_FACING_TRIANGLES,  // Ray flags.  (Here, we will skip hits with back-facing triangles)
@@ -151,13 +139,15 @@ void rayGen()
     }
     return;
 
-    #endif
+    #else
 
-    for (uint x = 0; x < dim1; x += sampling_res) {
-        for (uint y = 0; y < dim2; y += sampling_res) {
+    //// CLASSIC SAMPLING
+
+    for (uint x = 0; x < texRes; x += sampling_res) {
+        for (uint y = 0; y < texRes; y += sampling_res) {
             uint2 other_c = uint2(x, y);
 
-            if (pos[other_c].a < 1.0f || (useSubstructuring && lig[other_c].a < 1.0f)) continue;
+            if (pos[other_c].a < 1.0f || (useSubstructuring && lig_in[other_c].a < 1.0f)) continue;
 
 
             // Viscaching and randomization are mutually exclusive.
@@ -172,7 +162,7 @@ void rayGen()
                     }
                     continue;
                 }
-                lig2[self_c] = float4(1, 1, 1, 1);
+                lig_out[self_c] = float4(1, 1, 1, 1);
                 continue;
             }
             #elif RANDOMIZE
@@ -223,14 +213,18 @@ void rayGen()
             );
         }
     }
+
+    #endif
 }
 
 [shader("miss")]
 void primaryMiss(inout RayPayload rpl)
 {
     #if HEMISPHERIC
+
     return;
-    #endif
+
+    #else
 
     uint2 self_c = rpl.self_c;
     uint2 other_c = rpl.other_c;
@@ -243,6 +237,8 @@ void primaryMiss(inout RayPayload rpl)
     #endif
 
     setColor(self_c, other_c);
+
+    #endif
 }
 
 void setColor(uint2 self_c, uint2 other_c) {
@@ -278,13 +274,13 @@ void setColor(uint2 self_c, uint2 other_c) {
     pos.GetDimensions(dim1, dim2);
     float ha = float(sampling_res) * 0.5f;
     float2 uvs = float2(float(other_c.x)+ha, float(other_c.y)+ha) / float2(float(dim1), float(dim2));
-    float4 other_lig = lig.SampleLevel(sampleWrap, uvs, log2(sampling_res));
+    float4 other_lig = lig_in.SampleLevel(sampleWrap, uvs, log2(sampling_res));
     #else
-    float4 other_lig = lig[other_c];
+    float4 other_lig = lig_in[other_c];
     #endif
 
-    lig2[self_c] += (sampling_res * sampling_res) * (lig[other_c].a * other_lig * self_color * reflectivity_factor * F * other_surface);
-    lig2[self_c].a = 1.0f;
+    lig_out[self_c] += (sampling_res * sampling_res) * (lig_in[other_c].a * other_lig * self_color * reflectivity_factor * F * other_surface);
+    lig_out[self_c].a = 1.0f;
 }
 
 [shader("closesthit")]
@@ -298,8 +294,8 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     // Use this to create an image of which patches are sampled:
     //if (self_c.x == 4 && self_c.y == 4) {
-    //    lig2[self_c] = float4(1, 0, 0, 1);
-    //    lig2[uv * uint2(texRes, texRes)] = float4(1, 1, 1, 1);
+    //    lig_out[self_c] = float4(1, 0, 0, 1);
+    //    lig_out[uv * uint2(texRes, texRes)] = float4(1, 1, 1, 1);
     //}
     //return;
 
@@ -324,11 +320,11 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     float view_factor = self_cos * (1.0f / (PI * max(r * r, 0.1f)));
 
-    float4 col = lig.SampleLevel(sampleWrap, uv, 1);
+    float4 col = lig_in.SampleLevel(sampleWrap, uv, 1);
 
     float4 self_color = float4(mat[rpl.self_c].rgb, 1.0f);
     
-    lig2[self_c] += (col * self_color * reflectivity_factor * view_factor) / float(hemisphere_samples);
+    lig_out[self_c] += (col * self_color * reflectivity_factor * view_factor) / float(hemisphere_samples);
 }
 
 [shader("anyhit")]
