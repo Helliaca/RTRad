@@ -4,11 +4,22 @@ import Utils.Sampling.TinyUniformSampleGenerator;
 import Experimental.Scene.Lights.LightHelpers;
 import Experimental.Scene.Material.StandardMaterial;
 
+#if VISCACHE
 import RTRad.RTRad.Slang.VisCaching;
+#endif
+
+#if VOXELRAYMARCH
 import RTRad.RTRad.Slang.Voxel;
+#endif
+
+#if RANDOMIZE
 import RTRad.RTRad.Slang.Random;
+#endif
+
+#if HEMISPHERIC
 import RTRad.RTRad.Slang.HemisphericSampling;
 import RTRad.RTRad.Slang.Hemispheric;
+#endif
 
 #define PI 3.14159265359f
 #define max_bufferpos 4294705152
