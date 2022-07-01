@@ -18,7 +18,6 @@ import RTRad.RTRad.Slang.Random;
 
 #if HEMISPHERIC
 import RTRad.RTRad.Slang.HemisphericSampling;
-import RTRad.RTRad.Slang.Hemispheric;
 #endif
 
 
