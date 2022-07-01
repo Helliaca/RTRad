@@ -128,72 +128,81 @@ void RTLightmapPass::render(RenderContext* pContext, const TextureGroup* texture
 
 void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 {
-    bool h = settings.integral == RTPassIntegral::HEMISPHERIC;
-    win->checkbox("Hemispheric Integral", h, false);
-    if (h) {
-        settings.integral = RTPassIntegral::HEMISPHERIC;
-    }
-    else {
-        settings.integral = RTPassIntegral::AREA;
-    }
+    // Integral type
+    Falcor::Gui::DropdownList intlst;
+    uint32_t integ = (uint32_t)settings.integral;
+    intlst.push_back({ (uint32_t)RTPassIntegral::AREA, "Area" });
+    intlst.push_back({ (uint32_t)RTPassIntegral::HEMISPHERIC, "Hemispheric" });
+    win->dropdown("Integral type", intlst, integ);
+    settings.integral = (RTPassIntegral)integ;
+
+    win->separator();
+
+    win->text("Lighting Factors");
 
     win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 2.0f);
     win->slider("Distance", settings.distance_factor, 0.0f, 2.0f);
 
-    win->slider("Samples", settings.hemisphere_samples, 1, MAX_HEMISPHERIC_SAMPLES);
-
-    win->text("Undersampling Settings");
-
-    Falcor::Gui::DropdownList usmlst;
-    uint32_t usm = (uint32_t)settings.underSamplingMethod;
-    usmlst.push_back({ (uint32_t)RTPassUndersampling::NONE, "None" });
-    usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_BILINEAR, "Static (Bilinear)" });
-    usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_RANDOMIZED, "Static (Randomized)" });
-    usmlst.push_back({ (uint32_t)RTPassUndersampling::SUBSTRUCTURING, "Substructuring" });
-    win->dropdown("Undersampling Method", usmlst, usm);
-    settings.underSamplingMethod = (RTPassUndersampling)usm;
-
-    if (settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR || settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED) {
-        Falcor::Gui::DropdownList sreslst;
-        uint32_t sres = settings.sampling_res;
-        sreslst.push_back({ 1, "1x1" });
-        sreslst.push_back({ 2, "2x2" });
-        sreslst.push_back({ 4, "4x4" });
-        sreslst.push_back({ 8, "8x8" });
-        sreslst.push_back({ 16, "16x16" });
-        win->dropdown("Sampling Res", sreslst, sres);
-        settings.sampling_res = sres;
-    }
-
-    else if (settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) {
-
-        win->checkbox("Write Preview into LigIn", settings.writeSubstructurePreviewIntoLigIn);
-        win->slider("Gradient Threshold", settings.subStructureSplitThreshold, 0.001f, 0.5f);
-        Falcor::Gui::DropdownList ssreslst;
-        uint32_t ssres = settings.subStructureNodeRes;
-        ssreslst.push_back({ 2, "2x2" });
-        ssreslst.push_back({ 4, "4x4" });
-        ssreslst.push_back({ 8, "8x8" });
-        ssreslst.push_back({ 16, "16x16" });
-        win->dropdown("Max. Node Size", ssreslst, ssres);
-        settings.subStructureNodeRes = ssres;
-    }
-
     win->separator();
-    win->checkbox("VoxelRaymarching", settings.useVoxelRaymarching);
-    if (settings.useVoxelRaymarching) {
-        win->slider("Ratio", settings.voxelRaymarchRatio, 0, 256);
+
+    win->text("Sampling Settings");
+
+    if (settings.integral == RTPassIntegral::HEMISPHERIC) {
+        win->slider("Samples", settings.hemisphere_samples, 1, MAX_HEMISPHERIC_SAMPLES);
+    }
+    else {
+        Falcor::Gui::DropdownList usmlst;
+        uint32_t usm = (uint32_t)settings.underSamplingMethod;
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::NONE, "None" });
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_BILINEAR, "Static (Bilinear)" });
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_RANDOMIZED, "Static (Randomized)" });
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::SUBSTRUCTURING, "Substructuring" });
+        win->dropdown("Undersampling Method", usmlst, usm);
+        settings.underSamplingMethod = (RTPassUndersampling)usm;
+
+        if (settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR || settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED) {
+            Falcor::Gui::DropdownList sreslst;
+            uint32_t sres = settings.sampling_res;
+            sreslst.push_back({ 1, "1x1" });
+            sreslst.push_back({ 2, "2x2" });
+            sreslst.push_back({ 4, "4x4" });
+            sreslst.push_back({ 8, "8x8" });
+            sreslst.push_back({ 16, "16x16" });
+            win->dropdown("Sampling Res", sreslst, sres);
+            settings.sampling_res = sres;
+        }
+
+        else if (settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) {
+
+            win->checkbox("Write Preview into LigIn", settings.writeSubstructurePreviewIntoLigIn);
+            win->slider("Gradient Threshold", settings.subStructureSplitThreshold, 0.001f, 0.5f);
+            Falcor::Gui::DropdownList ssreslst;
+            uint32_t ssres = settings.subStructureNodeRes;
+            ssreslst.push_back({ 2, "2x2" });
+            ssreslst.push_back({ 4, "4x4" });
+            ssreslst.push_back({ 8, "8x8" });
+            ssreslst.push_back({ 16, "16x16" });
+            win->dropdown("Max. Node Size", ssreslst, ssres);
+            settings.subStructureNodeRes = ssres;
+        }
+
+        win->separator();
+        win->checkbox("VoxelRaymarching", settings.useVoxelRaymarching);
+        if (settings.useVoxelRaymarching) {
+            win->slider("Ratio", settings.voxelRaymarchRatio, 0, 256);
+        }
     }
 
     // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples
     // of sample-steps are taken per batch.
 
     win->separator();
-    win->text("Batching");
+    win->text("Batching Settings");
 
     int max_samples = MAX_SAMPLES_PER_BATCH;
 
     int samples_per_patch = (settings.textureResolution.x / settings.sampling_res) * (settings.textureResolution.y / settings.sampling_res);
+    if (settings.integral == RTPassIntegral::HEMISPHERIC) samples_per_patch = settings.hemisphere_samples;
 
     int max_batchsize = glm::min((int)(settings.textureResolution.x * settings.textureResolution.x), max_samples / samples_per_patch);
 

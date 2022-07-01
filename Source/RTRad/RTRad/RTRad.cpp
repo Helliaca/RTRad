@@ -37,7 +37,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
     // RTPASS
     {
-        Gui::Window w(pGui, "Radiosity Settings", { 300, 200 }, { 10, 190 });
+        Gui::Window w(pGui, "Radiosity Settings", { 350, 400 }, { 10, 190 });
 
         rtlPass->settings.textureResolution = uint2(textureGroup->settings.textureResolution, textureGroup->settings.textureResolution);
 
@@ -46,7 +46,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
     // SCENE CONTROLS
     {
-        Gui::Window w(pGui, "Scene Settings", { 300, 420 }, { 10, 400 });
+        Gui::Window w(pGui, "Scene Settings", { 350, 220 }, { 10, 600 });
 
         if (w.button("Load Scene"))
         {
