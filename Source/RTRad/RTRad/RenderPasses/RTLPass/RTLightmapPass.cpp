@@ -27,7 +27,7 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     sbt->setMiss(0, rtProgDesc.addMiss("primaryMiss"));
 
     // Hit shaders only used in hemispheric sampling
-    auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
+    auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "");
     sbt->setHitGroupByType(0, mpScene, Scene::GeometryType::TriangleMesh, primary);
 
     RTLightmapPass* pass = new RTLightmapPass(mpScene, rtProgDesc, sbt);
