@@ -14,11 +14,7 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
 
     RtProgram::Desc rtProgDesc;
 
-#if HEMISPHERIC_SAMPLING
-    rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap2.rt.hlsl");
-#else
     rtProgDesc.addShaderLibrary(RTLPASS_DIR_SHADERS"/rayTracedLightMap.rt.hlsl");
-#endif
 
     rtProgDesc.addDefines(mpScene->getSceneDefines());
 
@@ -30,14 +26,9 @@ RTLightmapPass::SharedPtr RTLightmapPass::create(const Scene::SharedPtr& mpScene
     sbt->setRayGen(rtProgDesc.addRayGen("rayGen"));
     sbt->setMiss(0, rtProgDesc.addMiss("primaryMiss"));
 
+    // Hit shaders only used in hemispheric sampling
     auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
     sbt->setHitGroupByType(0, mpScene, Scene::GeometryType::TriangleMesh, primary);
-
-#if HEMISPHERIC_SAMPLING
-    // This code only if we run hit-shaders
-    auto primary = rtProgDesc.addHitGroup("primaryClosestHit", "primaryAnyHit");
-    sbt->setHitGroupByType(0, mpScene, Scene::GeometryType::TriangleMesh, primary);
-#endif
 
     RTLightmapPass* pass = new RTLightmapPass(mpScene, rtProgDesc, sbt);
 
