@@ -7,7 +7,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
     SampleConfig config;
     config.windowDesc.title = "RTRad Project";
-    config.windowDesc.resizableWindow = true;
+    config.windowDesc.resizableWindow = false;
     config.windowDesc.mode = Falcor::Window::WindowMode::Normal;
     config.windowDesc.height = DEFAULT_WIN_HEIGHT;
     config.windowDesc.width = DEFAULT_WIN_WIDTH;

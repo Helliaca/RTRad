@@ -10,21 +10,21 @@ void RTRad::onGuiRender(Gui* pGui)
 {
     // TEXGROUP
     {
-        Gui::Window w(pGui, "TextureGroup Settings", { 300, 150 }, { 1600, 80 });
+        Gui::Window w(pGui, "TextureGroup Settings", { 350, 150 }, { 1080, 80 });
         textureGroup->onRenderGui(pGui, &w);
     }
 
     // VIS
     {
-        Gui::Window w(pGui, "Visualization Settings", { 300, 150 }, { 1600, 240 });
+        Gui::Window w(pGui, "Visualization Settings", { 350, 300 }, { 1080, 240 });
         vitPass->onRenderGui(pGui, &w);
     }
 
     // MAIN CONTROLPANEL
     {
-        Gui::Window w(pGui, "RTRad", { 300, 100 }, { 10, 80 });
+        Gui::Window w(pGui, "RTRad", { 350, 100 }, { 10, 80 });
 
-        mResetInputTextures = w.button("Reset Input Textures");
+        mResetInputTextures = w.button("Reset");
 
         if (rtlPass->settings.batchComplete) {
             mMakePass = w.button("Make Pass");
@@ -188,13 +188,9 @@ void RTRad::onHotReload(HotReloadFlags reloaded)
 
 void RTRad::onResizeSwapChain(uint32_t width, uint32_t height)
 {
-    float h = (float)height;
-    float w = (float)width;
-
     if (mpCamera)
     {
-        mpCamera->setFocalLength(18);
-        float aspectRatio = (w / h);
+        float aspectRatio = ((float)width / (float)height);
         mpCamera->setAspectRatio(aspectRatio);
     }
 }
