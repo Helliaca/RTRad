@@ -105,7 +105,9 @@ void rayGen()
 
     uint matID = (uint) mat[self_c].a;
     float3 emissive = gScene.materials[matID].emissive;
-    //if (length(emissive) > 0.1f) return; // don't run for light-sources
+    if (length(emissive) > 0.1f) return; // don't run for light-sources
+
+    lig_out[self_c] = float4(emissive.r, emissive.g, emissive.b, 1);
 
     // Use this to display a cool way of what points rayMarch determines to be visible from a given point
     /*lig_out[self_c] = float4(0, 0, 0, 1);
