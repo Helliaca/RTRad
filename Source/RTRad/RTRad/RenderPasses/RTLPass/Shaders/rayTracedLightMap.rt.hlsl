@@ -177,19 +177,17 @@ void rayGen()
             #elif RANDOMIZE
 
             // Sample random patch is sampling resolution
-            if (randomizeSamples) {
-                uint2 seed = uint2(
-                    random((other_c.x + 1) * (other_c.y + 1) + passNum, 7864128),
-                    random((other_c.x + 1) * (other_c.y + 1) + passNum, 5490141)
-                    );
+            uint2 seed = uint2(
+                random((other_c.x + 1) * (other_c.y + 1) + passNum, 7864128),
+                random((other_c.x + 1) * (other_c.y + 1) + passNum, 5490141)
+                );
 
-                uint2 rnd = random(seed, uint2(sampling_res, sampling_res));
+            uint2 rnd = random(seed, uint2(sampling_res, sampling_res));
 
-                other_c += uint2(
-                    rnd.x,
-                    rnd.y
-                    );
-            }
+            other_c += uint2(
+                rnd.x,
+                rnd.y
+                );
 
             #endif
 
