@@ -286,11 +286,8 @@ void setColor(uint2 self_c, uint2 other_c) {
     if (self_cos <= 0.0f || other_cos <= 0.0f) return;
 
     // Form factor
-    float F = self_cos * other_cos * (1.0f / (PI * r * r));
-    F = min(1.0f, F); // Limiting view factor to 1.0f
-
-    // Surface area
-    float other_surface = arf[other_c].r; // surface area of other
+    float F = arf[other_c].r * self_cos * other_cos * (1.0f / (PI * r * r));
+    F = min(1.0f, F); // Limiting view factor
 
     // Color of self
     float4 self_color = float4(mat[self_c].rgb, 1.0f);
@@ -305,7 +302,7 @@ void setColor(uint2 self_c, uint2 other_c) {
     #endif
 
     // Apply contribution
-    lig_out[self_c] += (sampling_res * sampling_res) * (lig_in[other_c].a * R * self_color * reflectivity_factor * F * other_surface);
+    lig_out[self_c] += (sampling_res * sampling_res) * (lig_in[other_c].a * R * self_color * reflectivity_factor * F);
     lig_out[self_c].a = 1.0f;
 }
 
