@@ -41,6 +41,7 @@
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Ref.ps.hlsl" />
     <ShaderSource Include="RTRad\Slang\VisCaching.slang" />
     <ShaderSource Include="RTRad\Slang\Random.slang" />
+    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\FixSeams.ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

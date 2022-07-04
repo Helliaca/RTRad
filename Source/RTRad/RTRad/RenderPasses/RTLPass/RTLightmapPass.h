@@ -83,5 +83,6 @@ private:
     RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable);
 
     FullScreenPass::SharedPtr fsp;
+    FullScreenPass::SharedPtr fsp2;
 };
 

@@ -258,6 +258,13 @@ void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup*
 
 void RTLightmapPass::onBatchComplete(RenderContext* pContext, const TextureGroup* textureGroup)
 {
+    // Run refinement pass
+    std::vector<Texture::SharedPtr> tfbo;
+    tfbo.push_back(textureGroup->lgoTex);
+    Fbo::SharedPtr fbo = Fbo::create(tfbo);
+    fsp2->getVars()->setTexture("lig", textureGroup->lgoTex);
+    //fsp2->getVars()["PerFrameCB"]["step"] = step;
+    fsp2->execute(pContext, fbo, true);
 }
 
 RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)
@@ -266,4 +273,5 @@ RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::
     settings = RTLPassSettings::RTLPassSettings();
 
     fsp = FullScreenPass::create(RTLPASS_DIR_SHADERS"/Ref.ps.hlsl", scene->getSceneDefines());
+    fsp2 = FullScreenPass::create(RTLPASS_DIR_SHADERS"/FixSeams.ps.hlsl", scene->getSceneDefines());
 }
