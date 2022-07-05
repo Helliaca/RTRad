@@ -38,10 +38,10 @@
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.vs.hlsl" />
     <ShaderSource Include="RTRad\Slang\Voxel.slang" />
     <ShaderSource Include="RTRad\Slang\HemisphericSampling.slang" />
-    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Ref.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Substructure.ps.hlsl" />
     <ShaderSource Include="RTRad\Slang\VisCaching.slang" />
     <ShaderSource Include="RTRad\Slang\Random.slang" />
-    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\FixSeams.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\ExtendSeams.ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

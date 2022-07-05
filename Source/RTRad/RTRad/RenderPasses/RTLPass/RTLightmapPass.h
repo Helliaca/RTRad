@@ -34,6 +34,8 @@ struct RTLPassSettings : public RR::BaseSettings {
     float reflectivity_factor;
     float distance_factor;
 
+    bool runExtendSeamsPass;
+
     // We need this for correct GUI output. It will be set each frame by RTRad
     uint2 textureResolution;
 
@@ -60,6 +62,8 @@ struct RTLPassSettings : public RR::BaseSettings {
         reflectivity_factor = 0.9f;
         distance_factor = 1.0f;
 
+        runExtendSeamsPass = true;
+
         textureResolution = uint2(64, 64);
     }
 };
@@ -82,7 +86,7 @@ public:
 private:
     RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable);
 
-    FullScreenPass::SharedPtr fsp;
-    FullScreenPass::SharedPtr fsp2;
+    FullScreenPass::SharedPtr SubstructurePass;
+    FullScreenPass::SharedPtr SeamExtendPass;
 };
 

@@ -42,7 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\FixSeams.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\ExtendSeams.ps.hlsl" />
     <ShaderSource Include="RTRad\Slang\HemisphericSampling.slang" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.ps.hlsl" />
@@ -51,7 +51,7 @@
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CVMPass\Shaders\CVMP.vs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\rayTracedLightMap.rt.hlsl" />
-    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Ref.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\Substructure.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.ps.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\VITPass\Shaders\VITP.vs.hlsl" />
     <ShaderSource Include="RTRad\Slang\Random.slang" />

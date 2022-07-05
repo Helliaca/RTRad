@@ -138,10 +138,11 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     win->separator();
 
-    win->text("Lighting Factors");
+    win->text("General Settings");
 
     win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 2.0f);
     win->slider("Distance", settings.distance_factor, 0.0f, 2.0f);
+    win->checkbox("Run ExtendSeamsPass", settings.runExtendSeamsPass);
 
     win->separator();
 
@@ -240,17 +241,17 @@ void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup*
         std::vector<Texture::SharedPtr> tfbo;
         tfbo.push_back(textureGroup->posTex);
         Fbo::SharedPtr fbo = Fbo::create(tfbo);
-        fsp->getVars()->setTexture("lig", textureGroup->lgiTex);
-        fsp->getVars()->setTexture("pos", textureGroup->posTex);
-        fsp->getVars()->setTexture("nrm", textureGroup->nrmTex);
-        fsp->getVars()["PerFrameCB"]["writeSubstructurePreviewIntoLigIn"] = settings.writeSubstructurePreviewIntoLigIn;
-        fsp->getVars()["PerFrameCB"]["subStructureSplitThreshold"] = settings.subStructureSplitThreshold;
+        SubstructurePass->getVars()->setTexture("lig", textureGroup->lgiTex);
+        SubstructurePass->getVars()->setTexture("pos", textureGroup->posTex);
+        SubstructurePass->getVars()->setTexture("nrm", textureGroup->nrmTex);
+        SubstructurePass->getVars()["PerFrameCB"]["writeSubstructurePreviewIntoLigIn"] = settings.writeSubstructurePreviewIntoLigIn;
+        SubstructurePass->getVars()["PerFrameCB"]["subStructureSplitThreshold"] = settings.subStructureSplitThreshold;
 
         int step = 1;
         while (step < settings.subStructureNodeRes)
         {
-            fsp->getVars()["PerFrameCB"]["step"] = step;
-            fsp->execute(pContext, fbo, true);
+            SubstructurePass->getVars()["PerFrameCB"]["step"] = step;
+            SubstructurePass->execute(pContext, fbo, true);
             step *= 2;
         }
     }
@@ -258,13 +259,15 @@ void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup*
 
 void RTLightmapPass::onBatchComplete(RenderContext* pContext, const TextureGroup* textureGroup)
 {
-    // Run refinement pass
-    std::vector<Texture::SharedPtr> tfbo;
-    tfbo.push_back(textureGroup->lgoTex);
-    Fbo::SharedPtr fbo = Fbo::create(tfbo);
-    fsp2->getVars()->setTexture("lig", textureGroup->lgoTex);
-    //fsp2->getVars()["PerFrameCB"]["step"] = step;
-    fsp2->execute(pContext, fbo, true);
+    if (settings.runExtendSeamsPass) {
+        // Extend seams
+        std::vector<Texture::SharedPtr> tfbo;
+        tfbo.push_back(textureGroup->lgoTex);
+        Fbo::SharedPtr fbo = Fbo::create(tfbo);
+        SeamExtendPass->getVars()->setTexture("lig", textureGroup->lgoTex);
+        SeamExtendPass->getVars()->setTexture("pos", textureGroup->posTex);
+        SeamExtendPass->execute(pContext, fbo, true);
+    }
 }
 
 RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::Desc programDesc, const RtBindingTable::SharedPtr bindingTable)
@@ -272,6 +275,6 @@ RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::
 {
     settings = RTLPassSettings::RTLPassSettings();
 
-    fsp = FullScreenPass::create(RTLPASS_DIR_SHADERS"/Ref.ps.hlsl", scene->getSceneDefines());
-    fsp2 = FullScreenPass::create(RTLPASS_DIR_SHADERS"/FixSeams.ps.hlsl", scene->getSceneDefines());
+    SubstructurePass = FullScreenPass::create(RTLPASS_DIR_SHADERS"/Substructure.ps.hlsl", scene->getSceneDefines());
+    SeamExtendPass = FullScreenPass::create(RTLPASS_DIR_SHADERS"/ExtendSeams.ps.hlsl", scene->getSceneDefines());
 }
