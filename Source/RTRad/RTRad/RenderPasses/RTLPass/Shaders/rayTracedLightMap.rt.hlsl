@@ -301,8 +301,14 @@ void setColor(uint2 self_c, uint2 other_c) {
     float4 R = lig_in[other_c];
     #endif
 
+    // We apply an upper limit to lighting to lighting contribution, because otherwise undersampling produces checker-patterns of bright spots on geometry edges
+    // NOTE: This upper threshold is fairly arbitrary. Different settings/scenes may benefit from a different one
+    const float max_contribution = 0.05f;
+    float4 cont = (sampling_res * sampling_res) * (lig_in[other_c].a * R * self_color * reflectivity_factor * F);
+    if (length(cont) > max_contribution) cont = normalize(cont) * max_contribution;
+
     // Apply contribution
-    lig_out[self_c] += (sampling_res * sampling_res) * (lig_in[other_c].a * R * self_color * reflectivity_factor * F);
+    lig_out[self_c] += cont;
     lig_out[self_c].a = 1.0f;
 }
 
