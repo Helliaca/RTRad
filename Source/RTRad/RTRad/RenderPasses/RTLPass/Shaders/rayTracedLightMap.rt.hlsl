@@ -340,7 +340,7 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     // Distance
     float3 self_to_other = other_wpos - self_wpos;
-    float r = length(self_to_other) * distance_factor;
+    float r = length(self_to_other) * distance_factor * 0.01f;;
 
     if (r < 0.1f) return;
 
