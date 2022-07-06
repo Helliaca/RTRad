@@ -140,7 +140,7 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     win->text("General Settings");
 
-    win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 2.0f);
+    win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 10.0f);
     win->slider("Distance", settings.distance_factor, 0.0f, 2.0f);
     win->checkbox("Run ExtendSeamsPass", settings.runExtendSeamsPass);
 

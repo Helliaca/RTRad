@@ -130,7 +130,7 @@ void rayGen()
         // Get ray direction. sampledirs is defined in HemisphericSampling.slang and includes 512 tangent space sampling directions.
         ray.Direction = mul(m, sampledirs[i]);
 
-        ray.TMin = 0.01f;
+        ray.TMin = 0.001f;
         ray.TMax = 10000;
 
         RayPayload rpl = { self_c };
@@ -340,27 +340,39 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
 
     // Distance
     float3 self_to_other = other_wpos - self_wpos;
-    float r = length(self_to_other) * distance_factor * 0.01f;;
-
-    if (r < 0.1f) return;
+    float r = length(self_to_other) * distance_factor;
 
     // Cosine
     self_to_other = normalize(self_to_other);
     float3 self_nrm = nrm[self_c].xyz;
     float self_cos = dot(self_nrm, self_to_other);
-    if (self_cos <= 0.0f) return;
 
-    // Form factor
-    float view_factor = self_cos * (1.0f / (PI * max(r * r, 0.1f)));
+    //float3 other_nrm = nrm.SampleLevel(sampleWrap, other_uv, 0).xyz;
+    //float other_cos = dot(other_nrm, -self_to_other);
+
+    if (self_cos <= 0.0f) return;
 
     // Color of self
     float4 self_color = float4(mat[rpl.self_c].rgb, 1.0f);
 
-    // Radiance of other
-    float4 R = lig_in.SampleLevel(sampleWrap, other_uv, 1);
+    // Larger surfaces emit more light. To account for this, we use this value as a "scale" factor
+    // that acts in opposition to the inverse square law. This ensures that lighting values don't differ too much
+    // from non-hemispheric mode
+    float scale = (texRes * texRes) * arf.SampleLevel(sampleWrap, other_uv, 0).r;
 
-    // Apply contribution
-    lig_out[self_c] += (R * self_color * reflectivity_factor * view_factor) / float(hemisphere_samples);
+    // Radiance of other (to the inverse square)
+    float4 R = lig_in.SampleLevel(sampleWrap, other_uv, 1) / max(r * r / scale, 0.1f);
+
+    // diffuse brdf and riemsum delta
+    // Math: Diffuse BRDF is (rho/pi), rieman sum of a hemisphere is (2pi / sample_count), geometric term is self_cos * other_cos
+    //       As a result, the 'brdf' is self_cos * other_cos * (rho/pi) * (2pi / sample_count)
+    //       Note: We leave the theoretical other_cos out, because the results appear to be better.
+    float brdf = self_cos * ((2.0f * reflectivity_factor) / float(hemisphere_samples));
+    brdf = min(brdf, 1.0f);
+
+    // Apply contribution. The factor of 0.1f is arbitrary and makes up for the added brightness brought by the "scale" factor eariler.
+    lig_out[self_c] += self_color * R * brdf * 0.1f;
+    lig_out[self_c].a = 1.0f;
 
     #endif
 }
