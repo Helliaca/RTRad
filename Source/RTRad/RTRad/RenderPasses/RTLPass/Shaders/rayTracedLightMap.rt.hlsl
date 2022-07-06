@@ -347,9 +347,6 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     float3 self_nrm = nrm[self_c].xyz;
     float self_cos = dot(self_nrm, self_to_other);
 
-    //float3 other_nrm = nrm.SampleLevel(sampleWrap, other_uv, 0).xyz;
-    //float other_cos = dot(other_nrm, -self_to_other);
-
     if (self_cos <= 0.0f) return;
 
     // Color of self
@@ -367,6 +364,9 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     // Math: Diffuse BRDF is (rho/pi), rieman sum of a hemisphere is (2pi / sample_count), geometric term is self_cos * other_cos
     //       As a result, the 'brdf' is self_cos * other_cos * (rho/pi) * (2pi / sample_count)
     //       Note: We leave the theoretical other_cos out, because the results appear to be better.
+    // If you want to try *with* other_cos, this is how you get the value:
+    //float3 other_nrm = nrm.SampleLevel(sampleWrap, other_uv, 0).xyz;
+    //float other_cos = dot(other_nrm, -self_to_other);
     float brdf = self_cos * ((2.0f * reflectivity_factor) / float(hemisphere_samples));
     brdf = min(brdf, 1.0f);
 
