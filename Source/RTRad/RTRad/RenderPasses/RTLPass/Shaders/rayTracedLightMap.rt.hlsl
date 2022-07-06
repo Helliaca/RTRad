@@ -361,7 +361,7 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     float4 R = lig_in.SampleLevel(sampleWrap, other_uv, 1) / max(r * r / scale, 0.1f);
 
     // diffuse brdf and riemsum delta
-    // Math: Diffuse BRDF is (rho/pi), rieman sum of a hemisphere is (2pi / sample_count), geometric term is self_cos * other_cos
+    // Math: Diffuse BRDF is (rho/pi), riemann sum of a hemisphere is (2pi / sample_count), geometric term is self_cos * other_cos
     //       As a result, the 'brdf' is self_cos * other_cos * (rho/pi) * (2pi / sample_count)
     //       Note: We leave the theoretical other_cos out, because the results appear to be better.
     // If you want to try *with* other_cos, this is how you get the value:
