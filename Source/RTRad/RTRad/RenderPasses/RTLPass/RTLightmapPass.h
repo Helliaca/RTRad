@@ -8,7 +8,7 @@
 using namespace Falcor;
 
 enum class RTPassIntegral { AREA=0, HEMISPHERIC=1 };
-enum class RTPassUndersampling { NONE=0, STATIC_BILINEAR=1, STATIC_RANDOMIZED=2, SUBSTRUCTURING=3 };
+enum class RTPassUndersampling { NONE=0, STATIC_STRIDE=1, STATIC_BILINEAR=2, STATIC_RANDOMIZED=3, SUBSTRUCTURING=4 };
 
 struct RTLPassSettings : public RR::BaseSettings {
     RTPassIntegral integral;
