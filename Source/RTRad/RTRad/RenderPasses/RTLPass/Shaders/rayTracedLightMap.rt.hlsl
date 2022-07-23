@@ -217,7 +217,7 @@ void rayGen()
             RayDesc ray;
             ray.Origin = self_wpos;
             ray.Direction = normalize(other_wpos - self_wpos);
-            ray.TMin = 0.0001f;
+            ray.TMin = 0.001f;
             ray.TMax = distance(self_wpos, other_wpos) - (2.0f * ray.TMin);
 
             RayPayload rpl = { self_c, other_c };
