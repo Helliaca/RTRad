@@ -180,8 +180,8 @@ void rayGen()
 
             // Sample random patch is sampling resolution
             uint2 seed = uint2(
-                random((other_c.x + 1) * (other_c.y + 1) + passNum, 7864128),
-                random((other_c.x + 1) * (other_c.y + 1) + passNum, 5490141)
+                random((other_c.x + 1) * (other_c.y + 1), 7864128),
+                random((other_c.x + 1) * (other_c.y + 1), 5490141)
                 );
 
             uint2 rnd = random(seed, uint2(sampling_res, sampling_res));
