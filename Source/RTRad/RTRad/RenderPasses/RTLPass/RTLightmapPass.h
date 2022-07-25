@@ -57,7 +57,7 @@ struct RTLPassSettings : public RR::BaseSettings {
         voxelRaymarchRatio = 4;
 
         currentOffset = uint2(0, 0);
-        batchDims = uint2(64, 1);
+        batchDims = uint2(32, 32);
 
         reflectivity_factor = 0.9f;
         distance_factor = 1.0f;

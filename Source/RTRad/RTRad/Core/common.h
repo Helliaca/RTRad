@@ -24,6 +24,7 @@ using namespace Falcor;
 
 #define DEFAULT_WIN_HEIGHT 810
 #define DEFAULT_WIN_WIDTH 1440
+#define ASPECT_RATIO (float)DEFAULT_WIN_WIDTH / (float)DEFAULT_WIN_HEIGHT
 
 #define CLEAR_COLOR float4(0.38f, 0.52f, 0.10f, 1)
 

@@ -33,10 +33,6 @@ void RTRad::onGuiRender(Gui* pGui)
         if (Profiler::instance().isEnabled()) {
             w.text(mOutputString);
         }
-
-        float fov = mpCamera->getFocalLength();
-        w.slider("Camera Focal Length", fov, 1.0f, 100.0f, false);
-        mpCamera->setFocalLength(fov);
     }
 
     // RTPASS
@@ -73,6 +69,7 @@ void RTRad::onGuiRender(Gui* pGui)
 void RTRad::loadScene(const std::string& filename)
 {
     SceneLoader::LoadSceneFromFile(filename, mpScene, mpCamera);
+    mpCamera->setAspectRatio(ASPECT_RATIO); //Reset aspect ratio
 
     citPass = CITPass::create(mpScene);
 
@@ -188,13 +185,10 @@ bool RTRad::onMouseEvent(const MouseEvent& mouseEvent)
 
 void RTRad::onHotReload(HotReloadFlags reloaded)
 {
+    
 }
 
 void RTRad::onResizeSwapChain(uint32_t width, uint32_t height)
 {
-    if (mpCamera)
-    {
-        float aspectRatio = ((float)width / (float)height);
-        mpCamera->setAspectRatio(aspectRatio);
-    }
+    
 }
