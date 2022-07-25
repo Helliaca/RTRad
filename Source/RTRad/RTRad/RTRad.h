@@ -59,4 +59,7 @@ private:
     // Output/Measurement variables
     std::string mOutputString = " -- Empty -- ";
     double mAccTime = 0;
+
+    // FOV slider
+    float CameraFocalLength;
 };

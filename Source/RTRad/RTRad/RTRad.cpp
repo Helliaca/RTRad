@@ -33,6 +33,10 @@ void RTRad::onGuiRender(Gui* pGui)
         if (Profiler::instance().isEnabled()) {
             w.text(mOutputString);
         }
+
+        float fov = mpCamera->getFocalLength();
+        w.slider("Camera Focal Length", fov, 1.0f, 100.0f, false);
+        mpCamera->setFocalLength(fov);
     }
 
     // RTPASS
