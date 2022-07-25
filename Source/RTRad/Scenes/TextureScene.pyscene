@@ -3,8 +3,8 @@ sceneBuilder.importScene('models/TextureScene.fbx')
 
 # Add camera
 camera = Camera()
-camera.position = float3(0, 0, -50)
-camera.target = float3(0, 0, 1)
+camera.position = float3(-366.8, 355.0, 181.2)
+camera.target = float3(-366-0, 354.8, 180.7)
 camera.up = float3(0, 1, 0)
-camera.focalLength = 21.0
+camera.focalLength = 9.5
 sceneBuilder.addCamera(camera)
