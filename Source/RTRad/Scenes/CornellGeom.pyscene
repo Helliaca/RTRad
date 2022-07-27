@@ -3,8 +3,8 @@ sceneBuilder.importScene('models/CornellGeom.fbx')
 
 # Add camera
 camera = Camera()
-camera.position = float3(0, 0, -3)
-camera.target = float3(0, 0, 1)
+camera.position = float3(0, 0, -30)
+camera.target = float3(0, 0, -29)
 camera.up = float3(0, 1, 0)
 camera.focalLength = 21.0
 sceneBuilder.addCamera(camera)
