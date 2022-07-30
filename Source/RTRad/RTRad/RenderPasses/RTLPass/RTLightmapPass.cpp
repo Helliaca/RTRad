@@ -39,13 +39,6 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 {
     PROFILE("setPerFrameVars");
 
-    // Defines
-    addProgramDefine("VISCACHE", std::to_string(textureGroup->settings.useViscache), false);
-    addProgramDefine("VOXELRAYMARCH", std::to_string(settings.useVoxelRaymarching), false);
-    addProgramDefine("RANDOMIZE", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED), false);
-    addProgramDefine("HEMISPHERIC", std::to_string(settings.integral == RTPassIntegral::HEMISPHERIC), false);
-    addProgramDefine("MIPMAPPED_UNDERSAMPLING", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR), true);
-
     rtVars->setTexture("pos", textureGroup->posTex);
     rtVars->setTexture("nrm", textureGroup->nrmTex);
     rtVars->setTexture("arf", textureGroup->arfTex);
@@ -237,6 +230,13 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
 void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup* textureGroup)
 {
+    // Update Defines
+    addProgramDefine("VISCACHE", std::to_string(textureGroup->settings.useViscache), false);
+    addProgramDefine("VOXELRAYMARCH", std::to_string(settings.useVoxelRaymarching), false);
+    addProgramDefine("RANDOMIZE", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED), false);
+    addProgramDefine("HEMISPHERIC", std::to_string(settings.integral == RTPassIntegral::HEMISPHERIC), false);
+    addProgramDefine("MIPMAPPED_UNDERSAMPLING", std::to_string(settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR), true);
+
     if (settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) {
         // Run refinement pass
         std::vector<Texture::SharedPtr> tfbo;
