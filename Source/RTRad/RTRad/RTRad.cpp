@@ -169,6 +169,7 @@ bool RTRad::onKeyEvent(const KeyboardEvent& keyEvent)
 {
     if (keyEvent.key == KeyboardEvent::Key::Escape && keyEvent.type == KeyboardEvent::Type::KeyPressed)
     {
+        rtlPass->settings.currentOffset = uint2(0, 0);
         rtlPass->settings.batchComplete = true;
         mMakePass = false;
         return true;
