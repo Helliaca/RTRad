@@ -204,7 +204,7 @@ void rayGen()
             #if VOXELRAYMARCH
 
             // Voxel raymarch
-            if ((other_c.x + other_c.y * dim2) % voxelRaymarchRatio == 0) {
+            if ((other_c.x + other_c.y * texRes) % voxelRaymarchRatio == 0) {
                 if (vRayMarch(self_wpos, other_wpos, voxTex, minPos, maxPos)) {
                     setColor(self_c, other_c);
                 }
