@@ -62,7 +62,7 @@ void RTLightmapPass::setPerFrameVars(const TextureGroup* textureGroup)
 
     rtVars["PerFrameCB"]["voxelRaymarchRatio"] = settings.voxelRaymarchRatio;
 
-    rtVars["PerFrameCB"]["sampling_res"] = (settings.underSamplingMethod == RTPassUndersampling::NONE) ? 1 : settings.sampling_res;
+    rtVars["PerFrameCB"]["sampling_res"] = (settings.underSamplingMethod == RTPassUndersampling::NONE || settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) ? 1 : settings.sampling_res;
     rtVars["PerFrameCB"]["texRes"] = textureGroup->lgiTex.get()->getWidth();
     rtVars["PerFrameCB"]["passNum"] = settings.passNum;
     rtVars["PerFrameCB"]["useSubstructuring"] = settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING;
