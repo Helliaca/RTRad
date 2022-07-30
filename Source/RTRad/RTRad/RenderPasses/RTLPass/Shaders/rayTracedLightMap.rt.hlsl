@@ -173,6 +173,7 @@ void rayGen()
                     }
                     continue;
                 }
+                continue;
             }
 
             #elif RANDOMIZE

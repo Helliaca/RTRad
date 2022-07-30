@@ -77,7 +77,9 @@ public:
         win->dropdown("VoxelMap Resolution", vreslst, settings.voxelResolution);
 
         bool prevVisc = settings.useViscache;
-        win->checkbox("Use Viscache", settings.useViscache);
+        if (settings.textureResolution <= MAX_VISCACHE_RESOLUTION) {
+            win->checkbox("Use Viscache", settings.useViscache);
+        }
 
         bool prevCons = settings.useConservativeRasterization;
         win->checkbox("Cons. Rasterization", settings.useConservativeRasterization);
@@ -100,6 +102,8 @@ public:
     {
         settingsChanged = false;
         this->outputFbo = outputFbo;
+
+        if (settings.textureResolution > MAX_VISCACHE_RESOLUTION) settings.useViscache = false;
 
         if (settings.useViscache) {
             /*
