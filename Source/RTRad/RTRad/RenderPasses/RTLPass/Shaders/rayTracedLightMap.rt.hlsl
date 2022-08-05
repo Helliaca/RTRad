@@ -109,13 +109,6 @@ void rayGen()
 
     lig_out[self_c] = float4(emissive.r, emissive.g, emissive.b, 1);
 
-    // Use this to display a cool way of what points rayMarch determines to be visible from a given point
-    /*lig_out[self_c] = float4(0, 0, 0, 1);
-    if (rayMarchVisible(self_wpos, float3(0.f, 0.f, -1.0f))) {
-        lig_out[self_c] = float4(1,1,1,1);
-    }
-    return;*/
-
     #if HEMISPHERIC
 
     //// HEMISPHERIC SAMPLING
@@ -326,13 +319,6 @@ void primaryClosestHit(inout RayPayload rpl, in BuiltInTriangleIntersectionAttri
     // Destination
     VertexData v = getVertexData(getGeometryInstanceID(), PrimitiveIndex(), attribs);
     float2 other_uv = v.texC;
-
-    // Use this to create an image of which patches are sampled:
-    //if (self_c.x == 4 && self_c.y == 4) {
-    //    lig_out[self_c] = float4(1, 0, 0, 1);
-    //    lig_out[other_uv * uint2(texRes, texRes)] = float4(1, 1, 1, 1);
-    //}
-    //return;
 
     // World position
     float3 self_wpos = pos[self_c].xyz + minPos;
