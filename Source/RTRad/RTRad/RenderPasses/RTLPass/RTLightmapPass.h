@@ -34,7 +34,7 @@ struct RTLPassSettings : public RR::BaseSettings {
     float reflectivity_factor;
     float distance_factor;
 
-    bool runExtendSeamsPass;
+    bool runSewSeamsPass;
 
     // We need this for correct GUI output. It will be set each frame by RTRad
     uint2 textureResolution;
@@ -62,7 +62,7 @@ struct RTLPassSettings : public RR::BaseSettings {
         reflectivity_factor = 0.9f;
         distance_factor = 1.0f;
 
-        runExtendSeamsPass = true;
+        runSewSeamsPass = true;
 
         textureResolution = uint2(64, 64);
     }

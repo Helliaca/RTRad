@@ -135,7 +135,7 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
 
     win->slider("Reflectivity", settings.reflectivity_factor, 0.0f, 10.0f);
     win->slider("Distance", settings.distance_factor, 0.0f, 2.0f);
-    win->checkbox("Run ExtendSeamsPass", settings.runExtendSeamsPass);
+    win->checkbox("Run SewSeamsPass", settings.runSewSeamsPass);
 
     win->separator();
 
@@ -260,7 +260,7 @@ void RTLightmapPass::onBatchStarted(RenderContext* pContext, const TextureGroup*
 
 void RTLightmapPass::onBatchComplete(RenderContext* pContext, const TextureGroup* textureGroup)
 {
-    if (settings.runExtendSeamsPass) {
+    if (settings.runSewSeamsPass) {
         // Extend seams
         std::vector<Texture::SharedPtr> tfbo;
         tfbo.push_back(textureGroup->lgoTex);
@@ -277,5 +277,5 @@ RTLightmapPass::RTLightmapPass(const Scene::SharedPtr& pScene, const RtProgram::
     settings = RTLPassSettings::RTLPassSettings();
 
     SubstructurePass = FullScreenPass::create(RTLPASS_DIR_SHADERS"/Substructure.ps.hlsl", scene->getSceneDefines());
-    SeamExtendPass = FullScreenPass::create(RTLPASS_DIR_SHADERS"/ExtendSeams.ps.hlsl", scene->getSceneDefines());
+    SeamExtendPass = FullScreenPass::create(RTLPASS_DIR_SHADERS"/SewSeams.ps.hlsl", scene->getSceneDefines());
 }

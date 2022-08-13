@@ -42,7 +42,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\ExtendSeams.ps.hlsl" />
+    <ShaderSource Include="RTRad\RenderPasses\RTLPass\Shaders\SewSeams.ps.hlsl" />
     <ShaderSource Include="RTRad\Slang\HemisphericSampling.slang" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.gs.hlsl" />
     <ShaderSource Include="RTRad\RenderPasses\CITPass\Shaders\CITP.ps.hlsl" />
