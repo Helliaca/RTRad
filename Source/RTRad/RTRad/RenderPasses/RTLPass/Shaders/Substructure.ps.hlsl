@@ -19,17 +19,6 @@ struct GsOut
     float2 texC : TEXCOORD;
 };
 
-float get_gradient(uint2 uv, int s) {
-    // mean color of siblings
-    float3 mean = 0.25f * (
-        lig[uv + uint2(0, 0)].rgb +
-        lig[uv + uint2(s, 0)].rgb +
-        lig[uv + uint2(0, s)].rgb +
-        lig[uv + uint2(s, s)].rgb
-    );
-    return length(lig[uv].rgb - mean);
-}
-
 float4 main(GsOut vsOut) : SV_TARGET0
 {
     // Get texture dimensions
@@ -60,12 +49,12 @@ float4 main(GsOut vsOut) : SV_TARGET0
     uint2 c3 = uv + uint2(s, s);
 
     // if ANY of them have a smaller number than step*step, do nothing
-    bool stuff = false;
-    if (lig[c0].a < s * s) stuff = true;
-    if (lig[c1].a < s * s) stuff = true;
-    if (lig[c2].a < s * s) stuff = true;
-    if (lig[c3].a < s * s) stuff = true;
-    if(stuff) return pos[uv];
+    bool skip = false;
+    if (lig[c0].a < s * s) skip = true;
+    if (lig[c1].a < s * s) skip = true;
+    if (lig[c2].a < s * s) skip = true;
+    if (lig[c3].a < s * s) skip = true;
+    if(skip) return pos[uv];
 
     // otherwise:
     float3 mean = 0.25f * (lig[c0].rgb + lig[c1].rgb + lig[c2].rgb + lig[c3].rgb);
