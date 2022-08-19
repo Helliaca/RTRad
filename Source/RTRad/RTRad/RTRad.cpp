@@ -46,7 +46,7 @@ void RTRad::onGuiRender(Gui* pGui)
 
     // SCENE CONTROLS
     {
-        Gui::Window w(pGui, "Scene Settings", { 350, 220 }, { 10, 600 });
+        Gui::Window w(pGui, "Scene Settings", { 350, 220 }, { 1080, 550 });
 
         if (w.button("Load Scene"))
         {
