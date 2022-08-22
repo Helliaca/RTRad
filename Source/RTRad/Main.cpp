@@ -6,7 +6,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
     RTRad::UniquePtr pRenderer = std::make_unique<RTRad>();
 
     SampleConfig config;
-    config.windowDesc.title = "RTRad Project";
+    config.windowDesc.title = "RTRad";
     config.windowDesc.resizableWindow = false;
     config.windowDesc.mode = Falcor::Window::WindowMode::Normal;
     config.windowDesc.height = DEFAULT_WIN_HEIGHT;
