@@ -1,0 +1,1 @@
+The given python code was used in a Google Colab program to generate a set of 1024 hemispheric directions for sampling. The final result is given in the (..)_Result.pdf file.
