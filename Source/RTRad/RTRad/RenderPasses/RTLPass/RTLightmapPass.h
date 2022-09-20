@@ -41,8 +41,8 @@ struct RTLPassSettings : public RR::BaseSettings {
 
     RTLPassSettings() {
         integral = RTPassIntegral::AREA;
-        sampling_res = 1;
-        hemisphere_samples = 100;
+        sampling_res = 2;
+        hemisphere_samples = 1024;
 
         batchComplete = true;
         passNum = 0;

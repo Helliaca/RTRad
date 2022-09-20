@@ -148,11 +148,11 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
         Falcor::Gui::DropdownList usmlst;
         uint32_t usm = (uint32_t)settings.underSamplingMethod;
         usmlst.push_back({ (uint32_t)RTPassUndersampling::NONE, "None" });
-        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_STRIDE, "Static (Stride)" });
-        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_BILINEAR, "Static (Bilinear)" });
-        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_RANDOMIZED, "Static (Randomized)" });
-        usmlst.push_back({ (uint32_t)RTPassUndersampling::SUBSTRUCTURING, "Substructuring" });
-        win->dropdown("Undersampling Method", usmlst, usm);
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_STRIDE, "Undersampling (Stride)" });
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_BILINEAR, "Undersampling (Mipmapped)" });
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::STATIC_RANDOMIZED, "Undersampling (Monte-Carlo)" });
+        usmlst.push_back({ (uint32_t)RTPassUndersampling::SUBSTRUCTURING, "Adaptive Subdivision" });
+        win->dropdown("Sampling Method", usmlst, usm);
         settings.underSamplingMethod = (RTPassUndersampling)usm;
 
         if (settings.underSamplingMethod == RTPassUndersampling::STATIC_BILINEAR || settings.underSamplingMethod == RTPassUndersampling::STATIC_RANDOMIZED || settings.underSamplingMethod == RTPassUndersampling::STATIC_STRIDE) {
@@ -163,7 +163,7 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
             sreslst.push_back({ 4, "4x4" });
             sreslst.push_back({ 8, "8x8" });
             sreslst.push_back({ 16, "16x16" });
-            win->dropdown("Sampling Res", sreslst, sres);
+            win->dropdown("Sampling Window", sreslst, sres);
             settings.sampling_res = sres;
         }
 
