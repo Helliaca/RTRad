@@ -57,7 +57,7 @@ You can press "F2" to toggle the GUI and "P" to bring up the profiler. Whilst th
 
 ![RTRad UI](https://i.imgur.com/SeQu51h.jpg)
 
-### Methods:
+### Methods
 
 There are roughly 4 different variants of progressive radiosity you can execute:
 
