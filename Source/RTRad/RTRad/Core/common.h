@@ -2,25 +2,30 @@
 
 using namespace Falcor;
 
-
-#define CITPASS_H <RTRad/RenderPasses/CITPass/CITPass.h>
-#define CITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/CITPass/Shaders"
-
-#define VITPASS_H <RTRad/RenderPasses/VITPass/VITPass.h>
-#define VITPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/VITPass/Shaders"
-#define VITPASS_DIR_UVPLANESCENE "../Source/RTRad/RTRad/RenderPasses/VITPass/UVPlaneScene/UVPlane.pyscene"
-
-#define CVMPASS_H <RTRad/RenderPasses/CVMPass/CVMPass.h>
-#define CVMPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/CVMPass/Shaders"
-
-#define RTLPASS_H <RTRad/RenderPasses/RTLPass/RTLightmapPass.h>
-#define RTLPASS_DIR_SHADERS "RTRad/RTRad/RenderPasses/RTLPass/Shaders"
-
-#define SETTINGSOBJ_H <RTRad/Core/SettingsObject.h>
-
+#if DEBUG
 #define SCENES_FOLDER "../Source/RTRad/Scenes"
+#define RENDERPASSES_FOLDER "RTRad/RTRad/RenderPasses"
+#else
+#define SCENES_FOLDER "RTRad/Scenes"
+#define RENDERPASSES_FOLDER "RTRad/RTRad/RenderPasses"
+#endif
 
 #define DEFAULT_SCENE SCENES_FOLDER"/CornellLucy.pyscene"
+
+#define CITPASS_H <RTRad/RenderPasses/CITPass/CITPass.h>
+#define CITPASS_DIR_SHADERS RENDERPASSES_FOLDER"/CITPass/Shaders"
+
+#define VITPASS_H <RTRad/RenderPasses/VITPass/VITPass.h>
+#define VITPASS_DIR_SHADERS RENDERPASSES_FOLDER"/VITPass/Shaders"
+#define VITPASS_DIR_UVPLANESCENE SCENES_FOLDER"/UVPlaneScene/UVPlane.pyscene"
+
+#define CVMPASS_H <RTRad/RenderPasses/CVMPass/CVMPass.h>
+#define CVMPASS_DIR_SHADERS RENDERPASSES_FOLDER"/CVMPass/Shaders"
+
+#define RTLPASS_H <RTRad/RenderPasses/RTLPass/RTLightmapPass.h>
+#define RTLPASS_DIR_SHADERS RENDERPASSES_FOLDER"/RTLPass/Shaders"
+
+#define SETTINGSOBJ_H <RTRad/Core/SettingsObject.h>
 
 #define DEFAULT_WIN_HEIGHT 810
 #define DEFAULT_WIN_WIDTH 1440

@@ -84,7 +84,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <ShaderSourceSubDir>Shaders\Samples\$(ProjectName)</ShaderSourceSubDir>
@@ -105,7 +105,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;SOLUTION_DIR=R"($(SolutionDir))";_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;SOLUTION_DIR=R"($(SolutionDir))";_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(FALCOR_CORE_DIRECTORY)\Falcor;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\deps\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman;$(FALCOR_CORE_DIRECTORY)\Externals;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nvapi;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\vulkansdk\Include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\python\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\WinPixEventRuntime\Include\WinPixEventRuntime;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nanovdb\include;$(FALCOR_CORE_DIRECTORY)\RTRad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -124,15 +124,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;SOLUTION_DIR=R"($(SolutionDir))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(FALCOR_CORE_DIRECTORY)\Falcor;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\deps\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman;$(FALCOR_CORE_DIRECTORY)\Externals;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nvapi;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\vulkansdk\Include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\python\include;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\WinPixEventRuntime\Include\WinPixEventRuntime;$(FALCOR_CORE_DIRECTORY)\Externals\.packman\nanovdb\include;$(FALCOR_CORE_DIRECTORY)\RTRad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Framework\Externals\DXRT\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
