@@ -9,9 +9,9 @@ GI lightmaps can be generated in a variety of different ways and individual data
 
 The development took place as part of a Masters's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). The thesis contains a detailed account on all features and requirements. It can be viewed and used as a form of documentation [here](https://www.todo.com/).
 
-![Image](https://i.imgur.com/hB4Bq5a.jpg)
+Here's a simple demonstration video that serves as an overview:
 
-(TODO: Insert demonstration video)
+[![Demo Video](https://i.imgur.com/aFJFiaD.png)](https://www.youtube.com/watch?v=84rVIG8G1Eg)
 
 # Instructions
 
@@ -86,3 +86,5 @@ For detailed information on each of these methods, please refer to the underlyin
 - Sewseams
 - Cons. Rasterization
 - ...
+
+![Image](https://i.imgur.com/hB4Bq5a.jpg)
