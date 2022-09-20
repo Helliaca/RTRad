@@ -40,7 +40,7 @@ Some issues can occur whilst setting thins up. Ultimately, make sure that you:
 - Have all the dependencies installed (VS2019 and Windows 10 SDK)
 - Have selected the "Debug D3D12" configuration
 - Have RTRad selected as your startup project
-- If you `right-click > Properties` any of the two projects (Falcor and RTRad) it should have "10.0.19041.0" as the Windows SDK version and "Visual Studio 2019 (v142)" as the Platform Toolset.
+- If you `Right-Click > Properties` any of the two projects (Falcor and RTRad) it should have "10.0.19041.0" as the Windows SDK version and "Visual Studio 2019 (v142)" as the Platform Toolset.
 - The C++ Language Standard should be "ISO C++ 17 Standard"
 - Falcor's configuration type should be set to "Dynamic Library (.dll)" and RTRad to "Application (.exe)"
 
@@ -64,13 +64,23 @@ There are roughly 4 different variants of progressive radiosity you can execute:
 - *Adaptive Subdivision* by selecting the integral type as "Area" and sampling settings as "Adaptive Subdivision". This is a mostly slower version of Undersampling but which can provide lightmaps that require smaller memory by packing them into quad-trees. The speed of this algorithm will depend on how the max. node size and gradient threshold interact with the scene composition and is generally hard to predict accurately.
 - *Hemispheric* by selecting the integral type as "Hemispheric". This is generally the fastest method and best-suited for very large lightmaps. Unfortunately, it can provide unsatisfactory results in scenes with small light-sources. You can select how many samples you shoot for each pixel in the lightmap, though the method is fast enough so that you can leave this at the maximum value of 1024.
 
-Note: The *first* pass you execute after loading a scene can be slower than subsequent ones, because the accleration structure needs to be rebuilt.
+Here's a simple comparison:
+
+![Comparison Image](https://i.imgur.com/x3L759V.png)
+
+Note: The *first* pass you execute after loading a scene can be slower than subsequent ones, because the acceleration structure needs to be rebuilt.
 
 For detailed information on each of these methods, please refer to the underlying [thesis](https://www.todo.com/).
 
 ### Visualizing Data
 
-...
+You can select what data you want visualized in which way by adjusting the "Visualization Settings". You can select which texture and mipmap to display, in addition to showing the texture's resolution and alpha channel.
+
+Textures can be rendered applied to a model, or as masked / unmasked textures. You can also toggle the bilinear magnification filter.
+
+Here are some examples of what data can be visualized: (Left-to-right: normal vectors, voxel-map, texture resolution and alpha-embedded quad-tree)
+
+![Visualization Examples](https://i.imgur.com/e9TCewt.png)
 
 ### Loading New Scenes
 
