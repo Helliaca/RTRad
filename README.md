@@ -82,19 +82,32 @@ Here are some examples of what data can be visualized: (Left-to-right: normal ve
 
 ![Visualization Examples](https://i.imgur.com/e9TCewt.png)
 
-### Loading New Scenes
+### Scene Management
 
-...
+In the "Scene Settings" panel you can adjust a scene to your liking as well as view useful information on the geometry and acceleration structures.
 
-### Creating New Scenes
+To load a new scene, you can click on the "Load Scene" button and navigate to the `Source/RTRad/Scenes` directory to select any of the `.pyscene` files.
 
-...
+RTRad comes with six different testing scenes to cover a wide variety of use-cases:
+
+![Scenes Overview](https://i.imgur.com/eGupPwt.jpg)
+
+To create your own scene, simply create a new `.pyscene` file and adjust it to your liking. Refer to the [python-scene-files documentation](https://falcor.docsforge.com/master/usage/scenes/) for further details.
+
+Note: For a scene to work out-of-the-box with RTRad it needs non-overlapping UV coordinates (for lightmaps) in the UV0 channel.
+
+<!---
+Note: Here's an archived link to the documentation page in case it gets taken down or changes:
+https://web.archive.org/web/20200924030604/https://falcor.docsforge.com/master/usage/scene-formats/
+-->
 
 ### Extra Features
 
-- Viscaching
-- Sewseams
-- Cons. Rasterization
-- ...
+RTRad comes with a number of additional features such as visiblity caching, sew-seams and voxel-raymarching. For a detailed account refer to the [thesis](https://www.todo.com/), but here's a rough overview:
+
+- *Viscaching*: This option is available for lightmaps of 512x512 and below. When enabled, visibility information is cached, making the very first pass slower, but subsequent passes significantly faster.
+- *SewSeams*: When enabled, each radiosity pass will be followed up by a SewSeams pass, which fixes some of the leaking shadow on geometry edges.
+- *Voxel-Raymarching*: You can substitute ray-traces by marching through a voxelmap instead. This is usually slower *and* less accurate, but serves as a point-of-reference.
+- *Conservative Rasterization*: You can create the initial input textures by utilizing conservative rasterization. This will make the Sew-Seams pass redundant, but only works if your primitves generally occupy more than one pixel in the UV lightmap.
 
 ![Image](https://i.imgur.com/hB4Bq5a.jpg)
