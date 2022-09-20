@@ -113,3 +113,7 @@ RTRad comes with a number of additional features such as visiblity caching, sew-
 - *Conservative Rasterization*: You can create the initial input textures by utilizing conservative rasterization. This will make the Sew-Seams pass redundant, but only works if your primitves generally occupy more than one pixel in the UV lightmap.
 
 ![Image](https://i.imgur.com/hB4Bq5a.jpg)
+
+### License
+
+This project is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) whilst its underlying framework (Falcor 4.4) has its [own license](https://github.com/Helliaca/RTRad/blob/main/Source/Falcor/LICENSE.md).
