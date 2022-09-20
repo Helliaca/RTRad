@@ -64,7 +64,7 @@ There are roughly 4 different variants of progressive radiosity you can execute:
 - *Adaptive Subdivision* by selecting the integral type as "Area" and sampling settings as "Adaptive Subdivision". This is a mostly slower version of Undersampling but which can provide lightmaps that require smaller memory by packing them into quad-trees. The speed of this algorithm will depend on how the max. node size and gradient threshold interact with the scene composition and is generally hard to predict accurately.
 - *Hemispheric* by selecting the integral type as "Hemispheric". This is generally the fastest method and best-suited for very large lightmaps. Unfortunately, it can provide unsatisfactory results in scenes with small light-sources. You can select how many samples you shoot for each pixel in the lightmap, though the method is fast enough so that you can leave this at the maximum value of 1024.
 
-Here's a simple comparison:
+Here's a simple comparison (lightmap of 256x256 pixels):
 
 ![Comparison Image](https://i.imgur.com/x3L759V.png)
 
