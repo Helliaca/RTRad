@@ -55,6 +55,8 @@ In the bottom left you can set "Batching Settings", which determines how many pi
 
 You can press "F2" to toggle the GUI and "P" to bring up the profiler. Whilst the profiler is active, the pass-time of the current (ie. last) pass will be displayed on the bottom of the "RTRad" panel.
 
+![RTRad UI](https://i.imgur.com/SeQu51h.jpg)
+
 ### Methods:
 
 There are roughly 4 different variants of progressive radiosity you can execute:
