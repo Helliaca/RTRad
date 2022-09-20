@@ -35,7 +35,7 @@ Once you've got those:
 
 ### Common issues
 
-Some issues can occur whilst setting thins up. Ultimately, make sure that you:
+Some issues can occur whilst setting things up. Ultimately, make sure that you:
 
 - Have all the dependencies installed (VS2019 and Windows 10 SDK)
 - Have selected the "Debug D3D12" configuration
@@ -49,9 +49,9 @@ Some issues can occur whilst setting thins up. Ultimately, make sure that you:
 Once you get the project running, you will see a basic scene with a GUI.
 
 The upper left-most panel will let you run a new radiosity pass (corresponding to one bounce of light) or reset back to zero.
-The upper right-most panel lets you select a resolution for the lightmap. Stick to low resolutions unless you use one of the faster methods/variants listed further down.
+The upper right-most panel lets you select a resolution for the lightmap. Stick to low resolutions unless you use one of the faster methods/variants listed further below.
 
-In the bottom left you can set "Batching Settings", which determines how many pixels (ie. radiosity patches) are processed before returning control back to the CPU. If you experience crashes or freezes, try lowering the batch-size. Passes generally run faster with the largest batch-size you can get away with (depends on GPU).
+In the bottom left you can set "Batching Settings", which determine how many pixels (ie. radiosity patches) are processed before returning control back to the CPU. If you experience crashes or freezes, try lowering the batch-size. Passes generally run faster with the largest batch-size you can get away with (depends on GPU).
 
 You can press "F2" to toggle the GUI and "P" to bring up the profiler. Whilst the profiler is active, the pass-time of the current (ie. last) pass will be displayed on the bottom of the "RTRad" panel.
 
@@ -70,7 +70,7 @@ Here's a simple comparison (lightmap of 256x256 pixels):
 
 ![Comparison Image](https://i.imgur.com/x3L759V.png)
 
-Note: The *first* pass you execute after loading a scene can be slower than subsequent ones, because the acceleration structure needs to be rebuilt.
+> **_NOTE:_** The *first* pass you execute after loading a scene can be slower than subsequent ones, because the acceleration structure needs to be rebuilt.
 
 For detailed information on each of these methods, please refer to the underlying [thesis](https://www.todo.com/).
 
@@ -78,7 +78,7 @@ For detailed information on each of these methods, please refer to the underlyin
 
 You can select what data you want visualized in which way by adjusting the "Visualization Settings". You can select which texture and mipmap to display, in addition to showing the texture's resolution and alpha channel.
 
-Textures can be rendered applied to a model, or as masked / unmasked textures. You can also toggle the bilinear magnification filter.
+Textures can be rendered as a model, or as masked / unmasked UV-textures. You can also toggle the bilinear magnification filter.
 
 Here are some examples of what data can be visualized: (Left-to-right: normal vectors, voxel-map, texture resolution and alpha-embedded quad-tree)
 
@@ -96,7 +96,7 @@ RTRad comes with six different testing scenes to cover a wide variety of use-cas
 
 To create your own scene, simply create a new `.pyscene` file and adjust it to your liking. Refer to the [python-scene-files documentation](https://falcor.docsforge.com/master/usage/scenes/) for further details.
 
-Note: For a scene to work out-of-the-box with RTRad it needs non-overlapping UV coordinates (for lightmaps) in the UV0 channel.
+> **_NOTE:_** For a scene to work out-of-the-box with RTRad it needs non-overlapping UV coordinates (for lightmaps) in the UV0 channel.
 
 <!---
 Note: Here's an archived link to the documentation page in case it gets taken down or changes:
