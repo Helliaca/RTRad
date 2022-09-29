@@ -43,6 +43,7 @@ Some issues can occur whilst setting things up. Ultimately, make sure that you:
 - If you `Right-Click > Properties` any of the two projects (Falcor and RTRad) it should have "10.0.19041.0" as the Windows SDK version and "Visual Studio 2019 (v142)" as the Platform Toolset.
 - The C++ Language Standard should be "ISO C++ 17 Standard"
 - Falcor's configuration type should be set to "Dynamic Library (.dll)" and RTRad to "Application (.exe)"
+- Make sure there are no whitepsaces in your working directory
 
 ## Generating Lightmaps
 
