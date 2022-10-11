@@ -7,7 +7,7 @@ RTRad is an enhanced implementation of *progressive refinement radiosity* using 
 The project is built on [Falcor 4.4](https://github.com/NVIDIAGameWorks/Falcor/releases/tag/4.4) and contains a highly configureable pipeline.
 GI lightmaps can be generated in a variety of different ways and individual data components can easily be visualized. Custom scenes and models can be defined and loaded into the rendering environment using the `.pyscene` format.
 
-The development took place as part of a Masters's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). The thesis contains a detailed account on all features and requirements. It can be viewed and used as a form of documentation [here](https://www.todo.com/).
+The development took place as part of a Masters's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). The thesis contains a detailed account on all features and requirements.
 
 Here's a simple demonstration video that serves as an overview:
 
@@ -73,8 +73,6 @@ Here's a simple comparison (lightmap of 256x256 pixels):
 
 > **_NOTE:_** The *first* pass you execute after loading a scene can be slower than subsequent ones, because the acceleration structure needs to be rebuilt.
 
-For detailed information on each of these methods, please refer to the underlying [thesis](https://www.todo.com/).
-
 ### Visualizing Data
 
 You can select what data you want visualized in which way by adjusting the "Visualization Settings". You can select which texture and mipmap to display, in addition to showing the texture's resolution and alpha channel.
@@ -106,7 +104,7 @@ https://web.archive.org/web/20200924030604/https://falcor.docsforge.com/master/u
 
 ### Extra Features
 
-RTRad comes with a number of additional features such as visiblity caching, sew-seams and voxel-raymarching. For a detailed account refer to the [thesis](https://www.todo.com/), but here's a rough overview:
+RTRad comes with a number of additional features such as visiblity caching, sew-seams and voxel-raymarching. Here's a rough overview:
 
 - *Viscaching*: This option is available for lightmaps of 512x512 and below. When enabled, visibility information is cached, making the very first pass slower, but subsequent passes significantly faster.
 - *SewSeams*: When enabled, each radiosity pass will be followed up by a SewSeams pass, which fixes some of the leaking shadow on geometry edges.
