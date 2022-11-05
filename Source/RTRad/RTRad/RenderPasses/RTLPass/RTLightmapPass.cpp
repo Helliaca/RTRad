@@ -188,6 +188,10 @@ void RTLightmapPass::onRenderGui(Gui* Gui, Gui::Window* win)
         }
     }
 
+    if (settings.underSamplingMethod == RTPassUndersampling::NONE || settings.underSamplingMethod == RTPassUndersampling::SUBSTRUCTURING) {
+        settings.sampling_res = 1;
+    }
+
     // What follows is a whole lot of math to ensure that only batching settings are allowed that lead to less than max_samples
     // of sample-steps are taken per batch.
 
