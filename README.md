@@ -7,7 +7,7 @@ RTRad is an enhanced implementation of *progressive refinement radiosity* using 
 The project is built on [Falcor 4.4](https://github.com/NVIDIAGameWorks/Falcor/releases/tag/4.4) and contains a highly configureable pipeline.
 GI lightmaps can be generated in a variety of different ways and individual data components can easily be visualized. Custom scenes and models can be defined and loaded into the rendering environment using the `.pyscene` format.
 
-The development took place as part of a Masters's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). The thesis contains a detailed account on all features and requirements.
+The development took place as part of a Masters's thesis at the [Freie Universität Berlin](https://www.fu-berlin.de/). The thesis contains a detailed account on all features and requirements and can be viewed as a form of documentation [here](https://github.com/Helliaca/RTRad/blob/main/MT-11.pdf).
 
 Here's a simple demonstration video that serves as an overview:
 
